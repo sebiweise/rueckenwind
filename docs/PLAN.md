@@ -1,6 +1,6 @@
 # Rückenwind – Umsetzungsplan
 
-Stand: 08.10.2026 · Name: **Rückenwind** (vorläufig festgelegt), Untertitel „Rückenwind – Therapieplatz finden“, Slug/Repo `rueckenwind-therapie`. Markenrecherche (DPMA/EUIPO, Klassen 9 und 44) vor dem ersten Release abschließen; den Namen im Code daher zentral in einer Konstante (`APP_NAME`) halten.
+Stand: 08.10.2026 · Name: **Rückenwind** (vorläufig festgelegt), Untertitel „Rückenwind – Therapieplatz finden“, Repo `rueckenwind`. Markenrecherche (DPMA/EUIPO, Klassen 9 und 44) vor dem ersten Release abschließen; den Namen im Code daher zentral in einer Konstante (`APP_NAME`) halten.
 
 ## Überblick
 
@@ -73,16 +73,16 @@ Die App spricht wie eine ruhige, kompetente Begleitung: duzend, kurz, ohne Parag
 
 ## Tech-Stack und Architektur
 
-Vorschlag: eine statisch gebaute SvelteKit-PWA ohne Backend, gehostet auf GitHub Pages. Der Stack ist noch nicht final bestätigt (offene Frage: SvelteKit oder React/Next); bis dahin gilt dieser Vorschlag.
+Entschieden (07.10.2026): eine statisch exportierte Next.js-PWA ohne Backend, gehostet auf GitHub Pages.
 
 | Bereich | Wahl | Grund |
 | --- | --- | --- |
-| Framework | SvelteKit + TypeScript, `adapter-static` | Kleine Bundles, einfach, statisch hostbar |
-| PWA | `@vite-pwa/sveltekit` | Offline-Fähigkeit, installierbar |
+| Framework | Next.js (App Router) + React + TypeScript, `output: 'export'` | Verbreitet, statisch exportierbar, ohne Server hostbar |
+| PWA | Serwist (`@serwist/next`) | Offline-Fähigkeit, installierbar |
 | Speicher | IndexedDB über Dexie.js | Strukturierte lokale Daten, Migrationen |
-| Inhalte | Markdown in `content/`, gerendert mit mdsvex | Pflege per Pull Request ohne Code |
+| Inhalte | Markdown in `content/`, zur Build-Zeit gerendert (MDX bzw. remark) | Pflege per Pull Request ohne Code |
 | PDF | pdfmake (clientseitig) | Tabellen ohne Server |
-| Styling | Plain CSS mit Custom Properties | Kein Framework-Overhead |
+| Styling | Plain CSS mit Custom Properties (global bzw. CSS Modules) | Kein Framework-Overhead |
 | i18n | Einfache JSON-Schlüssel | Spätere Übersetzungen |
 | Tests | Vitest (Parser, Datenlogik), Playwright (E2E) | Parser muss robust sein |
 | Qualität | ESLint, Prettier, axe-core in E2E | Barrierefreiheit prüfbar |
@@ -93,7 +93,7 @@ Vorschlag: eine statisch gebaute SvelteKit-PWA ohne Backend, gehostet auf GitHub
 
 - `src/lib/domain/` – reine Logik: Typen, Freitext-Parser, Etappenlogik, Fortschritt. Ohne Framework-Abhängigkeit, voll getestet.
 - `src/lib/data/` – Dexie-Datenbank, Repository-Funktionen, Export/Import.
-- `src/routes/` + `src/lib/components/` – UI.
+- `src/app/` (Routen) + `src/components/` – UI.
 - `content/de/` – Markdown pro Etappe und Infoseite mit Frontmatter (`title`, `stage`, `summary`, `lastReviewed`, `sources`).
 
 **Keine** Analytics, Tracker, externen Fonts oder CDN-Aufrufe. Eine Content-Security-Policy verbietet Verbindungen nach außen.
@@ -153,7 +153,7 @@ Sieben Phasen, jede endet mit einem lauffähigen Stand und einem eigenen Pull Re
 
 ### Phase 0 – Repo-Fundament
 
-- [ ] SvelteKit + TypeScript mit `adapter-static` aufsetzen, ESLint, Prettier, Vitest, Playwright
+- [ ] Next.js + TypeScript mit statischem Export (`output: 'export'`) aufsetzen, ESLint, Prettier, Vitest, Playwright
 - [ ] Ordnerstruktur wie in „Architektur“ anlegen
 - [ ] README (Ziel, Screenshots-Platzhalter, Datenschutz-Versprechen, Disclaimer), LICENSE (MIT), `content/LICENSE` (CC BY-SA 4.0), CONTRIBUTING.md, CODE_OF_CONDUCT.md, Issue- und PR-Templates
 - [ ] GitHub Actions: Lint, Test, Build, Deploy auf GitHub Pages

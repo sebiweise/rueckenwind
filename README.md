@@ -37,13 +37,14 @@ Voraussetzung: Node.js 22 oder neuer (siehe `.nvmrc`).
 npm ci              # Abhängigkeiten installieren
 npm run dev         # Entwicklungsserver
 npm run lint        # Prettier + ESLint
-npm run check       # Typprüfung (svelte-check)
+npm run check       # Typprüfung (tsc)
 npm test            # Unit-Tests (Vitest)
 npm run test:e2e    # E2E-Tests (Playwright + axe-core); vorher einmal: npx playwright install chromium
-npm run build       # statische Seite nach build/
+npm run build       # statischer Export nach out/
+npm run preview     # out/ lokal ansehen (http://localhost:4173)
 ```
 
-Tech-Stack: SvelteKit + TypeScript mit `adapter-static`, Plain CSS, Vitest, Playwright. Details, Datenmodell und Phasen stehen im [Umsetzungsplan](docs/PLAN.md), das Fachwissen in [docs/WISSEN.md](docs/WISSEN.md).
+Tech-Stack: Next.js + React + TypeScript als statischer Export, Plain CSS, Vitest, Playwright. Details, Datenmodell und Phasen stehen im [Umsetzungsplan](docs/PLAN.md), das Fachwissen in [docs/WISSEN.md](docs/WISSEN.md).
 
 ### Projektstruktur
 
@@ -51,11 +52,11 @@ Tech-Stack: SvelteKit + TypeScript mit `adapter-static`, Plain CSS, Vitest, Play
 content/de/          Infotexte als Markdown (CC BY-SA 4.0)
 docs/                Plan und Wissensstand
 e2e/                 End-to-End-Tests
+src/app/             Seiten und Layout
+src/components/      UI-Komponenten
 src/lib/domain/      reine Logik ohne Framework (Parser, Etappen, Fortschritt)
 src/lib/data/        lokale Datenhaltung, Export/Import
-src/lib/components/  UI-Komponenten
 src/lib/i18n/        UI-Texte
-src/routes/          Seiten
 ```
 
 ## Mitmachen

@@ -69,14 +69,14 @@ Die Anforderungen sind nicht bundesweit einheitlich geregelt und unterscheiden s
 - Keine Rechts- oder Medizinberatung, keine Diagnosefunktionen (MDR-Abgrenzung).
 - MVP: Etappen-Inhalte, Schnellerfassung, Kontaktliste, Nachweis-PDF, Export/Import.
 - Zielgruppe MVP: erwachsene gesetzlich Versicherte.
-- Name: **Rückenwind** (vorläufig), Untertitel „Rückenwind – Therapieplatz finden“, Repo `rueckenwind-therapie`.
+- Name: **Rückenwind** (vorläufig), Untertitel „Rückenwind – Therapieplatz finden“, Repo `rueckenwind`.
+- Framework: Next.js + TypeScript mit statischem Export (entschieden am 07.10.2026).
 
 ## 4. Offene Entscheidungen
 
 | Thema | Stand |
 | --- | --- |
 | Markenrecherche „Rückenwind“ | Offen. Bisher nur eine Radreisen-App gleichen Namens bekannt. DPMA und EUIPO (TMview) für Klassen 9 und 44 prüfen, vor dem ersten Release. |
-| Framework | Vorschlag SvelteKit + TypeScript; Alternative React/Next. Noch nicht bestätigt. |
 | Farbpalette / Logo | Offen. Richtung: ruhig, warm, freundlich. |
 | Impressum / Hosting-Domain | Offen, klärt der Projektinhaber. |
 | Fachliche Prüfung | Ansprechperson (Psychotherapeut:in, Beratungsstelle) noch zu finden. |
