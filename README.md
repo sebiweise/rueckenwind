@@ -40,11 +40,11 @@ npm run lint        # Prettier + ESLint
 npm run check       # Typprüfung (tsc)
 npm test            # Unit-Tests (Vitest)
 npm run test:e2e    # E2E-Tests (Playwright + axe-core); vorher einmal: npx playwright install chromium
-npm run build       # statischer Export nach out/
-npm run preview     # out/ lokal ansehen (http://localhost:4173)
+npm run build       # Produktions-Build (Standalone-Server)
+npm start           # Produktions-Build starten (http://localhost:3000)
 ```
 
-Tech-Stack: Next.js + React + TypeScript als statischer Export, Plain CSS, Vitest, Playwright. Details, Datenmodell und Phasen stehen im [Umsetzungsplan](docs/PLAN.md), das Fachwissen in [docs/WISSEN.md](docs/WISSEN.md).
+Tech-Stack: Next.js + React + TypeScript, Plain CSS, Vitest, Playwright. Details, Datenmodell und Phasen stehen im [Umsetzungsplan](docs/PLAN.md), das Fachwissen in [docs/WISSEN.md](docs/WISSEN.md).
 
 ### Projektstruktur
 
@@ -58,6 +58,37 @@ src/lib/domain/      reine Logik ohne Framework (Parser, Etappen, Fortschritt)
 src/lib/data/        lokale Datenhaltung, Export/Import
 src/lib/i18n/        UI-Texte
 ```
+
+## Hosting
+
+Rückenwind braucht kein Backend. Der Server liefert nur die App aus, deine Daten bleiben im Browser. Du hast drei Möglichkeiten:
+
+**1. Docker** (Next.js-Standalone-Server)
+
+```sh
+docker run -p 3000:3000 ghcr.io/sebiweise/rueckenwind:latest
+# oder selbst bauen:
+docker build -t rueckenwind . && docker run -p 3000:3000 rueckenwind
+# oder mit Compose:
+docker compose up -d
+```
+
+Das Image läuft als unprivilegierter Nutzer, verträgt ein schreibgeschütztes Dateisystem und hat einen Healthcheck. Port und Adresse lassen sich über `PORT` und `HOSTNAME` ändern.
+
+**2. Beliebiger Node-Host** (Node 22 oder neuer)
+
+```sh
+npm ci && npm run build && npm start
+```
+
+**3. Statischer Export** (GitHub Pages, Netlify, ein einfacher Webserver)
+
+```sh
+npm run build:static            # schreibt die Seite nach out/
+BASE_PATH=/rueckenwind npm run build:static   # wenn die App unter einem Unterpfad liegt
+```
+
+Die GitHub-Pages-Variante baut und veröffentlicht der Workflow `pages.yml` bei jedem Push auf `master`. Ein statischer Host kann keine HTTP-Header setzen; die Content-Security-Policy steckt deshalb zusätzlich als Meta-Tag in jeder Seite.
 
 ## Mitmachen
 

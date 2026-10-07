@@ -37,11 +37,12 @@ npm run lint
 npm run check
 npm test
 npm run test:e2e   # einmalig vorher: npx playwright install chromium
+E2E_TARGET=static npm run test:e2e
 ```
 
 Regeln für den Code:
 
-- **Lokal-first:** Keine Netzwerkanfragen zur Laufzeit, keine CDNs, externen Fonts, Analytics oder APIs.
+- **Lokal-first:** Keine Netzwerkanfragen zur Laufzeit, keine CDNs, externen Fonts, Analytics oder APIs. Keine Route Handler oder Server Actions: Die App muss auch als statischer Export funktionieren.
 - **Barrierefreiheit:** Ziel ist WCAG 2.2 AA. Touch-Ziele mindestens 44 px, `prefers-reduced-motion` beachten. Die E2E-Tests prüfen mit axe-core.
 - **UI-Texte** gehören in `src/lib/i18n/`, nie direkt in Komponenten.
 - **Den App-Namen** nur über `APP_NAME` aus `src/lib/config.ts` verwenden.

@@ -73,11 +73,12 @@ Die App spricht wie eine ruhige, kompetente Begleitung: duzend, kurz, ohne Parag
 
 ## Tech-Stack und Architektur
 
-Entschieden (07.10.2026): eine statisch exportierte Next.js-PWA ohne Backend, gehostet auf GitHub Pages.
+Entschieden (07.10.2026): eine Next.js-PWA ohne Backend für Nutzerdaten. Sie lässt sich auf mehrere Arten hosten: als Docker-Container mit dem Standalone-Server von Next.js, auf jedem Node-Host oder als statischer Export (z. B. GitHub Pages). Der Server liefert nur die App aus; Gesundheitsdaten bleiben immer im Browser.
 
 | Bereich | Wahl | Grund |
 | --- | --- | --- |
-| Framework | Next.js (App Router) + React + TypeScript, `output: 'export'` | Verbreitet, statisch exportierbar, ohne Server hostbar |
+| Framework | Next.js (App Router) + React + TypeScript | Verbreitet, als Standalone-Server oder statischer Export baubar |
+| Hosting | Docker-Image (`output: 'standalone'`, GHCR), beliebiger Node-Host, statischer Export (`output: 'export'`) für GitHub Pages | Mehrere Optionen, kein Vendor-Lock-in |
 | PWA | Serwist (`@serwist/next`) | Offline-Fähigkeit, installierbar |
 | Speicher | IndexedDB über Dexie.js | Strukturierte lokale Daten, Migrationen |
 | Inhalte | Markdown in `content/`, zur Build-Zeit gerendert (MDX bzw. remark) | Pflege per Pull Request ohne Code |
@@ -86,10 +87,10 @@ Entschieden (07.10.2026): eine statisch exportierte Next.js-PWA ohne Backend, ge
 | i18n | Einfache JSON-Schlüssel | Spätere Übersetzungen |
 | Tests | Vitest (Parser, Datenlogik), Playwright (E2E) | Parser muss robust sein |
 | Qualität | ESLint, Prettier, axe-core in E2E | Barrierefreiheit prüfbar |
-| CI/CD | GitHub Actions: Lint, Test, Build, Deploy auf GitHub Pages | Sichtbar im Profil |
+| CI/CD | GitHub Actions: Lint, Test, Build (beide Varianten), E2E, Docker-Image nach GHCR, Deploy auf GitHub Pages | Sichtbar im Profil |
 | Lizenz | Code MIT, Inhalte CC BY-SA 4.0 | Offen, Inhalte bleiben frei |
 
-**Architektur:** Drei Schichten ohne Netzwerkzugriff zur Laufzeit.
+**Architektur:** Drei Schichten ohne Netzwerkzugriff zur Laufzeit. Es gibt keine Route Handler oder Server Actions, die Nutzerdaten verarbeiten; die App muss jederzeit auch als statischer Export funktionieren.
 
 - `src/lib/domain/` – reine Logik: Typen, Freitext-Parser, Etappenlogik, Fortschritt. Ohne Framework-Abhängigkeit, voll getestet.
 - `src/lib/data/` – Dexie-Datenbank, Repository-Funktionen, Export/Import.
@@ -153,12 +154,13 @@ Sieben Phasen, jede endet mit einem lauffähigen Stand und einem eigenen Pull Re
 
 ### Phase 0 – Repo-Fundament
 
-- [ ] Next.js + TypeScript mit statischem Export (`output: 'export'`) aufsetzen, ESLint, Prettier, Vitest, Playwright
+- [ ] Next.js + TypeScript aufsetzen (Standalone und statischer Export), ESLint, Prettier, Vitest, Playwright
+- [ ] Dockerfile für den Standalone-Server
 - [ ] Ordnerstruktur wie in „Architektur“ anlegen
 - [ ] README (Ziel, Screenshots-Platzhalter, Datenschutz-Versprechen, Disclaimer), LICENSE (MIT), `content/LICENSE` (CC BY-SA 4.0), CONTRIBUTING.md, CODE_OF_CONDUCT.md, Issue- und PR-Templates
-- [ ] GitHub Actions: Lint, Test, Build, Deploy auf GitHub Pages
+- [ ] GitHub Actions: Lint, Test, Build, Docker-Image, Deploy auf GitHub Pages
 
-*Akzeptanz:* `npm run build` erzeugt eine statische Seite, die per Action auf GitHub Pages erreichbar ist.
+*Akzeptanz:* `npm run build:static` erzeugt eine statische Seite, die per Action auf GitHub Pages erreichbar ist; das Docker-Image startet und liefert die Startseite aus.
 
 ### Phase 1 – Domänenlogik
 

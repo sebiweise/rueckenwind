@@ -19,22 +19,23 @@ Bei Zielkonflikten gewinnen Datenschutz und Einfachheit.
 
 ## Tech-Stack
 
-| Bereich  | Wahl                                                                                    |
-| -------- | --------------------------------------------------------------------------------------- |
-| App      | Next.js 16 (App Router) + React 19 + TypeScript, statischer Export (`output: 'export'`) |
-| Speicher | IndexedDB über Dexie.js (Phase 2)                                                       |
-| Inhalte  | Markdown in `content/de/`, zur Build-Zeit gerendert (Phase 3)                           |
-| PDF      | pdfmake, clientseitig (Phase 5)                                                         |
-| PWA      | Serwist `@serwist/next` (Phase 6)                                                       |
-| Styling  | Plain CSS mit Custom Properties in `src/app/globals.css`, System-Font-Stack             |
-| i18n     | JSON-Schlüssel in `src/lib/i18n/de.json`, Zugriff über `t()`                            |
-| Tests    | Vitest (Unit), Playwright + `@axe-core/playwright` (E2E)                                |
-| Qualität | ESLint (`eslint-config-next`), Prettier, `tsc --noEmit`                                 |
-| CI/CD    | GitHub Actions: `ci.yml` (Lint, Check, Test, Build, E2E), `deploy.yml` (GitHub Pages)   |
+| Bereich  | Wahl                                                                                                                                                 |
+| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| App      | Next.js 16 (App Router) + React 19 + TypeScript                                                                                                      |
+| Hosting  | Standalone-Server (Standard, Dockerfile, GHCR) oder statischer Export (`NEXT_OUTPUT=export`, GitHub Pages)                                           |
+| Speicher | IndexedDB über Dexie.js (Phase 2)                                                                                                                    |
+| Inhalte  | Markdown in `content/de/`, zur Build-Zeit gerendert (Phase 3)                                                                                        |
+| PDF      | pdfmake, clientseitig (Phase 5)                                                                                                                      |
+| PWA      | Serwist `@serwist/next` (Phase 6)                                                                                                                    |
+| Styling  | Plain CSS mit Custom Properties in `src/app/globals.css`, System-Font-Stack                                                                          |
+| i18n     | JSON-Schlüssel in `src/lib/i18n/de.json`, Zugriff über `t()`                                                                                         |
+| Tests    | Vitest (Unit), Playwright + `@axe-core/playwright` (E2E)                                                                                             |
+| Qualität | ESLint (`eslint-config-next`), Prettier, `tsc --noEmit`                                                                                              |
+| CI/CD    | GitHub Actions: `ci.yml` (Lint, Check, Test, beide Builds, E2E für beide), `docker.yml` (Image bauen, prüfen, nach GHCR), `pages.yml` (GitHub Pages) |
 
-Next.js 16 weicht in Teilen von älterem Wissen ab: vor neuem Code die passende Anleitung in `node_modules/next/dist/docs/` lesen (siehe `AGENTS.md`). Wegen des statischen Exports gibt es keine Server-Funktionen, keine Route Handler mit Laufzeit, kein `next/image`-Optimizer und keine Middleware. Keine `next/font/google` (lädt von Google); System-Fonts verwenden.
+Next.js 16 weicht in Teilen von älterem Wissen ab: vor neuem Code die passende Anleitung in `node_modules/next/dist/docs/` lesen (siehe `AGENTS.md`). Zwei Build-Ziele aus einer Codebasis (`next.config.ts`): Standalone (Standard) und statischer Export. Die App muss in beiden funktionieren, CI baut und testet beide. Deshalb: keine Route Handler, Server Actions, Middleware/Proxy, dynamischen Server-Funktionen (`cookies()`, `headers()`) und kein `next/image`-Optimizer. Der Server liefert nur die App aus, Nutzerdaten bleiben im Browser. Keine `next/font/google` (lädt von Google); System-Fonts verwenden.
 
-Die CSP steht als `<meta>` in `src/app/layout.tsx` (Quelle: `src/lib/csp.ts`), weil GitHub Pages keine Header setzen kann. Sie erlaubt nur `'self'`; `script-src` braucht wegen der Next.js-Hydration `'unsafe-inline'`, Härtung per Hashes ist für Phase 6 vorgesehen. Imports aus `src/` laufen über `@/…`.
+Die CSP kommt aus `src/lib/csp.ts`: als `<meta>` in `src/app/layout.tsx` (für statische Hosts) und im Standalone-Betrieb zusätzlich als HTTP-Header samt weiterer Sicherheits-Header (`next.config.ts`). Sie erlaubt nur `'self'`; `script-src` braucht wegen der Next.js-Hydration `'unsafe-inline'`, Härtung per Hashes ist für Phase 6 vorgesehen. Imports aus `src/` laufen über `@/…`.
 
 ## Befehle
 
@@ -46,10 +47,14 @@ npm run format      # Prettier --write
 npm run check       # tsc --noEmit (Typen)
 npm test            # Vitest einmalig
 npm run test:unit   # Vitest im Watch-Modus
-npm run test:e2e    # Playwright gegen den statischen Export (vorher: npx playwright install chromium)
-npm run build       # statischer Export nach out/
-npm run preview     # out/ lokal auf Port 4173 ausliefern (scripts/preview.mjs)
-BASE_PATH=/rueckenwind npm run build   # wie auf GitHub Pages
+npm run build       # Standalone-Build nach .next/standalone (kopiert public/ und static/ dazu)
+npm start           # Standalone-Server starten (PORT, HOSTNAME per Umgebungsvariable)
+npm run build:static            # statischer Export nach out/
+npm run preview:static          # out/ lokal auf Port 4173 ausliefern (scripts/preview.mjs)
+BASE_PATH=/rueckenwind npm run build:static   # wie auf GitHub Pages
+npm run test:e2e                # Playwright gegen den Standalone-Server (vorher: npx playwright install chromium)
+E2E_TARGET=static npm run test:e2e   # Playwright gegen den statischen Export
+docker build -t rueckenwind . && docker run -p 3000:3000 rueckenwind   # Container
 ```
 
 ## Struktur
@@ -59,7 +64,7 @@ content/de/          Infotexte (CC BY-SA 4.0), Frontmatter: title, stage, summar
 docs/                PLAN.md, WISSEN.md
 e2e/                 Playwright-Tests (*.e2e.ts)
 public/              statische Dateien (u. a. .nojekyll für GitHub Pages)
-scripts/             Hilfsskripte (Preview-Server)
+scripts/             Hilfsskripte (Preview-Server, Standalone-Assets kopieren)
 src/app/             Routen, Layout, globals.css
 src/components/      UI-Komponenten
 src/lib/config.ts    APP_NAME, APP_SUBTITLE, APP_TITLE – der Name ist vorläufig, nur hier pflegen
