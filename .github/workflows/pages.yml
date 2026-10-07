@@ -1,4 +1,4 @@
-name: Deploy auf GitHub Pages
+name: GitHub Pages (statischer Export)
 
 on:
   push:
@@ -24,7 +24,7 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
-      - run: npm run build
+      - run: npm run build:static
         env:
           BASE_PATH: /${{ github.event.repository.name }}
       - uses: actions/upload-pages-artifact@v3
