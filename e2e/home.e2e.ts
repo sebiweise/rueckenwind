@@ -34,3 +34,17 @@ test('start page loads without errors or requests to other origins', async ({ pa
 	expect(foreign).toEqual([]);
 	expect(errors).toEqual([]);
 });
+
+test('content security policy blocks requests to other origins', async ({ page }) => {
+	await page.goto('./');
+	const blocked = await page.evaluate(
+		() =>
+			new Promise<string>((resolve) => {
+				document.addEventListener('securitypolicyviolation', (event) =>
+					resolve(event.effectiveDirective)
+				);
+				fetch('https://example.org/').catch(() => undefined);
+			})
+	);
+	expect(blocked).toBe('connect-src');
+});

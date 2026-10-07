@@ -1,53 +1,44 @@
 {
 	"name": "rueckenwind",
-	"private": true,
 	"version": "0.0.0",
-	"type": "module",
-	"scripts": {
-		"dev": "vite dev",
-		"build": "vite build",
-		"preview": "vite preview",
-		"prepare": "svelte-kit sync || echo ''",
-		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"lint": "prettier --check . && eslint .",
-		"format": "prettier --write .",
-		"test": "vitest --run",
-		"test:unit": "vitest",
-		"test:e2e": "playwright test"
-	},
-	"devDependencies": {
-		"@axe-core/playwright": "^4.13.0",
-		"@eslint/js": "^10.0.1",
-		"@playwright/test": "^1.60.0",
-		"@sveltejs/adapter-static": "^4.0.0",
-		"@sveltejs/kit": "^3.0.0",
-		"@sveltejs/vite-plugin-svelte": "^7.2.0",
-		"@types/node": "^22",
-		"eslint": "^10.4.1",
-		"eslint-config-prettier": "^10.1.8",
-		"eslint-plugin-svelte": "^3.19.0",
-		"globals": "^17.6.0",
-		"prettier": "^3.8.3",
-		"prettier-plugin-svelte": "^4.1.0",
-		"svelte": "^5.57.1",
-		"svelte-check": "^4.6.0",
-		"typescript": "^6.0.3",
-		"typescript-eslint": "^8.60.1",
-		"vite": "^8.3.0",
-		"vitest": "^4.1.8"
-	},
-	"imports": {
-		"#lib": "./src/lib/index.js",
-		"#lib/*": "./src/lib/*"
-	},
+	"private": true,
 	"description": "Begleit-App (PWA) für die Suche nach einem ambulanten Psychotherapieplatz in Deutschland",
 	"license": "MIT",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/sebiweise/rueckenwind.git"
 	},
+	"type": "module",
 	"engines": {
 		"node": ">=22.12"
+	},
+	"scripts": {
+		"dev": "next dev",
+		"build": "next build",
+		"preview": "node scripts/preview.mjs",
+		"lint": "prettier --check . && eslint .",
+		"format": "prettier --write .",
+		"check": "tsc --noEmit",
+		"test": "vitest --run",
+		"test:unit": "vitest",
+		"test:e2e": "playwright test"
+	},
+	"dependencies": {
+		"next": "^16.4.0",
+		"react": "^19.3.0",
+		"react-dom": "^19.3.0"
+	},
+	"devDependencies": {
+		"@axe-core/playwright": "^4.13.0",
+		"@playwright/test": "^1.64.0",
+		"@types/node": "^22.20.5",
+		"@types/react": "^19.3.0",
+		"@types/react-dom": "^19.3.0",
+		"eslint": "^9.39.5",
+		"eslint-config-next": "^16.4.0",
+		"eslint-config-prettier": "^10.1.8",
+		"prettier": "^3.9.9",
+		"typescript": "^5.9.3",
+		"vitest": "^5.0.3"
 	}
 }

@@ -1,13 +1,11 @@
-# Package Managers
 package-lock.json
-pnpm-lock.yaml
-yarn.lock
-bun.lock
-bun.lockb
-
-# Miscellaneous
-/static/
+.next/
+out/
+next-env.d.ts
+test-results/
+playwright-report/
 
 # Docs and licence texts are kept verbatim
 docs/
 content/LICENSE
+AGENTS.md
