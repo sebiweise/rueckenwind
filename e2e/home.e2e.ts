@@ -48,3 +48,12 @@ test('content security policy blocks requests to other origins', async ({ page }
 	);
 	expect(blocked).toBe('connect-src');
 });
+
+test('standalone server sends security headers', async ({ page }) => {
+	test.skip(process.env.E2E_TARGET === 'static', 'static hosts cannot send headers');
+	const response = await page.goto('./');
+	const headers = response!.headers();
+	expect(headers['content-security-policy']).toContain("default-src 'self'");
+	expect(headers['x-content-type-options']).toBe('nosniff');
+	expect(headers['referrer-policy']).toBe('no-referrer');
+});
