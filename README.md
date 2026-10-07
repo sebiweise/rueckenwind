@@ -61,7 +61,7 @@ src/lib/i18n/        UI-Texte
 
 ## Hosting
 
-Rückenwind braucht kein Backend. Der Server liefert nur die App aus, deine Daten bleiben im Browser. Du hast drei Möglichkeiten:
+Rückenwind braucht kein Backend. Der Server liefert nur die App aus, deine Daten bleiben im Browser. Du hast vier Möglichkeiten:
 
 **1. Docker** (Next.js-Standalone-Server)
 
@@ -81,7 +81,11 @@ Das Image läuft als unprivilegierter Nutzer, verträgt ein schreibgeschütztes 
 npm ci && npm run build && npm start
 ```
 
-**3. Statischer Export** (GitHub Pages, Netlify, ein einfacher Webserver)
+**3. Vercel oder ein anderer Next.js-Hoster**
+
+Repository importieren, fertig. Es ist keine weitere Konfiguration nötig; Vercel erkennt Next.js selbst. Bitte Vercel Analytics und Speed Insights ausgeschaltet lassen, die App verzichtet bewusst auf Tracking.
+
+**4. Statischer Export** (GitHub Pages, Netlify, ein einfacher Webserver)
 
 ```sh
 npm run build:static            # schreibt die Seite nach out/
