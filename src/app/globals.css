@@ -443,8 +443,8 @@ details > ul {
 	box-shadow: 0 0 0 0.25rem var(--color-soft);
 }
 
-/* Room for the bottom bar and the button above it at the end of every page */
-.shell {
+/* Room for the bottom bar and the button above it at the end of every app page */
+.shell:has(> .main-nav) {
 	padding-bottom: calc(6rem + env(safe-area-inset-bottom));
 }
 
@@ -494,7 +494,7 @@ details > ul {
 		display: none;
 	}
 
-	.shell {
+	.shell:has(> .main-nav) {
 		padding-bottom: calc(var(--touch-target) + var(--space-5));
 	}
 }
@@ -1029,4 +1029,91 @@ legend {
 }
 .palette-swatches[data-palette='himmel'] span:nth-child(3) {
 	background: #d6f0e4;
+}
+
+/* Start page: a short introduction before the app */
+
+.start-hero {
+	padding: var(--space-3) 0 var(--space-2);
+}
+
+.start-hero .logo {
+	width: 4rem;
+	height: 4rem;
+	margin-bottom: var(--space-3);
+}
+
+.start-cta {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-2) var(--space-3);
+	margin: var(--space-4) 0;
+}
+
+.start-cta .button {
+	padding: var(--space-2) var(--space-4);
+	text-decoration: none;
+	font-size: 1.125rem;
+}
+
+.start .card h3 {
+	margin: 0 0 var(--space-2);
+	font-size: 1.125rem;
+}
+
+.start .card p {
+	margin: 0;
+}
+
+.start-grid {
+	display: grid;
+	gap: var(--space-3);
+	margin: var(--space-3) 0;
+}
+
+.start-grid .card {
+	margin: 0;
+}
+
+.start-stages {
+	margin: var(--space-2) 0 0;
+	padding-left: var(--space-4);
+	color: var(--color-text-muted);
+}
+
+.start-steps {
+	display: grid;
+	gap: var(--space-3);
+	margin: var(--space-3) 0;
+	padding: 0;
+	list-style: none;
+	counter-reset: step;
+}
+
+.start-steps li {
+	display: flex;
+	align-items: center;
+	gap: var(--space-3);
+	counter-increment: step;
+}
+
+.start-steps li::before {
+	content: counter(step);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	width: var(--touch-target);
+	height: var(--touch-target);
+	border-radius: 50%;
+	background: var(--color-soft);
+	color: var(--color-accent);
+	font-weight: 600;
+}
+
+@media (min-width: 48rem) {
+	.start-grid {
+		grid-template-columns: 1fr 1fr;
+	}
 }
