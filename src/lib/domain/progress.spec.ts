@@ -4,6 +4,9 @@ import {
 	computeProgress,
 	countsForProof,
 	EXPORT_REMINDER_AFTER,
+	MAX_PEBBLES,
+	OPEN_PEBBLES,
+	proofPebbles,
 	shouldRemindExport,
 	shouldSuggestPause
 } from './progress';
@@ -160,5 +163,22 @@ describe('attemptPeriod', () => {
 			from: '2026-09-01T10:00:00.000Z',
 			to: '2026-10-07T10:00:00.000Z'
 		});
+	});
+});
+
+describe('proofPebbles', () => {
+	it('draws one stone per proof plus fading open ones, without a target', () => {
+		expect(proofPebbles(0)).toEqual({ filled: 0, open: OPEN_PEBBLES, more: 0 });
+		expect(proofPebbles(4)).toEqual({ filled: 4, open: OPEN_PEBBLES, more: 0 });
+	});
+
+	it('sums up stones beyond the maximum and ignores odd input', () => {
+		expect(proofPebbles(MAX_PEBBLES + 3)).toEqual({
+			filled: MAX_PEBBLES,
+			open: OPEN_PEBBLES,
+			more: 3
+		});
+		expect(proofPebbles(-2)).toEqual({ filled: 0, open: OPEN_PEBBLES, more: 0 });
+		expect(proofPebbles(2.7)).toEqual({ filled: 2, open: OPEN_PEBBLES, more: 0 });
 	});
 });
