@@ -33,6 +33,7 @@ const nextConfig: NextConfig = {
 	trailingSlash: true,
 	images: { unoptimized: true },
 	poweredByHeader: false,
+	env: { NEXT_PUBLIC_BASE_PATH: basePath },
 	// Static hosts cannot send headers; there the CSP comes from the <meta> tag in the layout.
 	...(isStaticExport
 		? {}

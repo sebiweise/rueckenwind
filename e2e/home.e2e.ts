@@ -50,6 +50,7 @@ test('content security policy blocks requests to other origins', async ({ page }
 });
 
 test('standalone server sends security headers', async ({ page }) => {
+	// Static hosts like GitHub Pages cannot send HTTP headers, so only the server is checked.
 	test.skip(process.env.E2E_TARGET === 'static', 'static hosts cannot send headers');
 	const response = await page.goto('./');
 	const headers = response!.headers();

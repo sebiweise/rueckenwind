@@ -1,6 +1,6 @@
 {
 	"name": "rueckenwind",
-	"version": "0.0.0",
+	"version": "0.1.0",
 	"private": true,
 	"description": "Begleit-App (PWA) für die Suche nach einem ambulanten Psychotherapieplatz in Deutschland",
 	"license": "MIT",
@@ -10,14 +10,15 @@
 	},
 	"type": "module",
 	"engines": {
-		"node": ">=22.12"
+		"node": ">=22.18"
 	},
 	"scripts": {
 		"dev": "next dev",
 		"build": "next build",
-		"postbuild": "node scripts/copy-standalone-assets.mjs",
+		"postbuild": "node scripts/postbuild.mjs",
 		"start": "node .next/standalone/server.js",
 		"build:static": "NEXT_OUTPUT=export next build",
+		"postbuild:static": "NEXT_OUTPUT=export node scripts/postbuild.mjs",
 		"preview:static": "node scripts/preview.mjs",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
@@ -41,17 +42,21 @@
 	"devDependencies": {
 		"@axe-core/playwright": "^4.13.0",
 		"@playwright/test": "^1.64.0",
+		"@serwist/cli": "^9.5.13",
+		"@serwist/next": "^9.5.13",
 		"@types/node": "^22.20.5",
 		"@types/pdfmake": "^0.3.3",
 		"@types/react": "^19.3.0",
 		"@types/react-dom": "^19.3.0",
 		"@vitest/coverage-v8": "^5.0.3",
+		"esbuild": "^0.28.2",
 		"eslint": "^9.39.5",
 		"eslint-config-next": "^16.4.0",
 		"eslint-config-prettier": "^10.1.8",
 		"fake-indexeddb": "^6.2.5",
 		"pdfjs-dist": "^6.4.299",
 		"prettier": "^3.9.9",
+		"serwist": "^9.5.13",
 		"typescript": "^5.9.3",
 		"vitest": "^5.0.3"
 	}

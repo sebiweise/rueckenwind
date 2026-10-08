@@ -11,7 +11,7 @@ const messages: Record<MessageKey, string> = de;
 export function t(key: MessageKey, values?: Record<string, string | number>): string {
 	const message = messages[key];
 	if (!values) return message;
-	return message.replace(/\{(\w+)\}/g, (placeholder, name: string) =>
+	return message.replaceAll(/\{(\w+)\}/g, (placeholder, name: string) =>
 		name in values ? String(values[name]) : placeholder
 	);
 }

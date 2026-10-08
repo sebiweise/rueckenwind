@@ -91,6 +91,7 @@ export function shouldRemindExport(attempts: ContactAttempt[], lastExportAt?: st
 /** Earliest and latest attempt, for the period shown in the PDF. */
 export function attemptPeriod(attempts: ContactAttempt[]): { from: string; to: string } | null {
 	if (attempts.length === 0) return null;
-	const sorted = attempts.map((attempt) => attempt.at).sort();
-	return { from: sorted[0], to: sorted[sorted.length - 1] };
+	// ISO timestamps sort by plain code unit order, which is also chronological.
+	const sorted = attempts.map((attempt) => attempt.at).sort((a, b) => (a < b ? -1 : Number(a > b)));
+	return { from: sorted[0], to: sorted.at(-1)! };
 }

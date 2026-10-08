@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { getDb } from '@/lib/data';
+import { getDb } from '@/lib/data/db';
 import { useJourney } from '@/lib/data/hooks';
 import { setStepDone, updateJourney } from '@/lib/data/repository';
 import { nextStep, suggestedStage, type StageNumber } from '@/lib/domain';
@@ -20,7 +20,7 @@ interface Props {
 }
 
 /** "Dein Weg": the five stages, the current one highlighted with exactly one next task. */
-export function JourneyView({ stages, steps }: Props) {
+export function JourneyView({ stages, steps }: Readonly<Props>) {
 	const journey = useJourney();
 	const current = journey?.currentStage ?? 1;
 	const completed = journey?.completedSteps ?? [];
@@ -52,8 +52,10 @@ export function JourneyView({ stages, steps }: Props) {
 								<Link href={`/etappe/${stage.stage}/`} className="timeline-title">
 									{stage.title}
 								</Link>
-								{isCurrent && journey && (
-									<div className="card next-task">
+								{isCurrent && (
+									// Until the saved state has loaded, the card keeps its place invisibly so the
+									// page below does not jump (layout shift) once it appears.
+									<div className={journey ? 'card next-task' : 'card next-task next-task-pending'}>
 										<p className="eyebrow">{t('journey.current')}</p>
 										{task ? (
 											<>
@@ -62,6 +64,7 @@ export function JourneyView({ stages, steps }: Props) {
 												<button
 													type="button"
 													className="button button-primary"
+													disabled={!journey}
 													onClick={() => done(task.id)}
 												>
 													{t('journey.done')}

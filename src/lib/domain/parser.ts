@@ -55,7 +55,7 @@ const RESULT_RULES: ResultRule[] = [
 	},
 	{
 		result: 'rejected',
-		pattern: /\b(nimmt|nehmen) (niemanden|keine[n]?)( neuen?)?( patient(inn)?en)?\b/g,
+		pattern: /\b(nimmt|nehmen) (niemanden|keinen?)( neuen?)?( patient(inn)?en)?\b/g,
 		confidence: 0.95
 	},
 	{
@@ -90,8 +90,12 @@ const RESULT_RULES: ResultRule[] = [
 	// Callback promised.
 	{
 		result: 'callback_pending',
-		pattern:
-			/\b(rueckruf|zurueckrufen|ruft( \S+){0,3} zurueck|rufen( \S+){0,3} zurueck|meldet sich|melden sich|melde mich|soll( \S+){0,2} melden)\b/g,
+		pattern: /\b(rueckruf|zurueckrufen|ruft( \S+){0,3} zurueck|rufen( \S+){0,3} zurueck)\b/g,
+		confidence: 0.9
+	},
+	{
+		result: 'callback_pending',
+		pattern: /\b(meldet sich|melden sich|melde mich|soll( \S+){0,2} melden)\b/g,
 		confidence: 0.9
 	},
 
@@ -121,7 +125,17 @@ const RESULT_RULES: ResultRule[] = [
 	{
 		result: 'not_reached',
 		pattern:
-			/\b(nicht erreicht|nicht erreichbar|nicht (durch)?gekommen|kein durchkommen|besetzt|niemand( \S+)? (erreicht|dran|ran|abgenommen)|keiner( \S+)? (dran|ran|abgenommen)|nicht (abgenommen|rangegangen|ran)|niemand erreicht|erfolglos)\b/g,
+			/\b(nicht erreicht|nicht erreichbar|nicht (durch)?gekommen|kein durchkommen|besetzt|erfolglos)\b/g,
+		confidence: 0.9
+	},
+	{
+		result: 'not_reached',
+		pattern: /\b(niemand|keiner)( \S+)? (erreicht|dran|ran|abgenommen)\b/g,
+		confidence: 0.9
+	},
+	{
+		result: 'not_reached',
+		pattern: /\bnicht (abgenommen|rangegangen|ran)\b/g,
 		confidence: 0.9
 	}
 ];
@@ -314,8 +328,8 @@ const SHORT_TYPOS: Record<string, string> = { nich: 'nicht', nciht: 'nicht', kie
 
 function correctTypos(folded: string): string {
 	return folded
-		.replace(/\p{L}+/gu, (word) => SHORT_TYPOS[word] ?? word)
-		.replace(/\p{L}{5,}/gu, (word) => {
+		.replaceAll(/\p{L}+/gu, (word) => SHORT_TYPOS[word] ?? word)
+		.replaceAll(/\p{L}{5,}/gu, (word) => {
 			if (KEYWORDS.includes(word)) return word;
 			for (const keyword of KEYWORDS) {
 				if (Math.abs(keyword.length - word.length) > 1) continue;
@@ -329,9 +343,9 @@ function parseNumber(token: string): number {
 	if (token in NUMBER_WORDS) return NUMBER_WORDS[token];
 	if (token.includes('/')) {
 		const [a, b] = token.split('/').map(Number);
-		return b ? a / b : NaN;
+		return b ? a / b : Number.NaN;
 	}
-	return Number(token.replace(',', '.'));
+	return Number(token.replaceAll(',', '.'));
 }
 
 function unitToWeeks(unit: string): number {
@@ -362,6 +376,11 @@ function parseResult(text: string): ParsedField<ContactResult> {
 	return { value: best.result, confidence: ambiguous ? best.confidence - 0.15 : best.confidence };
 }
 
+function durationConfidence(vague: boolean, amount: string): number {
+	if (vague) return 0.6;
+	return amount in NUMBER_WORDS ? 0.85 : 0.9;
+}
+
 function parseWaitTime(text: string): ParsedField<number> | null {
 	let best: ParsedField<number> | null = null;
 	for (const match of text.matchAll(DURATION)) {
@@ -373,7 +392,7 @@ function parseWaitTime(text: string): ParsedField<number> | null {
 		if (!Number.isFinite(amount) || amount <= 0) continue;
 		const weeks = Math.round(amount * unitToWeeks(unit));
 		if (weeks <= 0 || weeks > 520) continue;
-		const field = { value: weeks, confidence: vague ? 0.6 : from in NUMBER_WORDS ? 0.85 : 0.9 };
+		const field = { value: weeks, confidence: durationConfidence(vague, from) };
 		if (!best || field.value > best.value) best = field;
 	}
 	return best;
@@ -409,8 +428,15 @@ function parsePracticeKind(text: string): ParsedField<PracticeKind> | null {
 	return null;
 }
 
+/** Cuts any of `chars` off the end; a loop instead of a regex keeps it linear. */
+function trimEndChars(text: string, chars: string): string {
+	let end = text.length;
+	while (end > 0 && chars.includes(text[end - 1])) end--;
+	return text.slice(0, end);
+}
+
 function foldToken(token: string): string {
-	return fold(token).replace(/[.:!?()"']+$/g, '');
+	return trimEndChars(fold(token), '.:!?()"\'');
 }
 
 function isStopToken(token: string): boolean {
@@ -426,48 +452,52 @@ function isStopToken(token: string): boolean {
 }
 
 function tidyName(tokens: string[]): string {
-	const name = tokens.join(' ').replace(/[\s.:,;-]+$/, '');
+	const name = trimEndChars(tokens.join(' '), ' \t\n\r.:,;-');
 	if (name !== name.toLowerCase()) return name;
 	// All lower case: give it capitals so it reads like a name.
-	return name.replace(
+	return name.replaceAll(
 		/(^|[\s-])(\p{L})/gu,
 		(_, gap: string, letter: string) => gap + letter.toUpperCase()
 	);
 }
 
+/** Tokens from the start up to the first one that is no longer part of a name. */
+function takeNameTokens(tokens: string[]): string[] {
+	const stop = tokens.findIndex(isStopToken);
+	return stop === -1 ? tokens : tokens.slice(0, stop);
+}
+
+/** A marker word ("Praxis", "Dr.", "Frau", …) starts the name, if the segment has one. */
+function nameFromMarker(segment: string): ParsedField<string> | null {
+	const tokens = segment.split(/\s+/);
+	const start = tokens.findIndex((token) => NAME_MARKERS.has(foldToken(token)));
+	if (start === -1) return null;
+	const nameTokens = [tokens[start], ...takeNameTokens(tokens.slice(start + 1))];
+	const folded = foldToken(nameTokens.join(' '));
+	if (TSS.test(folded) && nameTokens.length === 1) {
+		return { value: 'Terminservicestelle', confidence: 0.9 };
+	}
+	return { value: tidyName(nameTokens), confidence: nameTokens.length > 1 ? 0.9 : 0.5 };
+}
+
 function parsePracticeName(raw: string): ParsedField<string> | null {
-	const prepared = raw.replace(/\b(Dr|Prof|dr|prof)\.(?=\S)/g, '$1. ');
+	const prepared = raw.replaceAll(/\b(Dr|Prof|dr|prof)\.(?=\S)/g, '$1. ');
 	const segments = prepared
 		.split(/[,;\n|]|\s[-–—]\s|\s\/\s/)
 		.map((segment) => segment.trim())
 		.filter(Boolean);
 	if (segments.length === 0) return null;
 
-	// 1. A marker word anywhere ("Praxis", "Dr.", "Frau", …) starts the name.
+	// 1. A marker word anywhere starts the name.
 	for (const segment of segments) {
-		const tokens = segment.split(/\s+/);
-		const start = tokens.findIndex((token) => NAME_MARKERS.has(foldToken(token)));
-		if (start === -1) continue;
-		const nameTokens = [tokens[start]];
-		for (const token of tokens.slice(start + 1)) {
-			if (isStopToken(token)) break;
-			nameTokens.push(token);
-		}
-		const folded = foldToken(nameTokens.join(' '));
-		if (TSS.test(folded) && nameTokens.length === 1) {
-			return { value: 'Terminservicestelle', confidence: 0.9 };
-		}
-		return { value: tidyName(nameTokens), confidence: nameTokens.length > 1 ? 0.9 : 0.5 };
+		const marked = nameFromMarker(segment);
+		if (marked) return marked;
 	}
 
 	// 2. Otherwise the leading words of the first segment, up to the first keyword.
 	if (TSS.test(fold(raw))) return { value: 'Terminservicestelle', confidence: 0.9 };
 	const tokens = segments[0].split(/\s+/);
-	const nameTokens: string[] = [];
-	for (const token of tokens) {
-		if (isStopToken(token)) break;
-		nameTokens.push(token);
-	}
+	const nameTokens = takeNameTokens(tokens);
 	if (nameTokens.length === 0) return null;
 	const wholeSegment = nameTokens.length === tokens.length && segments.length > 1;
 	return { value: tidyName(nameTokens), confidence: wholeSegment ? 0.75 : 0.5 };
