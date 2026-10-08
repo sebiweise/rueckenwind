@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 	return { title: `${page.title} – ${APP_NAME}`, description: page.summary };
 }
 
-export default async function StagePage({ params }: Props) {
+export default async function StagePage({ params }: Readonly<Props>) {
 	const stage = Number((await params).stage) as StageNumber;
 	const stages = loadStages();
 	const page = stages[stage - 1];

@@ -50,7 +50,7 @@ export function QuickCapture() {
 	const parsed = useMemo(() => parseContactInput(text), [text]);
 	const name = overrides.name ?? parsed.practiceName?.value ?? '';
 	const result = overrides.result ?? parsed.result.value;
-	const weeks = overrides.weeks !== undefined ? overrides.weeks : parsed.waitTimeWeeks?.value;
+	const weeks = overrides.weeks === undefined ? parsed.waitTimeWeeks?.value : overrides.weeks;
 	const at = overrides.at ?? parsed.at.value;
 	const hasInput = text.trim() !== '' || overrides.result !== undefined;
 
@@ -80,7 +80,7 @@ export function QuickCapture() {
 		dialogRef.current?.close();
 	}
 
-	async function save(event: React.FormEvent) {
+	async function save(event: React.SubmitEvent<HTMLFormElement>) {
 		event.preventDefault();
 		if (!hasInput) return;
 		try {
@@ -291,7 +291,7 @@ interface ChipProps {
 	onClick: () => void;
 }
 
-function Chip({ label, value, unsure = false, expanded, onClick }: ChipProps) {
+function Chip({ label, value, unsure = false, expanded, onClick }: Readonly<ChipProps>) {
 	return (
 		<button
 			type="button"

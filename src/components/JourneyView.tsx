@@ -20,7 +20,7 @@ interface Props {
 }
 
 /** "Dein Weg": the five stages, the current one highlighted with exactly one next task. */
-export function JourneyView({ stages, steps }: Props) {
+export function JourneyView({ stages, steps }: Readonly<Props>) {
 	const journey = useJourney();
 	const current = journey?.currentStage ?? 1;
 	const completed = journey?.completedSteps ?? [];

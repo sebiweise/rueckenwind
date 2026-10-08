@@ -6,13 +6,19 @@
 export function fold(text: string): string {
 	return text
 		.toLowerCase()
-		.replace(/ä/g, 'ae')
-		.replace(/ö/g, 'oe')
-		.replace(/ü/g, 'ue')
-		.replace(/ß/g, 'ss')
-		.replace(/[–—]/g, '-')
-		.replace(/\s+/g, ' ')
+		.replaceAll('ä', 'ae')
+		.replaceAll('ö', 'oe')
+		.replaceAll('ü', 'ue')
+		.replaceAll('ß', 'ss')
+		.replaceAll(/[–—]/g, '-')
+		.replaceAll(/\s+/g, ' ')
 		.trim();
+}
+
+/** First row and column of the distance table: the cost of building a prefix from nothing. */
+function initialDistance(i: number, j: number): number {
+	if (i === 0) return j;
+	return j === 0 ? i : 0;
 }
 
 /**
@@ -23,7 +29,7 @@ export function editDistance(a: string, b: string): number {
 	const rows = a.length + 1;
 	const cols = b.length + 1;
 	const d: number[][] = Array.from({ length: rows }, (_, i) =>
-		Array.from({ length: cols }, (_, j) => (i === 0 ? j : j === 0 ? i : 0))
+		Array.from({ length: cols }, (_, j) => initialDistance(i, j))
 	);
 	for (let i = 1; i < rows; i++) {
 		for (let j = 1; j < cols; j++) {

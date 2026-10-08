@@ -9,7 +9,7 @@ const FRONTMATTER = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?/;
 function toHtml(markdown: string): string {
 	const html = marked.parse(markdown) as string;
 	// External links open in a new tab and send no referrer.
-	return html.replace(
+	return html.replaceAll(
 		/<a href="(https?:[^"]+)"/g,
 		'<a href="$1" rel="noopener noreferrer" target="_blank"'
 	);
@@ -31,8 +31,8 @@ export function renderContent(slug: string, source: string): ContentPage {
 		throw new Error(`content/${slug}.md: steps need a stage`);
 	}
 
-	// Comments are notes for reviewers ("TODO: fachlich prüfen"), not for readers.
-	const body = source.slice(match[0].length).replace(/<!--[\s\S]*?-->/g, '');
+	// HTML comments are review notes for content authors, not for readers.
+	const body = source.slice(match[0].length).replaceAll(/<!--[\s\S]*?-->/g, '');
 	const [intro, ...rest] = body.split(/^## /m);
 	const sections: ContentSection[] = rest.map((chunk) => {
 		const newline = chunk.indexOf('\n');

@@ -12,7 +12,7 @@ interface Props {
 }
 
 /** Renders a page from content/de: title, short text, details, review date and sources. */
-export function ContentView({ page, collapsible = false, eyebrow }: Props) {
+export function ContentView({ page, collapsible = false, eyebrow }: Readonly<Props>) {
 	return (
 		<article className="content">
 			{eyebrow && <p className="eyebrow">{eyebrow}</p>}

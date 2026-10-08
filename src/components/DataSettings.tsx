@@ -9,7 +9,7 @@ import { t } from '@/lib/i18n';
 const loadBackup = () => import('@/lib/data/backup');
 
 /** Backup as a file, restore from a file, delete everything. Nothing leaves the device. */
-export function DataView() {
+export function DataSettings() {
 	const [message, setMessage] = useState('');
 	const id = useId();
 
@@ -40,7 +40,7 @@ export function DataView() {
 			return;
 		}
 		const db = getDb();
-		if ((await hasData(db)) && !window.confirm(t('data.importConfirm'))) {
+		if ((await hasData(db)) && !globalThis.confirm(t('data.importConfirm'))) {
 			setMessage(t('data.importCancelled'));
 			return;
 		}
@@ -49,7 +49,7 @@ export function DataView() {
 	}
 
 	async function deleteAll() {
-		if (!window.confirm(t('data.deleteConfirm'))) return;
+		if (!globalThis.confirm(t('data.deleteConfirm'))) return;
 		await clearAll(getDb());
 		setMessage(t('data.deleted'));
 	}
