@@ -1,0 +1,34 @@
+name: Inhalt korrigieren
+description: Ein Infotext ist falsch, veraltet oder missverständlich.
+title: 'Inhalt: '
+labels: [inhalt]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Danke, dass du hilfst, die Infos richtig zu halten.
+        **Bitte keine persönlichen Gesundheitsdaten eintragen.** Alles hier ist öffentlich.
+  - type: input
+    id: page
+    attributes:
+      label: Welche Seite oder Datei?
+      placeholder: z. B. Etappe 2 „Sprechstunde“ oder content/de/02-sprechstunde.md
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Was stimmt nicht?
+    validations:
+      required: true
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Wie sollte es heißen?
+  - type: textarea
+    id: sources
+    attributes:
+      label: Quelle
+      description: Gesetz, Kasse, Kammer, Berufsverband, KBV oder eine andere seriöse Quelle, gern mit Link.
+    validations:
+      required: true
