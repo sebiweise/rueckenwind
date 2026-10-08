@@ -11,6 +11,7 @@ test('export, delete all and import restore the same data', async ({ page }) => 
 	await expect(page.getByRole('status')).not.toBeEmpty();
 
 	await page.goto('daten/');
+	const status = page.locator('.toast-inline');
 	const downloadPromise = page.waitForEvent('download');
 	await page.getByRole('button', { name: 'Sicherung herunterladen' }).click();
 	const download = await downloadPromise;
@@ -21,13 +22,13 @@ test('export, delete all and import restore the same data', async ({ page }) => 
 
 	page.on('dialog', (dialog) => dialog.accept());
 	await page.getByRole('button', { name: 'Alle Daten löschen' }).click();
-	await expect(page.getByRole('status')).toHaveText('Alle Daten wurden gelöscht.');
+	await expect(status).toHaveText('Alle Daten wurden gelöscht.');
 	await page.goto('kontakte/');
 	await expect(page.getByText('Noch keine Kontakte.')).toBeVisible();
 
 	await page.goto('daten/');
 	await page.getByLabel('Sicherungsdatei wählen').setInputFiles(file);
-	await expect(page.getByRole('status')).toHaveText('Sicherung eingespielt.');
+	await expect(status).toHaveText('Sicherung eingespielt.');
 	await page.goto('kontakte/');
 	await expect(page.getByRole('heading', { name: 'Praxis Weber' })).toBeVisible();
 	await expect(page.locator('.attempt')).toContainText('ca. 12 Monate');
@@ -40,7 +41,7 @@ test('a foreign file is rejected without changes', async ({ page }) => {
 		mimeType: 'application/json',
 		buffer: Buffer.from('{"app":"andere"}')
 	});
-	await expect(page.getByRole('status')).toHaveText(
+	await expect(page.locator('.toast-inline')).toHaveText(
 		'Diese Datei ist keine Sicherung aus dieser App.'
 	);
 });

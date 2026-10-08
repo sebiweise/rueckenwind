@@ -1,0 +1,1456 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`buildProofDocument > matches the snapshot with 0 entries 1`] = `
+"[
+ {
+  "text": "Nachweis über Anfragen für einen Psychotherapieplatz",
+  "style": "title"
+ },
+ {
+  "columns": [
+   {
+    "width": 90,
+    "text": "Name:",
+    "style": "label"
+   },
+   {
+    "width": "*",
+    "text": "Kim Öztürk"
+   }
+  ],
+  "margin": [
+   0,
+   0,
+   0,
+   4
+  ]
+ },
+ {
+  "columns": [
+   {
+    "width": 90,
+    "text": "Zeitraum:",
+    "style": "label"
+   },
+   {
+    "width": "*",
+    "text": "noch keine Anfragen erfasst"
+   }
+  ],
+  "margin": [
+   0,
+   0,
+   0,
+   4
+  ]
+ },
+ {
+  "columns": [
+   {
+    "width": 90,
+    "text": "Erstellt am:",
+    "style": "label"
+   },
+   {
+    "width": "*",
+    "text": "08.10.2026"
+   }
+  ],
+  "margin": [
+   0,
+   0,
+   0,
+   12
+  ]
+ },
+ {
+  "text": "Diese Liste enthält alle erfassten Kontaktversuche, chronologisch sortiert."
+ },
+ {
+  "text": "Es wurden noch keine Kontaktversuche erfasst.",
+  "italics": true,
+  "margin": [
+   0,
+   8,
+   0,
+   0
+  ]
+ },
+ {
+  "text": "Zusammenfassung",
+  "style": "heading"
+ },
+ {
+  "ul": [
+   "Kontaktversuche insgesamt: 0",
+   "Kassenpraxen ohne Behandlungsplatz (Absage, Warteliste oder nicht erreicht): 0"
+  ]
+ },
+ {
+  "text": "Terminservicestelle (116 117)",
+  "style": "heading"
+ },
+ {
+  "text": "Kein Kontakt zur Terminservicestelle erfasst."
+ },
+ {
+  "stack": [
+   {
+    "text": "Bestätigung",
+    "style": "heading"
+   },
+   {
+    "text": "Ich bestätige, dass die Angaben vollständig und richtig sind."
+   },
+   {
+    "columns": [
+     {
+      "stack": [
+       {
+        "canvas": [
+         {
+          "type": "line",
+          "x1": 0,
+          "y1": 0,
+          "x2": 220,
+          "y2": 0,
+          "lineWidth": 0.5
+         }
+        ],
+        "margin": [
+         0,
+         40,
+         0,
+         4
+        ]
+       },
+       {
+        "text": "Ort, Datum",
+        "style": "small"
+       }
+      ]
+     },
+     {
+      "stack": [
+       {
+        "canvas": [
+         {
+          "type": "line",
+          "x1": 0,
+          "y1": 0,
+          "x2": 220,
+          "y2": 0,
+          "lineWidth": 0.5
+         }
+        ],
+        "margin": [
+         0,
+         40,
+         0,
+         4
+        ]
+       },
+       {
+        "text": "Unterschrift",
+        "style": "small"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "unbreakable": true
+ }
+]"
+`;
+
+exports[`buildProofDocument > matches the snapshot with 1 entries 1`] = `
+"[
+ {
+  "text": "Nachweis über Anfragen für einen Psychotherapieplatz",
+  "style": "title"
+ },
+ {
+  "columns": [
+   {
+    "width": 90,
+    "text": "Name:",
+    "style": "label"
+   },
+   {
+    "width": "*",
+    "text": "Kim Öztürk"
+   }
+  ],
+  "margin": [
+   0,
+   0,
+   0,
+   4
+  ]
+ },
+ {
+  "columns": [
+   {
+    "width": 90,
+    "text": "Zeitraum:",
+    "style": "label"
+   },
+   {
+    "width": "*",
+    "text": "01.09.2026 – 01.09.2026"
+   }
+  ],
+  "margin": [
+   0,
+   0,
+   0,
+   4
+  ]
+ },
+ {
+  "columns": [
+   {
+    "width": 90,
+    "text": "Erstellt am:",
+    "style": "label"
+   },
+   {
+    "width": "*",
+    "text": "08.10.2026"
+   }
+  ],
+  "margin": [
+   0,
+   0,
+   0,
+   12
+  ]
+ },
+ {
+  "text": "Diese Liste enthält alle erfassten Kontaktversuche, chronologisch sortiert."
+ },
+ {
+  "table": {
+   "headerRows": 1,
+   "dontBreakRows": true,
+   "widths": [
+    22,
+    58,
+    36,
+    "*",
+    46,
+    70,
+    56
+   ],
+   "body": [
+    [
+     {
+      "text": "Nr.",
+      "style": "tableHeader"
+     },
+     {
+      "text": "Datum",
+      "style": "tableHeader"
+     },
+     {
+      "text": "Uhrzeit",
+      "style": "tableHeader"
+     },
+     {
+      "text": "Praxis / Stelle",
+      "style": "tableHeader"
+     },
+     {
+      "text": "Weg",
+      "style": "tableHeader"
+     },
+     {
+      "text": "Ergebnis",
+      "style": "tableHeader"
+     },
+     {
+      "text": "Wartezeit",
+      "style": "tableHeader"
+     }
+    ],
+    [
+     "1",
+     "01.09.2026",
+     "07:15",
+     {
+      "stack": [
+       "Terminservicestelle",
+       {
+        "text": "Terminservicestelle",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Termin bekommen",
+     "ca. 8 Monate"
+    ]
+   ]
+  },
+  "layout": "lightHorizontalLines",
+  "margin": [
+   0,
+   8,
+   0,
+   0
+  ]
+ },
+ {
+  "text": "Zusammenfassung",
+  "style": "heading"
+ },
+ {
+  "ul": [
+   "Kontaktversuche insgesamt: 1",
+   "Kassenpraxen ohne Behandlungsplatz (Absage, Warteliste oder nicht erreicht): 0"
+  ]
+ },
+ {
+  "text": "Terminservicestelle (116 117)",
+  "style": "heading"
+ },
+ {
+  "ul": [
+   "Kontakt am 01.09.2026: Termin bekommen"
+  ]
+ },
+ {
+  "stack": [
+   {
+    "text": "Bestätigung",
+    "style": "heading"
+   },
+   {
+    "text": "Ich bestätige, dass die Angaben vollständig und richtig sind."
+   },
+   {
+    "columns": [
+     {
+      "stack": [
+       {
+        "canvas": [
+         {
+          "type": "line",
+          "x1": 0,
+          "y1": 0,
+          "x2": 220,
+          "y2": 0,
+          "lineWidth": 0.5
+         }
+        ],
+        "margin": [
+         0,
+         40,
+         0,
+         4
+        ]
+       },
+       {
+        "text": "Ort, Datum",
+        "style": "small"
+       }
+      ]
+     },
+     {
+      "stack": [
+       {
+        "canvas": [
+         {
+          "type": "line",
+          "x1": 0,
+          "y1": 0,
+          "x2": 220,
+          "y2": 0,
+          "lineWidth": 0.5
+         }
+        ],
+        "margin": [
+         0,
+         40,
+         0,
+         4
+        ]
+       },
+       {
+        "text": "Unterschrift",
+        "style": "small"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "unbreakable": true
+ }
+]"
+`;
+
+exports[`buildProofDocument > matches the snapshot with 50 entries 1`] = `
+"[
+ {
+  "text": "Nachweis über Anfragen für einen Psychotherapieplatz",
+  "style": "title"
+ },
+ {
+  "columns": [
+   {
+    "width": 90,
+    "text": "Name:",
+    "style": "label"
+   },
+   {
+    "width": "*",
+    "text": "Kim Öztürk"
+   }
+  ],
+  "margin": [
+   0,
+   0,
+   0,
+   4
+  ]
+ },
+ {
+  "columns": [
+   {
+    "width": 90,
+    "text": "Zeitraum:",
+    "style": "label"
+   },
+   {
+    "width": "*",
+    "text": "01.09.2026 – 20.10.2026"
+   }
+  ],
+  "margin": [
+   0,
+   0,
+   0,
+   4
+  ]
+ },
+ {
+  "columns": [
+   {
+    "width": 90,
+    "text": "Erstellt am:",
+    "style": "label"
+   },
+   {
+    "width": "*",
+    "text": "08.10.2026"
+   }
+  ],
+  "margin": [
+   0,
+   0,
+   0,
+   12
+  ]
+ },
+ {
+  "text": "Diese Liste enthält alle erfassten Kontaktversuche, chronologisch sortiert."
+ },
+ {
+  "table": {
+   "headerRows": 1,
+   "dontBreakRows": true,
+   "widths": [
+    22,
+    58,
+    36,
+    "*",
+    46,
+    70,
+    56
+   ],
+   "body": [
+    [
+     {
+      "text": "Nr.",
+      "style": "tableHeader"
+     },
+     {
+      "text": "Datum",
+      "style": "tableHeader"
+     },
+     {
+      "text": "Uhrzeit",
+      "style": "tableHeader"
+     },
+     {
+      "text": "Praxis / Stelle",
+      "style": "tableHeader"
+     },
+     {
+      "text": "Weg",
+      "style": "tableHeader"
+     },
+     {
+      "text": "Ergebnis",
+      "style": "tableHeader"
+     },
+     {
+      "text": "Wartezeit",
+      "style": "tableHeader"
+     }
+    ],
+    [
+     "1",
+     "01.09.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Müller-Lüdenscheid, Ärztehaus Größe",
+       {
+        "text": "030 123456",
+        "style": "small"
+       },
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Absage",
+     "ca. 8 Monate"
+    ],
+    [
+     "2",
+     "02.09.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 1",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Warteliste",
+     "–"
+    ],
+    [
+     "3",
+     "03.09.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 2",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Nicht erreicht",
+     "–"
+    ],
+    [
+     "4",
+     "04.09.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 3",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Auf AB gesprochen",
+     "ca. 8 Monate"
+    ],
+    [
+     "5",
+     "05.09.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 4",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Rückruf versprochen",
+     "–"
+    ],
+    [
+     "6",
+     "06.09.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 5",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Absage",
+     "–"
+    ],
+    [
+     "7",
+     "07.09.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 6",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Warteliste",
+     "ca. 8 Monate"
+    ],
+    [
+     "8",
+     "08.09.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 7",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Nicht erreicht",
+     "–"
+    ],
+    [
+     "9",
+     "09.09.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 8",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Auf AB gesprochen",
+     "–"
+    ],
+    [
+     "10",
+     "10.09.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 9",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Rückruf versprochen",
+     "ca. 8 Monate"
+    ],
+    [
+     "11",
+     "11.09.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 10",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Absage",
+     "–"
+    ],
+    [
+     "12",
+     "12.09.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 11",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Warteliste",
+     "–"
+    ],
+    [
+     "13",
+     "13.09.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 12",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Nicht erreicht",
+     "ca. 8 Monate"
+    ],
+    [
+     "14",
+     "14.09.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 13",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Auf AB gesprochen",
+     "–"
+    ],
+    [
+     "15",
+     "15.09.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 14",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Rückruf versprochen",
+     "–"
+    ],
+    [
+     "16",
+     "16.09.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 15",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Absage",
+     "ca. 8 Monate"
+    ],
+    [
+     "17",
+     "17.09.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 16",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Warteliste",
+     "–"
+    ],
+    [
+     "18",
+     "18.09.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 17",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Nicht erreicht",
+     "–"
+    ],
+    [
+     "19",
+     "19.09.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 18",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Auf AB gesprochen",
+     "ca. 8 Monate"
+    ],
+    [
+     "20",
+     "20.09.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 19",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Rückruf versprochen",
+     "–"
+    ],
+    [
+     "21",
+     "21.09.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 20",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Absage",
+     "–"
+    ],
+    [
+     "22",
+     "22.09.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 21",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Warteliste",
+     "ca. 8 Monate"
+    ],
+    [
+     "23",
+     "23.09.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 22",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Nicht erreicht",
+     "–"
+    ],
+    [
+     "24",
+     "24.09.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 23",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Auf AB gesprochen",
+     "–"
+    ],
+    [
+     "25",
+     "25.09.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 24",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Rückruf versprochen",
+     "ca. 8 Monate"
+    ],
+    [
+     "26",
+     "26.09.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 25",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Absage",
+     "–"
+    ],
+    [
+     "27",
+     "27.09.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 26",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Warteliste",
+     "–"
+    ],
+    [
+     "28",
+     "28.09.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 27",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Nicht erreicht",
+     "ca. 8 Monate"
+    ],
+    [
+     "29",
+     "29.09.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 28",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Auf AB gesprochen",
+     "–"
+    ],
+    [
+     "30",
+     "30.09.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 29",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Rückruf versprochen",
+     "–"
+    ],
+    [
+     "31",
+     "01.10.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 30",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Absage",
+     "ca. 8 Monate"
+    ],
+    [
+     "32",
+     "02.10.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 31",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Warteliste",
+     "–"
+    ],
+    [
+     "33",
+     "03.10.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 32",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Nicht erreicht",
+     "–"
+    ],
+    [
+     "34",
+     "04.10.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 33",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Auf AB gesprochen",
+     "ca. 8 Monate"
+    ],
+    [
+     "35",
+     "05.10.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 34",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Rückruf versprochen",
+     "–"
+    ],
+    [
+     "36",
+     "06.10.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 35",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Absage",
+     "–"
+    ],
+    [
+     "37",
+     "07.10.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 36",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Warteliste",
+     "ca. 8 Monate"
+    ],
+    [
+     "38",
+     "08.10.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 37",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Nicht erreicht",
+     "–"
+    ],
+    [
+     "39",
+     "09.10.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 38",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Auf AB gesprochen",
+     "–"
+    ],
+    [
+     "40",
+     "10.10.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 39",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Rückruf versprochen",
+     "ca. 8 Monate"
+    ],
+    [
+     "41",
+     "11.10.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 40",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Absage",
+     "–"
+    ],
+    [
+     "42",
+     "12.10.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 41",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Warteliste",
+     "–"
+    ],
+    [
+     "43",
+     "13.10.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 42",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Nicht erreicht",
+     "ca. 8 Monate"
+    ],
+    [
+     "44",
+     "14.10.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 43",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Auf AB gesprochen",
+     "–"
+    ],
+    [
+     "45",
+     "15.10.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 44",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Rückruf versprochen",
+     "–"
+    ],
+    [
+     "46",
+     "16.10.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 45",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Absage",
+     "ca. 8 Monate"
+    ],
+    [
+     "47",
+     "17.10.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 46",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Warteliste",
+     "–"
+    ],
+    [
+     "48",
+     "18.10.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 47",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Nicht erreicht",
+     "–"
+    ],
+    [
+     "49",
+     "19.10.2026",
+     "07:15",
+     {
+      "stack": [
+       "Praxis Nr. 48",
+       {
+        "text": "Kassenpraxis",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Auf AB gesprochen",
+     "ca. 8 Monate"
+    ],
+    [
+     "50",
+     "20.10.2026",
+     "07:15",
+     {
+      "stack": [
+       "Terminservicestelle",
+       {
+        "text": "Terminservicestelle",
+        "style": "small"
+       }
+      ]
+     },
+     "Telefon",
+     "Termin bekommen",
+     "–"
+    ]
+   ]
+  },
+  "layout": "lightHorizontalLines",
+  "margin": [
+   0,
+   8,
+   0,
+   0
+  ]
+ },
+ {
+  "text": "Zusammenfassung",
+  "style": "heading"
+ },
+ {
+  "ul": [
+   "Kontaktversuche insgesamt: 50",
+   "Kassenpraxen ohne Behandlungsplatz (Absage, Warteliste oder nicht erreicht): 30"
+  ]
+ },
+ {
+  "text": "Terminservicestelle (116 117)",
+  "style": "heading"
+ },
+ {
+  "ul": [
+   "Kontakt am 20.10.2026: Termin bekommen"
+  ]
+ },
+ {
+  "stack": [
+   {
+    "text": "Bestätigung",
+    "style": "heading"
+   },
+   {
+    "text": "Ich bestätige, dass die Angaben vollständig und richtig sind."
+   },
+   {
+    "columns": [
+     {
+      "stack": [
+       {
+        "canvas": [
+         {
+          "type": "line",
+          "x1": 0,
+          "y1": 0,
+          "x2": 220,
+          "y2": 0,
+          "lineWidth": 0.5
+         }
+        ],
+        "margin": [
+         0,
+         40,
+         0,
+         4
+        ]
+       },
+       {
+        "text": "Ort, Datum",
+        "style": "small"
+       }
+      ]
+     },
+     {
+      "stack": [
+       {
+        "canvas": [
+         {
+          "type": "line",
+          "x1": 0,
+          "y1": 0,
+          "x2": 220,
+          "y2": 0,
+          "lineWidth": 0.5
+         }
+        ],
+        "margin": [
+         0,
+         40,
+         0,
+         4
+        ]
+       },
+       {
+        "text": "Unterschrift",
+        "style": "small"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "unbreakable": true
+ }
+]"
+`;
