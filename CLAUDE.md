@@ -46,6 +46,7 @@ npm run lint        # Prettier --check + ESLint
 npm run format      # Prettier --write
 npm run check       # tsc --noEmit (Typen)
 npm test            # Vitest einmalig
+npm run test:coverage   # Vitest mit Abdeckung (Domäne ≥ 90 %, läuft in CI)
 npm run test:unit   # Vitest im Watch-Modus
 npm run build       # Standalone-Build nach .next/standalone (kopiert public/ und static/ dazu)
 npm start           # Standalone-Server starten (PORT, HOSTNAME per Umgebungsvariable)
