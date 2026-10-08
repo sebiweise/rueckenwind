@@ -14,7 +14,7 @@ export interface ParsedContact {
 	result: ParsedField<ContactResult>;
 	waitTimeWeeks: ParsedField<number> | null;
 	channel: ParsedField<ContactChannel>;
-	/** ISO 8601. "Now" unless the text says "gestern" or "vorgestern". */
+	/** ISO 8601. "Now" unless the text names a day ("gestern", "vorgestern") or a time ("8:30"). */
 	at: ParsedField<string>;
 }
 
@@ -50,17 +50,24 @@ const RESULT_RULES: ResultRule[] = [
 	},
 	{
 		result: 'rejected',
-		pattern: /\bkeine? (freien? )?kapazitaet(en)?\b/g,
+		pattern: /\bkeine? (freien? )?(kapazitaet(en)?|kapas?)\b/g,
 		confidence: 0.95
 	},
 	{
 		result: 'rejected',
-		pattern: /\b(nimmt|nehmen) (niemanden|keinen?)( neuen?)?( patient(inn)?en)?\b/g,
+		pattern: /\b(nimmt|nehmen)( \S+)? (niemand(en)?|keinen?)( neuen?)?( patient(inn)?en)?\b/g,
 		confidence: 0.95
 	},
 	{
 		result: 'rejected',
 		pattern: /\bkeine (neuen? )?patient(inn)?en\b/g,
+		confidence: 0.95
+	},
+
+	// A promised callback, not a promised place.
+	{
+		result: 'callback_pending',
+		pattern: /\b(rueckruf|zurueckrufen) (zugesagt|versprochen)\b/g,
 		confidence: 0.95
 	},
 
@@ -74,7 +81,7 @@ const RESULT_RULES: ResultRule[] = [
 	{
 		result: 'appointment',
 		pattern:
-			/\b(erstgespraech|sprechstundentermin|probatori(k|sche)|zusage|zugesagt|platz bekommen|therapieplatz( bekommen| erhalten)?)\b/g,
+			/\b(erstgespraech|sprechstunde|sprechstundentermin|probatori(k|sche)|zusage|zugesagt|platz bekommen|therapieplatz( bekommen| erhalten)?)\b/g,
 		confidence: 0.9
 	},
 	{ result: 'appointment', pattern: /\btermine?\b/g, confidence: 0.75 },
@@ -256,6 +263,8 @@ const NAME_STOP_WORDS = new Set([
 	'circa',
 	'heute',
 	'gestern',
+	'um',
+	'uhr',
 	'vorgestern',
 	'morgen',
 	'angerufen',
@@ -278,6 +287,16 @@ const NAME_STOP_WORDS = new Set([
 	'aber',
 	'und',
 	'erstgespraech',
+	'sprechstunde',
+	'sprechstundentermin',
+	'naechste',
+	'naechsten',
+	'naechster',
+	'nimmt',
+	'nehmen',
+	'hinterlassen',
+	'gesprochen',
+	'draufgesprochen',
 	'vorgemerkt',
 	'aufnahmestopp',
 	'kapazitaet',
@@ -324,7 +343,12 @@ const NAME_MARKERS = new Set([
 const TSS = /\b(tss|terminservicestelle|116 ?117|116117\.de)\b/;
 
 /** Short words are too close to others for edit distance, so they get a fixed list. */
-const SHORT_TYPOS: Record<string, string> = { nich: 'nicht', nciht: 'nicht', kien: 'kein' };
+const SHORT_TYPOS: Record<string, string> = {
+	nich: 'nicht',
+	nciht: 'nicht',
+	ned: 'nicht',
+	kien: 'kein'
+};
 
 function correctTypos(folded: string): string {
 	return folded
@@ -503,17 +527,55 @@ function parsePracticeName(raw: string): ParsedField<string> | null {
 	return { value: tidyName(nameTokens), confidence: wholeSegment ? 0.75 : 0.5 };
 }
 
-function parseDate(text: string, now: Date): ParsedField<string> {
+/*
+ * A time of day: "8:30", "8.30 Uhr", "um 8.30", "12 Uhr". A dot needs "um" or
+ * "Uhr" next to it, so dates like "14.11." are not read as times.
+ */
+const TIME =
+	/(?<![\p{L}\d.,:])(?:(um )?(\d{1,2})([:.])(\d{2})|(\d{1,2}))(\s*uhr(?![\p{L}]))?(?!\d)/gu;
+
+/** Words before a time that make it the time of a future event, not of the contact. */
+const FUTURE_BEFORE_TIME =
+	/\b(termine?|erstgespraech|sprechstunde\S*|probatori\S*|rueckruf|zurueck\S*|meldet?|melden)\b|(?<!heute |gestern )\bmorgen\b/;
+
+interface TimeOfDay {
+	hours: number;
+	minutes: number;
+	index: number;
+	length: number;
+}
+
+function findTime(text: string): TimeOfDay | null {
+	for (const match of text.matchAll(TIME)) {
+		const [whole, um, hourWithMinutes, separator, minuteText, hourOnly, uhr] = match;
+		const dotWithoutContext = separator === '.' && !um && !uhr;
+		if (dotWithoutContext || (hourOnly && !uhr)) continue;
+		const hours = Number(hourWithMinutes ?? hourOnly);
+		const minutes = Number(minuteText ?? 0);
+		if (hours > 23 || minutes > 59) continue;
+		if (FUTURE_BEFORE_TIME.test(text.slice(0, match.index))) continue;
+		return { hours, minutes, index: match.index, length: whole.length };
+	}
+	return null;
+}
+
+function parseDate(text: string, time: TimeOfDay | null, now: Date): ParsedField<string> {
 	const date = new Date(now);
+	let confidence = 0.6;
 	if (/\bvorgestern\b/.test(text)) {
 		date.setDate(date.getDate() - 2);
-		return { value: date.toISOString(), confidence: 0.8 };
-	}
-	if (/\bgestern\b/.test(text)) {
+		confidence = 0.8;
+	} else if (/\bgestern\b/.test(text)) {
 		date.setDate(date.getDate() - 1);
-		return { value: date.toISOString(), confidence: 0.8 };
+		confidence = 0.8;
 	}
-	return { value: date.toISOString(), confidence: 0.6 };
+	if (time) {
+		const timed = new Date(date);
+		timed.setHours(time.hours, time.minutes, 0, 0);
+		// A contact cannot lie in the future; such a time means something else.
+		if (timed <= now) return { value: timed.toISOString(), confidence: confidence + 0.1 };
+	}
+	return { value: date.toISOString(), confidence };
 }
 
 /**
@@ -526,7 +588,12 @@ export function parseContactInput(input: string, now: Date = new Date()): Parsed
 	const rawInput = input.trim();
 	const text = correctTypos(fold(rawInput));
 	const result = parseResult(text);
-	let waitTimeWeeks = parseWaitTime(text);
+	const time = findTime(text);
+	// "8.30 Uhr" is a time of day, so it must not count as a waiting time.
+	const withoutTime = time
+		? text.slice(0, time.index) + ' '.repeat(time.length) + text.slice(time.index + time.length)
+		: text;
+	let waitTimeWeeks = parseWaitTime(withoutTime);
 	// "Rückruf in 3 Tagen" is about the callback, not about a waiting time.
 	if (
 		waitTimeWeeks &&
@@ -542,6 +609,6 @@ export function parseContactInput(input: string, now: Date = new Date()): Parsed
 		result,
 		waitTimeWeeks,
 		channel: parseChannel(text),
-		at: parseDate(text, now)
+		at: parseDate(text, time, now)
 	};
 }

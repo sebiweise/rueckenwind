@@ -4,6 +4,11 @@ Alle wichtigen Änderungen an Rückenwind. Format nach [Keep a Changelog](https:
 
 ## [Unveröffentlicht]
 
+### Verbessert
+
+- **Schnellerfassung:** Uhrzeiten wie „8:30“, „8.30 Uhr“ oder „gestern 12 Uhr“ werden als Zeitpunkt des Kontaktversuchs übernommen (#13).
+- **Parser:** versteht mehr Alltagsformulierungen, etwa „ned erreicht“, „keine Kapa“, „nimmt grad niemand auf“ oder „Rückruf zugesagt“ (#14).
+
 ## [0.1.0] – noch offen
 
 Erste Version mit dem vollen MVP-Umfang aus [docs/PLAN.md](docs/PLAN.md). Vor der Veröffentlichung stehen noch die fachliche Prüfung der Infotexte (#11) und die Markenrecherche (#4) aus. Zum Ausprobieren gibt es vorher Testversionen (`v0.1.0-beta.1`, 2026-10-08).

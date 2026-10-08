@@ -79,6 +79,63 @@ const CASES: Case[] = [
 	{ input: 'Sprechstundentermin über TSS', result: 'appointment', name: 'Terminservicestelle' },
 	{ input: 'termin in 2 wochen', result: 'appointment', weeks: 2 },
 	{ input: 'Probatorik ab Januar', result: 'appointment' },
+	// Everyday phrasing: voice-message style, dialect, abbreviations
+	{
+		input: 'hab bei praxis meier angerufen aber da ging keiner ran',
+		result: 'not_reached',
+		name: 'Praxis Meier'
+	},
+	{ input: 'Dr Brandt ned erreicht', result: 'not_reached', name: 'Dr Brandt' },
+	{ input: 'Praxis Simon - war besetzt, 3x probiert', result: 'not_reached', name: 'Praxis Simon' },
+	{ input: 'Pr. Schulze AB drauf gesprochen', result: 'voicemail', name: 'Pr. Schulze' },
+	{
+		input: 'Hab ne Nachricht auf dem AB von Praxis Ludwig hinterlassen',
+		result: 'voicemail',
+		name: 'Praxis Ludwig'
+	},
+	{ input: 'praxis winter, mailbox, nix hinterlassen', result: 'voicemail', name: 'Praxis Winter' },
+	{ input: 'dr. kaya - is voll, nimmt keine neuen', result: 'rejected', name: 'Dr. Kaya' },
+	{ input: 'jo praxis horn nimmt grad niemand auf', result: 'rejected', name: 'Praxis Horn' },
+	{ input: 'Praxis Baumann, keine Kapa', result: 'rejected', name: 'Praxis Baumann' },
+	{ input: 'Praxis Nowak, Wartelsite zu', result: 'rejected', name: 'Praxis Nowak' },
+	{
+		input: 'Praxis Albrecht – leider keine Plätze frei',
+		result: 'rejected',
+		name: 'Praxis Albrecht'
+	},
+	{ input: 'Dr. Pohl hat abgelehnt', result: 'rejected', name: 'Dr. Pohl' },
+	{
+		input: 'Psychotherapeutin Engel, Absage per Mail',
+		result: 'rejected',
+		name: 'Psychotherapeutin Engel'
+	},
+	{
+		input: 'Frau Yilmaz hat gesagt warteliste so 5 monate',
+		result: 'waitlist',
+		name: 'Frau Yilmaz',
+		weeks: 22
+	},
+	{
+		input: 'Dr. Arslan hat mich auf die warteliste gesetzt, ca. 1 Jahr',
+		result: 'waitlist',
+		name: 'Dr. Arslan',
+		weeks: 52
+	},
+	{ input: 'Praxis Kühn: Wartezeit mind. 6 Monate', result: 'waitlist', weeks: 26 },
+	{ input: 'Praxis Graf, 2 Jahre Wartezeit, trotzdem vorgemerkt', result: 'waitlist', weeks: 104 },
+	{ input: 'Praxis Sommer: Rückruf zugesagt', result: 'callback_pending', name: 'Praxis Sommer' },
+	{
+		input: 'Frau Lorenz ruft zurück wenn was frei wird',
+		result: 'callback_pending',
+		name: 'Frau Lorenz'
+	},
+	{ input: 'tss angerufen termin nächste woche', result: 'appointment' },
+	{ input: 'erstgespräch am 20.10. bei Dr. Frank', result: 'appointment', name: 'Dr. Frank' },
+	{
+		input: 'Frau Seidel sprechstunde nächsten dienstag',
+		result: 'appointment',
+		name: 'Frau Seidel'
+	},
 	// Other
 	{ input: 'Praxis Busch', result: 'other', name: 'Praxis Busch' },
 	{ input: '', result: 'other', name: null }
@@ -201,6 +258,48 @@ describe('parseContactInput – channel, kind and date', () => {
 	it('understands "gestern" and "vorgestern"', () => {
 		expect(new Date(parseContactInput('gestern Absage', NOW).at.value).getDate()).toBe(7);
 		expect(new Date(parseContactInput('vorgestern Absage', NOW).at.value).getDate()).toBe(6);
+	});
+
+	it.each([
+		['Praxis Weber 8:30 nicht erreicht', 8, 30, 8],
+		['heute 8.30 Uhr AB', 8, 30, 8],
+		['Absage um 7.15', 7, 15, 8],
+		['gestern 12 Uhr Absage', 12, 0, 7],
+		['vorgestern 17:45 Warteliste 3 Monate', 17, 45, 6],
+		['gestern um 9 uhr besetzt', 9, 0, 7]
+	])('takes the time from "%s"', (input, hours, minutes, day) => {
+		const at = new Date(parseContactInput(input, NOW).at.value);
+		expect([at.getHours(), at.getMinutes(), at.getDate()]).toEqual([hours, minutes, day]);
+	});
+
+	it('is more confident with a time than without', () => {
+		const plain = parseContactInput('Absage', NOW).at.confidence;
+		const timed = parseContactInput('8:30 Absage', NOW).at.confidence;
+		const yesterday = parseContactInput('gestern Absage', NOW).at.confidence;
+		const yesterdayTimed = parseContactInput('gestern 8:30 Absage', NOW).at.confidence;
+		expect(timed).toBeGreaterThan(plain);
+		expect(yesterdayTimed).toBeGreaterThan(yesterday);
+	});
+
+	it('does not read a time as practice name or waiting time', () => {
+		const parsed = parseContactInput('Praxis Weber 8:30 nicht erreicht', NOW);
+		expect(parsed.practiceName?.value).toBe('Praxis Weber');
+		expect(parsed.waitTimeWeeks).toBeNull();
+		expect(parseContactInput('Weber um 8 Uhr Absage', NOW).practiceName?.value).toBe('Weber');
+		expect(parseContactInput('8.30 Uhr Warteliste', NOW).waitTimeWeeks).toBeNull();
+		expect(parseContactInput('12 Uhr Warteliste 6 Wochen', NOW).waitTimeWeeks?.value).toBe(6);
+	});
+
+	it.each([
+		'Termin am 14.11.',
+		'Termin am 3.11. um 10 Uhr',
+		'Rückruf um 14 Uhr',
+		'ruft morgen 8:30 zurück',
+		'heute 18:00 Absage',
+		'Warteliste Platz 25:99',
+		'Absage 24 Uhr'
+	])('keeps the current time for "%s"', (input) => {
+		expect(parseContactInput(input, NOW).at.value).toBe(NOW.toISOString());
 	});
 
 	it('keeps the trimmed raw input and never throws on odd input', () => {
