@@ -11,6 +11,9 @@ for (const colorScheme of ['light', 'dark']) {
 	const shot = (name) => page.screenshot({ path: `docs/screenshots/${name}-${colorScheme}.png` });
 
 	await page.goto(base, { waitUntil: 'networkidle' });
+	await shot('einfuehrung');
+
+	await page.goto(new URL('app/', base).href, { waitUntil: 'networkidle' });
 	for (const line of [
 		'Praxis Weber, AB, Warteliste 8 Monate',
 		'Dr. Müller, keine Kapazitäten',

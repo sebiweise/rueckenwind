@@ -3,7 +3,8 @@ import { sectionOf } from './navigation';
 
 describe('sectionOf', () => {
 	it('maps pages to their navigation tab', () => {
-		expect(sectionOf('/')).toBe('home');
+		expect(sectionOf('/app/')).toBe('home');
+		expect(sectionOf('/app')).toBe('home');
 		expect(sectionOf('/etappe/3/')).toBe('home');
 		expect(sectionOf('/kontakte/')).toBe('contacts');
 		expect(sectionOf('/daten')).toBe('data');
@@ -11,5 +12,7 @@ describe('sectionOf', () => {
 		expect(sectionOf('/hilfen/')).toBe('more');
 		expect(sectionOf('/ueber/')).toBe('more');
 		expect(sectionOf('/krise/')).toBeNull();
+		// The start page is outside the app.
+		expect(sectionOf('/')).toBeNull();
 	});
 });

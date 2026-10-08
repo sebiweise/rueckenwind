@@ -12,7 +12,7 @@ test('the proof PDF is created in the browser, without requests to other origins
 		if (url.protocol.startsWith('http') && url.origin !== origin) foreign.push(request.url());
 	});
 
-	await page.goto('./');
+	await page.goto('app/');
 	await page.getByRole('button', { name: 'Kontakt notieren' }).click();
 	await page.getByLabel('Was ist passiert? Eine Zeile reicht.').fill('Praxis Müller, Absage');
 	await page.getByRole('button', { name: 'Speichern' }).click();

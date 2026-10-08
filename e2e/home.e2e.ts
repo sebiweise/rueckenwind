@@ -58,3 +58,31 @@ test('standalone server sends security headers', async ({ page }) => {
 	expect(headers['x-content-type-options']).toBe('nosniff');
 	expect(headers['referrer-policy']).toBe('no-referrer');
 });
+
+test('the start page introduces the app and leads into it', async ({ page }) => {
+	await page.goto('./');
+	await expect(page.getByRole('heading', { name: 'So unterstützt dich Rückenwind' })).toBeVisible();
+	// The start page is not part of the app: no navigation and no capture button.
+	await expect(page.getByRole('navigation', { name: 'Hauptnavigation' })).toHaveCount(0);
+	await expect(page.getByRole('button', { name: 'Kontakt notieren' })).toHaveCount(0);
+	await expect(page.getByRole('link', { name: 'Krise? Hilfe' })).toBeVisible();
+
+	await page.getByRole('link', { name: 'Los geht’s' }).first().click();
+	await expect(page).toHaveURL(/\/app\/$/);
+	await expect(page.getByRole('heading', { name: 'Dein Weg', exact: true })).toBeVisible();
+	await expect(page.getByRole('button', { name: 'Kontakt notieren' })).toBeVisible();
+	await expect(page.getByRole('link', { name: 'Rückenwind' })).toHaveAttribute('href', /\/app\/$/);
+});
+
+test('the installed app skips the start page', async ({ page }) => {
+	await page.addInitScript(() => {
+		const original = globalThis.matchMedia.bind(globalThis);
+		globalThis.matchMedia = (query: string) =>
+			query === '(display-mode: standalone)'
+				? ({ ...original(query), matches: true } as MediaQueryList)
+				: original(query);
+	});
+	await page.goto('./');
+	await expect(page).toHaveURL(/\/app\/$/);
+	await expect(page.getByRole('button', { name: 'Kontakt notieren' })).toBeVisible();
+});

@@ -27,7 +27,7 @@ for (const path of PAGES) {
 }
 
 test('stage details open on demand and stages link to each other', async ({ page }) => {
-	await page.goto('./');
+	await page.goto('app/');
 	await page.getByRole('link', { name: 'Sprechstunde' }).click();
 	await expect(page.getByRole('heading', { level: 1 })).toHaveText('Sprechstunde');
 	const details = page.locator('details').first();

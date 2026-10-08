@@ -17,9 +17,9 @@ Wer keinen Kassenplatz findet, ruft viele Praxen an, oft nur in kurzen Telefonsp
 
 ## Screenshots
 
-| Dein Weg                                                                            | Kontakt notieren                                                           | Kontakte                                                             | Etappe                                                                       |
-| ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| ![Startseite mit Zeitleiste und nächster Aufgabe](docs/screenshots/start-light.png) | ![Schnellerfassung mit Chip-Vorschau](docs/screenshots/erfassen-light.png) | ![Kontaktliste mit Fortschritt](docs/screenshots/kontakte-light.png) | ![Etappenseite mit aufklappbaren Details](docs/screenshots/etappe-light.png) |
+| Einführung                                                                  | Dein Weg                                                                          | Kontakt notieren                                                           | Kontakte                                                             | Etappe                                                                       |
+| --------------------------------------------------------------------------- | --------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| ![Startseite mit kurzer Einführung](docs/screenshots/einfuehrung-light.png) | ![Dein Weg mit Zeitleiste und nächster Aufgabe](docs/screenshots/start-light.png) | ![Schnellerfassung mit Chip-Vorschau](docs/screenshots/erfassen-light.png) | ![Kontaktliste mit Fortschritt](docs/screenshots/kontakte-light.png) | ![Etappenseite mit aufklappbaren Details](docs/screenshots/etappe-light.png) |
 
 Dunkelmodus: ![Schnellerfassung im Dunkelmodus](docs/screenshots/erfassen-dark.png)
 
@@ -27,6 +27,7 @@ Screenshots neu erzeugen: Server starten (`npm start` mit `PORT=4173`), dann `no
 
 ## Was die App kann
 
+- **Kurze Einführung:** Die Startseite (`/`) erklärt die Idee und wie du anfängst. Die App selbst liegt unter `/app/`; die installierte App startet direkt dort.
 - **Dein Weg:** fünf Etappen von der Orientierung bis zum Antrag, immer mit genau einer nächsten kleinen Aufgabe.
 - **Kontakt in einer Zeile notieren:** „Praxis Weber, AB, Warteliste 8 Monate“ wird lokal erkannt und als Vorschau gezeigt. Korrigieren per Tipp, speichern mit einem Tipp. Dazu Schnellbuttons.
 - **Kontakte und Fortschritt:** alle Praxen mit Telefonzeiten und Kontaktversuchen. Absagen zählen sichtbar als gesammelte Nachweise.

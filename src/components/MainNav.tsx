@@ -11,7 +11,7 @@ import { sectionOf, type Section } from '@/lib/navigation';
  * "Kontakt notieren" button; on wider screens a row of links below the header.
  */
 export function MainNav() {
-	const section = sectionOf(usePathname() ?? '/');
+	const section = sectionOf(usePathname() ?? '/app/');
 
 	function item(key: Section, href: string, label: string, icon: React.ReactNode) {
 		return (
@@ -24,7 +24,7 @@ export function MainNav() {
 
 	return (
 		<nav className="main-nav" aria-label={t('nav.main')}>
-			{item('home', '/', t('nav.homeShort'), <PathIcon />)}
+			{item('home', '/app/', t('nav.homeShort'), <PathIcon />)}
 			{item('contacts', '/kontakte/', t('nav.contacts'), <PeopleIcon />)}
 			<span className="nav-gap" aria-hidden="true" />
 			{item('data', '/daten/', t('nav.dataShort'), <DocumentIcon />)}

@@ -13,7 +13,10 @@ export default function manifest(): MetadataRoute.Manifest {
 		description: t('meta.description'),
 		lang: 'de',
 		dir: 'ltr',
-		start_url: `${basePath}/`,
+		// Keeps installs from before the start page the same app; it once started at `/`.
+		id: `${basePath}/`,
+		// The installed app opens the app itself, not the start page.
+		start_url: `${basePath}/app/`,
 		scope: `${basePath}/`,
 		display: 'standalone',
 		background_color: '#fcf3ee',

@@ -7,7 +7,7 @@ async function capture(page: Page, text: string) {
 }
 
 test('a contact attempt is saved with one tap after typing', async ({ page }) => {
-	await page.goto('./');
+	await page.goto('app/');
 	await capture(page, 'Praxis Weber, AB, Warteliste 8 Monate');
 
 	const preview = page.locator('.preview');
@@ -31,7 +31,7 @@ test('a contact attempt is saved with one tap after typing', async ({ page }) =>
 });
 
 test('chips can be corrected with a tap', async ({ page }) => {
-	await page.goto('./');
+	await page.goto('app/');
 	await capture(page, 'Dr. Koch blabla');
 	const resultChip = page.locator('.chip', { hasText: 'Ergebnis' });
 	await expect(resultChip).toContainText('Sonstiges');
@@ -48,7 +48,7 @@ test('chips can be corrected with a tap', async ({ page }) => {
 });
 
 test('quick buttons work without typing', async ({ page }) => {
-	await page.goto('./');
+	await page.goto('app/');
 	await page.getByRole('button', { name: 'Kontakt notieren' }).click();
 	const save = page.getByRole('button', { name: 'Speichern' });
 	await expect(save).toBeDisabled();
@@ -59,7 +59,7 @@ test('quick buttons work without typing', async ({ page }) => {
 });
 
 test('three rejections on one day bring a gentle pause hint', async ({ page }) => {
-	await page.goto('./');
+	await page.goto('app/');
 	for (const name of ['Praxis A', 'Praxis B', 'Praxis C']) {
 		await capture(page, `${name}, Absage`);
 		await page.getByRole('button', { name: 'Speichern' }).click();
@@ -73,7 +73,7 @@ test('three rejections on one day bring a gentle pause hint', async ({ page }) =
 });
 
 test('the next task can be marked as done', async ({ page }) => {
-	await page.goto('./');
+	await page.goto('app/');
 	const task = page.locator('.next-task');
 	await expect(task).toContainText('Lies dir den Überblick in Ruhe durch.');
 	await task.getByRole('button', { name: 'Erledigt' }).click();
@@ -86,7 +86,7 @@ test('stages can be chosen freely', async ({ page }) => {
 	await page.goto('etappe/4/');
 	await page.getByRole('button', { name: 'Hier stehe ich gerade' }).click();
 	await expect(page.getByText('Hier stehst du gerade.')).toBeVisible();
-	await page.goto('./');
+	await page.goto('app/');
 	await expect(page.locator('[aria-current="step"]')).toContainText('Plan B');
 });
 
@@ -112,7 +112,7 @@ test('practices can be added with phone hours, edited and deleted', async ({ pag
 });
 
 test('a saved attempt can be edited later', async ({ page }) => {
-	await page.goto('./');
+	await page.goto('app/');
 	await capture(page, 'Praxis Mond nicht erreicht');
 	await page.getByRole('button', { name: 'Speichern' }).click();
 	await expect(page.getByRole('status')).not.toBeEmpty();
@@ -128,14 +128,14 @@ test('a saved attempt can be edited later', async ({ page }) => {
 for (const colorScheme of ['light', 'dark'] as const) {
 	test(`core pages have no accessibility violations (${colorScheme})`, async ({ page }) => {
 		await page.emulateMedia({ colorScheme });
-		await page.goto('./');
+		await page.goto('app/');
 		await capture(page, 'Praxis Weber, Absage');
 		await expect(page.locator('.preview')).toBeVisible();
 		expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
 		await page.getByRole('button', { name: 'Speichern' }).click();
 		await expect(page.getByRole('status')).not.toBeEmpty();
 
-		for (const path of ['./', 'kontakte/', 'daten/', 'etappe/3/']) {
+		for (const path of ['app/', 'kontakte/', 'daten/', 'etappe/3/']) {
 			await page.goto(path);
 			await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 			await page.waitForLoadState('networkidle');

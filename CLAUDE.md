@@ -68,7 +68,7 @@ docs/                PLAN.md, WISSEN.md
 e2e/                 Playwright-Tests (*.e2e.ts)
 public/              statische Dateien (u. a. .nojekyll für GitHub Pages)
 scripts/             Hilfsskripte (postbuild, Preview-Server, Icons, Screenshots, Lighthouse)
-src/app/             Routen, Layout, globals.css
+src/app/             Startseite (page.tsx), App-Routen in (app)/ (Weg unter /app/), Layout, globals.css
 src/components/      UI-Komponenten
 src/lib/config.ts    APP_NAME, APP_SUBTITLE, APP_TITLE – der Name ist vorläufig, nur hier pflegen
 src/lib/domain/      reine Logik ohne Framework, voll getestet
