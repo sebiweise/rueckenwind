@@ -95,3 +95,18 @@ export function attemptPeriod(attempts: ContactAttempt[]): { from: string; to: s
 	const sorted = attempts.map((attempt) => attempt.at).sort((a, b) => (a < b ? -1 : Number(a > b)));
 	return { from: sorted[0], to: sorted.at(-1)! };
 }
+
+/** At most this many collected stones are drawn; more are summed up as "+n". */
+export const MAX_PEBBLES = 12;
+/** Open stones after the collected ones. They fade out: there is no fixed target number. */
+export const OPEN_PEBBLES = 3;
+
+/**
+ * The stones for the progress card: one per proof, followed by a few fading open ones.
+ * Deliberately no goal or "x of y": insurers ask for different numbers.
+ */
+export function proofPebbles(proofCount: number): { filled: number; open: number; more: number } {
+	const count = Math.max(0, Math.floor(proofCount));
+	const filled = Math.min(count, MAX_PEBBLES);
+	return { filled, open: OPEN_PEBBLES, more: count - filled };
+}

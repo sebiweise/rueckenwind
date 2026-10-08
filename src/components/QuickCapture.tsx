@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
-import { PlusIcon } from '@/components/Icons';
+import { CheckCircleIcon, PlusIcon } from '@/components/Icons';
 import { getDb } from '@/lib/data/db';
 import { usePractices } from '@/lib/data/hooks';
 import { recordContact } from '@/lib/data/repository';
@@ -115,7 +115,12 @@ export function QuickCapture() {
 			</button>
 
 			<p className="toast" role="status" aria-live="polite">
-				{message}
+				{message && (
+					<>
+						<CheckCircleIcon />
+						<span>{message}</span>
+					</>
+				)}
 			</p>
 
 			<dialog ref={dialogRef} className="capture" aria-labelledby={`${ids}-title`} onClose={reset}>

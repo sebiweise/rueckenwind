@@ -249,7 +249,9 @@ function AttemptRow({ attempt }: Readonly<{ attempt: ContactAttempt }>) {
 				<p>
 					<time dateTime={attempt.at}>{formatDateTime(attempt.at)}</time>
 					{' · '}
-					<strong>{t(`result.${attempt.result}`)}</strong>
+					<strong className={`result-pill result-${attempt.result}`}>
+						{t(`result.${attempt.result}`)}
+					</strong>
 					{attempt.waitTimeWeeks ? ` · ${formatWaitTime(attempt.waitTimeWeeks)}` : ''}
 				</p>
 				{(attempt.notes || attempt.rawInput) && (

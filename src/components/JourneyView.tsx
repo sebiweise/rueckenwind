@@ -1,10 +1,11 @@
 'use client';
 
 import Link from 'next/link';
+import { CheckIcon } from '@/components/Icons';
 import { getDb } from '@/lib/data/db';
 import { useJourney } from '@/lib/data/hooks';
 import { setStepDone, updateJourney } from '@/lib/data/repository';
-import { nextStep, suggestedStage, type StageNumber } from '@/lib/domain';
+import { nextStep, stageCompletion, suggestedStage, type StageNumber } from '@/lib/domain';
 import type { ContentStep } from '@/lib/content/schema';
 import { t } from '@/lib/i18n';
 
@@ -39,27 +40,38 @@ export function JourneyView({ stages, steps }: Readonly<Props>) {
 			<ol className="timeline">
 				{stages.map((stage) => {
 					const isCurrent = stage.stage === current;
+					const isDone = !!journey && stageCompletion(steps, completed, stage.stage) === 1;
+					const className = [
+						'timeline-item',
+						isCurrent && 'timeline-current',
+						isDone && 'timeline-done'
+					]
+						.filter(Boolean)
+						.join(' ');
 					return (
 						<li
 							key={stage.stage}
-							className={isCurrent ? 'timeline-item timeline-current' : 'timeline-item'}
+							className={className}
 							aria-current={isCurrent ? 'step' : undefined}
 						>
 							<span className="timeline-number" aria-hidden="true">
-								{stage.stage}
+								{isDone ? <CheckIcon /> : stage.stage}
 							</span>
 							<div className="timeline-body">
-								<Link href={`/etappe/${stage.stage}/`} className="timeline-title">
-									{stage.title}
-								</Link>
+								<p className="timeline-head">
+									<Link href={`/etappe/${stage.stage}/`} className="timeline-title">
+										{stage.title}
+									</Link>
+									{isDone && <span className="visually-hidden">{t('journey.stageCompleted')}</span>}
+									{isCurrent && <span className="pill">{t('journey.current')}</span>}
+								</p>
 								{isCurrent && (
 									// Until the saved state has loaded, the card keeps its place invisibly so the
 									// page below does not jump (layout shift) once it appears.
 									<div className={journey ? 'card next-task' : 'card next-task next-task-pending'}>
-										<p className="eyebrow">{t('journey.current')}</p>
 										{task ? (
 											<>
-												<p className="muted">{t('journey.nextTask')}</p>
+												<p className="eyebrow">{t('journey.nextTask')}</p>
 												<p className="next-task-title">{task.title}</p>
 												<button
 													type="button"
