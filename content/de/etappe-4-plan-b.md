@@ -8,9 +8,12 @@ summary: >-
   Über die Kostenerstattung kann auch eine Privatpraxis infrage kommen.
 lastReviewed: 2026-10-08
 sources:
-  - https://www.krankenkasseninfo.de/ratgeber/62714/kein-therapieplatz-in-sicht-diese-moeglichkeiten-sind-oft-nicht-bekannt.html
-  - https://www.biallo.de/soziales/ratgeber/psychotherapie-kostenerstattung-krankenkasse/
-  - https://psychotherapeutenkammer-berlin.de/media/1923
+  - url: https://www.krankenkasseninfo.de/ratgeber/62714/kein-therapieplatz-in-sicht-diese-moeglichkeiten-sind-oft-nicht-bekannt.html
+    title: Kein Therapieplatz in Sicht?
+  - url: https://www.biallo.de/soziales/ratgeber/psychotherapie-kostenerstattung-krankenkasse/
+    title: 'Psychotherapie: Kostenerstattung für Privatpraxen'
+  - url: https://psychotherapeutenkammer-berlin.de/media/1923
+    title: Außervertragliche Psychotherapie
 steps:
   - id: planb-institut
     title: Frag bei einem Ausbildungsinstitut in deiner Nähe nach.

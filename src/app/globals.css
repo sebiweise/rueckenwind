@@ -379,14 +379,128 @@ details > ul {
 	font-size: 0.9375rem;
 }
 
-.content-meta details {
+/* Review date and sources: one quiet card at the end of a page */
+.meta-card {
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius);
+	background: var(--color-surface);
+	box-shadow: var(--shadow-card);
+	overflow: hidden;
+}
+
+.meta-reviewed {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2);
+	margin: 0;
+	padding: var(--space-2) var(--space-3);
+	min-height: var(--touch-target);
+}
+
+.meta-reviewed .icon {
+	flex: none;
+	width: 1.125rem;
+	height: 1.125rem;
+	color: var(--color-accent);
+}
+
+.content-meta .sources {
+	border: 0;
+	border-top: 1px solid var(--color-border);
+	border-radius: 0;
 	background: transparent;
 }
 
-.content-meta li a {
-	display: inline-flex;
+.sources > summary {
+	gap: var(--space-2);
+	color: var(--color-text);
+	list-style: none;
+}
+
+.sources > summary::-webkit-details-marker {
+	display: none;
+}
+
+.sources-count {
+	display: inline-grid;
+	place-items: center;
+	min-width: 1.5rem;
+	height: 1.5rem;
+	padding: 0 var(--space-1);
+	border-radius: 999px;
+	background: var(--color-soft);
+	color: var(--color-text);
+	font-size: 0.8125rem;
+	font-weight: 600;
+}
+
+.sources .chevron {
+	width: 1.25rem;
+	height: 1.25rem;
+	margin-left: auto;
+	color: var(--color-text-muted);
+	transition: transform 0.2s ease;
+}
+
+.sources[open] .chevron {
+	transform: rotate(180deg);
+}
+
+.sources-intro {
+	margin: 0;
+	padding: 0 var(--space-3) var(--space-2);
+}
+
+.content-meta .source-list {
+	margin: 0;
+	padding: 0 0 var(--space-1);
+	list-style: none;
+}
+
+.source-list a {
+	display: flex;
 	align-items: center;
+	gap: var(--space-3);
 	min-height: var(--touch-target);
+	padding: var(--space-2) var(--space-3);
+	border-top: 1px solid var(--color-border);
+	color: var(--color-text);
+	text-decoration: none;
+}
+
+.source-list a:hover .source-title {
+	text-decoration: underline;
+}
+
+.source-list a:focus-visible {
+	outline-offset: -3px;
+}
+
+.source-text {
+	display: flex;
+	gap: 0.125rem;
+	line-height: 1.35;
+	flex: 1;
+	flex-direction: column;
+	min-width: 0;
+}
+
+.source-title {
+	color: var(--color-accent);
+	font-weight: 600;
+	overflow-wrap: anywhere;
+}
+
+.source-site {
+	color: var(--color-text-muted);
+	font-size: 0.875rem;
+}
+
+.source-list .icon {
+	flex: none;
+	width: 1.125rem;
+	height: 1.125rem;
+	color: var(--color-text-muted);
 }
 
 .notice {
@@ -455,8 +569,8 @@ details > ul {
 	box-shadow: 0 0 0 0.25rem var(--color-soft);
 }
 
-/* Room for the bottom bar and the button above it at the end of every page */
-.shell {
+/* Room for the bottom bar and the button above it at the end of every app page */
+.shell:has(> .main-nav) {
 	padding-bottom: calc(6rem + env(safe-area-inset-bottom));
 }
 
@@ -506,7 +620,7 @@ details > ul {
 		display: none;
 	}
 
-	.shell {
+	.shell:has(> .main-nav) {
 		padding-bottom: calc(var(--touch-target) + var(--space-5));
 	}
 }
@@ -1224,5 +1338,92 @@ legend {
 @keyframes sheet-up {
 	from {
 		transform: translateY(100%);
+	}
+}
+
+/* Start page: a short introduction before the app */
+
+.start-hero {
+	padding: var(--space-3) 0 var(--space-2);
+}
+
+.start-hero .logo {
+	width: 4rem;
+	height: 4rem;
+	margin-bottom: var(--space-3);
+}
+
+.start-cta {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-2) var(--space-3);
+	margin: var(--space-4) 0;
+}
+
+.start-cta .button {
+	padding: var(--space-2) var(--space-4);
+	text-decoration: none;
+	font-size: 1.125rem;
+}
+
+.start .card h3 {
+	margin: 0 0 var(--space-2);
+	font-size: 1.125rem;
+}
+
+.start .card p {
+	margin: 0;
+}
+
+.start-grid {
+	display: grid;
+	gap: var(--space-3);
+	margin: var(--space-3) 0;
+}
+
+.start-grid .card {
+	margin: 0;
+}
+
+.start-stages {
+	margin: var(--space-2) 0 0;
+	padding-left: var(--space-4);
+	color: var(--color-text-muted);
+}
+
+.start-steps {
+	display: grid;
+	gap: var(--space-3);
+	margin: var(--space-3) 0;
+	padding: 0;
+	list-style: none;
+	counter-reset: step;
+}
+
+.start-steps li {
+	display: flex;
+	align-items: center;
+	gap: var(--space-3);
+	counter-increment: step;
+}
+
+.start-steps li::before {
+	content: counter(step);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	width: var(--touch-target);
+	height: var(--touch-target);
+	border-radius: 50%;
+	background: var(--color-soft);
+	color: var(--color-accent);
+	font-weight: 600;
+}
+
+@media (min-width: 48rem) {
+	.start-grid {
+		grid-template-columns: 1fr 1fr;
 	}
 }

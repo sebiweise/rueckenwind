@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { STAGES } from '@/lib/domain';
 import { loadOptionalPage, loadPage, loadStage, loadStages, loadSteps } from './load';
 import { renderContent } from './render';
+import { describeSource } from './schema';
 
 describe('content files', () => {
 	const stages = loadStages();
@@ -92,14 +93,47 @@ describe('renderContent', () => {
 		expect(page.steps).toEqual([{ id: 'a-b', title: 'Tu etwas.', stage: 3 }]);
 	});
 
+	it('accepts sources with and without a title', () => {
+		const page = renderContent(
+			'test',
+			valid.replace(
+				'sources: [https://example.org]',
+				'sources: [https://www.example.org/a.pdf, { url: https://example.org/b, title: Bericht }]'
+			)
+		);
+		expect(page.sources).toEqual([
+			{ url: 'https://www.example.org/a.pdf', site: 'example.org', pdf: true },
+			{ url: 'https://example.org/b', title: 'Bericht', site: 'example.org', pdf: false }
+		]);
+	});
+
 	it.each([
 		['no frontmatter', 'Nur Text', 'frontmatter missing'],
 		['a bad date', valid.replace('2026-10-08', '8.10.2026'), 'lastReviewed'],
 		['no sources', valid.replace('sources: [https://example.org]', 'sources: []'), 'sources'],
+		[
+			'a source without url',
+			valid.replace('sources: [https://example.org]', 'sources: [{ title: Ohne Link }]'),
+			'sources'
+		],
 		['a bad stage', valid.replace('stage: 3', 'stage: 9'), 'stage'],
 		['steps without stage', valid.replace('stage: 3\n', ''), 'steps need a stage'],
 		['a bad step id', valid.replace('id: a-b', 'id: A B'), 'kebab-case']
 	])('fails on %s', (_, source, message) => {
 		expect(() => renderContent('test', source)).toThrow(message);
+	});
+});
+
+describe('describeSource', () => {
+	it('reads the site from the URL and spots PDFs', () => {
+		expect(describeSource({ url: 'https://www.therapie.de/x/' })).toEqual({
+			url: 'https://www.therapie.de/x/',
+			site: 'therapie.de',
+			pdf: false
+		});
+		expect(describeSource({ url: 'https://a.de/F.PDF', title: 'Faltblatt' })).toMatchObject({
+			title: 'Faltblatt',
+			pdf: true
+		});
 	});
 });

@@ -8,8 +8,10 @@ summary: >-
   Danach bekommst du das Formular PTV 11. Heb es gut auf.
 lastReviewed: 2026-10-08
 sources:
-  - https://www.therapie.de/psyche/info/fragen/wichtigste-fragen/psychotherapie-kostenerstattung/
-  - https://www.krankenkasseninfo.de/ratgeber/62714/kein-therapieplatz-in-sicht-diese-moeglichkeiten-sind-oft-nicht-bekannt.html
+  - url: https://www.therapie.de/psyche/info/fragen/wichtigste-fragen/psychotherapie-kostenerstattung/
+    title: Psychotherapie per Kostenerstattung
+  - url: https://www.krankenkasseninfo.de/ratgeber/62714/kein-therapieplatz-in-sicht-diese-moeglichkeiten-sind-oft-nicht-bekannt.html
+    title: Kein Therapieplatz in Sicht?
 steps:
   - id: sprechstunde-termin
     title: Vereinbare einen Termin für eine Sprechstunde.
