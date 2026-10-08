@@ -1,16 +1,26 @@
 /*
- * Placeholder palette: calm and warm, final colours still to be decided.
- * Components only use these custom properties, so the palette can change in one place.
+ * Colour themes. Components only use these custom properties.
+ * - Salbei (default, no attribute): sage accent on a soft peach background.
+ * - Pfirsich (data-palette="pfirsich"): plum accent, peach and rose.
+ * - Himmel (data-palette="himmel"): lavender blue, mint, very round, rounded font.
+ * The choice is stored on the device (src/lib/theme) and set before the first paint.
+ * Every palette has a light and a dark variant; text colours keep WCAG AA contrast.
  */
 :root {
-	--color-bg: #fbf8f4;
-	--color-surface: #ffffff;
+	--color-bg: #fcf3ee;
+	--color-surface: #fffcfa;
 	--color-text: #2b2724;
-	--color-text-muted: #5c544d;
-	--color-accent: #2f6f62;
-	--color-border: #e4ddd4;
-	--color-input-border: #8a7f75;
+	--color-text-muted: #5e5550;
+	--color-accent: #3d6b57;
+	--color-border: #eedfd6;
+	--color-input-border: #8d7f76;
 	--color-on-accent: #ffffff;
+	--color-soft: #e2ecdf;
+	--color-highlight: #e6efe3;
+	--color-crisis-bg: #f3e1d0;
+	--color-crisis-text: #6a3f1d;
+	--shadow-card: none;
+	--shadow-float: 0 6px 16px -6px rgb(47 87 69 / 0.55);
 
 	--font-sans:
 		system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
@@ -19,21 +29,96 @@
 	--space-3: 1rem;
 	--space-4: 1.5rem;
 	--space-5: 2.5rem;
-	--radius: 0.75rem;
+	--radius: 1rem;
 	--content-width: 40rem;
 	--touch-target: 44px;
 }
 
+:root[data-palette='pfirsich'] {
+	--color-bg: #fcf3ee;
+	--color-surface: #ffffff;
+	--color-text: #36262f;
+	--color-text-muted: #6b5460;
+	--color-accent: #8a4a6b;
+	--color-border: #f0ddd3;
+	--color-input-border: #9a7c88;
+	--color-on-accent: #ffffff;
+	--color-soft: #f6dfe8;
+	--color-highlight: #fbe3d6;
+	--color-crisis-bg: #ece1f5;
+	--color-crisis-text: #57336d;
+	--shadow-card: 0 8px 22px -14px rgb(122 61 93 / 0.45);
+	--shadow-float: 0 6px 16px -6px rgb(138 74 107 / 0.6);
+	--radius: 1.25rem;
+}
+
+:root[data-palette='himmel'] {
+	--color-bg: #eff3fa;
+	--color-surface: #ffffff;
+	--color-text: #222a3c;
+	--color-text-muted: #545e78;
+	--color-accent: #4a58ad;
+	--color-border: #dde4f0;
+	--color-input-border: #7f8aa8;
+	--color-on-accent: #ffffff;
+	--color-soft: #e3e3f8;
+	--color-highlight: #e3ecf6;
+	--color-crisis-bg: #fde6dc;
+	--color-crisis-text: #7a3a20;
+	--shadow-card: 0 10px 26px -18px rgb(61 74 153 / 0.5);
+	--shadow-float: 0 6px 16px -6px rgb(74 88 173 / 0.6);
+	--font-sans: 'Nunito Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+	--radius: 1.5rem;
+}
+
 @media (prefers-color-scheme: dark) {
 	:root {
-		--color-bg: #1c1a18;
-		--color-surface: #262321;
-		--color-text: #f1ece6;
-		--color-text-muted: #c2b9b0;
-		--color-accent: #7cc4b3;
-		--color-border: #3a3633;
-		--color-input-border: #8c8279;
-		--color-on-accent: #1c1a18;
+		--color-bg: #1e1716;
+		--color-surface: #29201e;
+		--color-text: #f3ebe6;
+		--color-text-muted: #c4b5ad;
+		--color-accent: #93c7ab;
+		--color-border: #3d302c;
+		--color-input-border: #8f7f77;
+		--color-on-accent: #10201a;
+		--color-soft: #2a3a31;
+		--color-highlight: #263229;
+		--color-crisis-bg: #3a2c20;
+		--color-crisis-text: #f1cba6;
+		--shadow-card: none;
+		--shadow-float: 0 6px 16px -6px rgb(0 0 0 / 0.7);
+	}
+
+	:root[data-palette='pfirsich'] {
+		--color-bg: #1c1418;
+		--color-surface: #271c22;
+		--color-text: #f6e9ee;
+		--color-text-muted: #c9adba;
+		--color-accent: #eaa9c7;
+		--color-border: #3a2a32;
+		--color-input-border: #8a6d7b;
+		--color-on-accent: #2a1420;
+		--color-soft: #3b2733;
+		--color-highlight: #33232b;
+		--color-crisis-bg: #352a44;
+		--color-crisis-text: #e1cbf1;
+		--shadow-card: none;
+	}
+
+	:root[data-palette='himmel'] {
+		--color-bg: #131726;
+		--color-surface: #1c2134;
+		--color-text: #e9ecf8;
+		--color-text-muted: #aab2cd;
+		--color-accent: #aab5f6;
+		--color-border: #2c3351;
+		--color-input-border: #6c76a2;
+		--color-on-accent: #161a36;
+		--color-soft: #2a2e4e;
+		--color-highlight: #212842;
+		--color-crisis-bg: #3f2a25;
+		--color-crisis-text: #f6cbb8;
+		--shadow-card: none;
 	}
 }
 
@@ -144,15 +229,16 @@ h1 {
 	align-items: center;
 	min-height: var(--touch-target);
 	padding: 0 var(--space-3);
-	border: 2px solid var(--color-accent);
+	border: 2px solid transparent;
 	border-radius: 999px;
-	color: var(--color-accent);
+	background: var(--color-crisis-bg);
+	color: var(--color-crisis-text);
 	font-weight: 600;
 	text-decoration: none;
 }
 
 .crisis-button:hover {
-	background: var(--color-surface);
+	border-color: currentColor;
 }
 
 .site-footer {
@@ -287,7 +373,7 @@ details > ul {
 	min-height: var(--touch-target);
 	padding: var(--space-2) var(--space-3);
 	border: 1px solid var(--color-border);
-	border-radius: var(--radius);
+	border-radius: 999px;
 	background: var(--color-surface);
 	color: var(--color-text);
 	font: inherit;
@@ -398,6 +484,7 @@ legend {
 	border: 1px solid var(--color-border);
 	border-radius: var(--radius);
 	background: var(--color-surface);
+	box-shadow: var(--shadow-card);
 }
 
 .card > h2:first-child,
@@ -439,6 +526,7 @@ legend {
 	border-color: var(--color-accent);
 	background: var(--color-accent);
 	color: var(--color-on-accent);
+	box-shadow: 0 0 0 5px var(--color-soft);
 }
 
 .timeline-body {
@@ -455,6 +543,8 @@ legend {
 
 .next-task {
 	margin-top: var(--space-1);
+	border-color: transparent;
+	background: var(--color-highlight);
 }
 
 .next-task-pending {
@@ -556,7 +646,7 @@ legend {
 	color: var(--color-on-accent);
 	font: inherit;
 	font-weight: 600;
-	box-shadow: 0 4px 12px rgb(0 0 0 / 0.2);
+	box-shadow: var(--shadow-float);
 	cursor: pointer;
 }
 
@@ -674,4 +764,86 @@ legend {
 
 .toast:empty {
 	display: none;
+}
+
+/* Colour theme picker */
+
+.palette-options {
+	display: grid;
+	gap: var(--space-2);
+}
+
+.palette-option {
+	display: flex;
+	align-items: center;
+	gap: var(--space-3);
+	min-height: var(--touch-target);
+	padding: var(--space-2) var(--space-3);
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius);
+	background: var(--color-bg);
+	font-weight: 400;
+	cursor: pointer;
+}
+
+.palette-option:has(input:checked) {
+	border-color: var(--color-accent);
+	box-shadow: inset 0 0 0 1px var(--color-accent);
+}
+
+.palette-option:has(input:focus-visible) {
+	outline: 3px solid var(--color-accent);
+	outline-offset: 2px;
+}
+
+.palette-text {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-width: 0;
+}
+
+.palette-name {
+	font-weight: 600;
+}
+
+.palette-swatches {
+	display: flex;
+	gap: var(--space-1);
+}
+
+.palette-swatches span {
+	width: 1.25rem;
+	height: 1.25rem;
+	border: 1px solid var(--color-border);
+	border-radius: 50%;
+}
+
+/* Fixed previews, independent of the active theme */
+.palette-swatches[data-palette='salbei'] span:nth-child(1) {
+	background: #3d6b57;
+}
+.palette-swatches[data-palette='salbei'] span:nth-child(2) {
+	background: #e2ecdf;
+}
+.palette-swatches[data-palette='salbei'] span:nth-child(3) {
+	background: #fcf3ee;
+}
+.palette-swatches[data-palette='pfirsich'] span:nth-child(1) {
+	background: #8a4a6b;
+}
+.palette-swatches[data-palette='pfirsich'] span:nth-child(2) {
+	background: #f6dfe8;
+}
+.palette-swatches[data-palette='pfirsich'] span:nth-child(3) {
+	background: #fbd9c2;
+}
+.palette-swatches[data-palette='himmel'] span:nth-child(1) {
+	background: #4a58ad;
+}
+.palette-swatches[data-palette='himmel'] span:nth-child(2) {
+	background: #e3e3f8;
+}
+.palette-swatches[data-palette='himmel'] span:nth-child(3) {
+	background: #d6f0e4;
 }
