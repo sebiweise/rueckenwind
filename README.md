@@ -6,7 +6,7 @@
 
 Rückenwind ist eine Open-Source-Web-App (PWA), die gesetzlich Versicherte in Deutschland auf dem Weg zu einem ambulanten Psychotherapieplatz begleitet. Sie erklärt die Schritte verständlich, schlägt immer genau eine nächste kleine Aufgabe vor und dokumentiert jeden Kontaktversuch nebenbei. Am Ende entsteht daraus ein Nachweis-PDF für das Kostenerstattungsverfahren.
 
-> **Status:** Im Aufbau (Phase 1 von 6: Domänenlogik und Freitext-Parser). Noch nicht für den Einsatz gedacht.
+> **Status:** Im Aufbau (Phase 2 von 6: lokale Datenhaltung). Noch nicht für den Einsatz gedacht.
 
 > **Akute Krise?** Warte nicht auf einen Therapieplatz. Notruf **112**, Telefonseelsorge **0800 111 0 111** oder **0800 111 0 222** (kostenfrei, rund um die Uhr, auch Chat auf [telefonseelsorge.de](https://www.telefonseelsorge.de)) oder die psychiatrische Notaufnahme einer Klinik in deiner Nähe.
 
