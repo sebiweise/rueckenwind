@@ -10,3 +10,4 @@ docs/
 content/LICENSE
 AGENTS.md
 coverage/
+public/sw.js

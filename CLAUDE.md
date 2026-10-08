@@ -35,12 +35,12 @@ Bei Zielkonflikten gewinnen Datenschutz und Einfachheit.
 
 Next.js 16 weicht in Teilen von älterem Wissen ab: vor neuem Code die passende Anleitung in `node_modules/next/dist/docs/` lesen (siehe `AGENTS.md`). Zwei Build-Ziele aus einer Codebasis (`next.config.ts`): Standalone (Standard) und statischer Export. Die App muss in beiden funktionieren, CI baut und testet beide. Deshalb: keine Route Handler, Server Actions, Middleware/Proxy, dynamischen Server-Funktionen (`cookies()`, `headers()`) und kein `next/image`-Optimizer. Der Server liefert nur die App aus, Nutzerdaten bleiben im Browser. Keine `next/font/google` (lädt von Google); System-Fonts verwenden.
 
-Die CSP kommt aus `src/lib/csp.ts`: als `<meta>` in `src/app/layout.tsx` (für statische Hosts) und im Standalone-Betrieb zusätzlich als HTTP-Header samt weiterer Sicherheits-Header (`next.config.ts`). Sie erlaubt nur `'self'`; `script-src` braucht wegen der Next.js-Hydration `'unsafe-inline'`, Härtung per Hashes ist für Phase 6 vorgesehen. Imports aus `src/` laufen über `@/…`.
+Die CSP kommt aus `src/lib/csp.ts`: als `<meta>` mit Skript-Hashes in jeder vorgerenderten Seite (von `scripts/postbuild.mjs` eingefügt, im Dev-Server vom Layout) und im Standalone-Betrieb zusätzlich als HTTP-Header samt weiterer Sicherheits-Header (`next.config.ts`). Sie erlaubt nur `'self'`. `scripts/postbuild.mjs` fügt nach jedem Build den Meta-Tag ohne `'unsafe-inline'` für Skripte ein und baut den Service Worker (`src/sw.ts` → `sw.js`, Serwist). Deshalb immer `npm run build` bzw. `npm run build:static` nutzen, nie `next build` direkt. Imports aus `src/` laufen über `@/…`.
 
 ## Befehle
 
 ```sh
-npm ci              # Abhängigkeiten installieren (Node 22, siehe .nvmrc)
+npm ci              # Abhängigkeiten installieren (Node ≥ 22.18, siehe .nvmrc)
 npm run dev         # Entwicklungsserver
 npm run lint        # Prettier --check + ESLint
 npm run format      # Prettier --write
@@ -48,13 +48,15 @@ npm run check       # tsc --noEmit (Typen)
 npm test            # Vitest einmalig
 npm run test:coverage   # Vitest mit Abdeckung (Domäne ≥ 90 %, läuft in CI)
 npm run test:unit   # Vitest im Watch-Modus
-npm run build       # Standalone-Build nach .next/standalone (kopiert public/ und static/ dazu)
+npm run build       # Standalone-Build nach .next/standalone, danach postbuild (CSP-Hashes, sw.js, Assets)
 npm start           # Standalone-Server starten (PORT, HOSTNAME per Umgebungsvariable)
 npm run build:static            # statischer Export nach out/
 npm run preview:static          # out/ lokal auf Port 4173 ausliefern (scripts/preview.mjs)
 BASE_PATH=/rueckenwind npm run build:static   # wie auf GitHub Pages
 npm run test:e2e                # Playwright gegen den Standalone-Server (vorher: npx playwright install chromium)
 E2E_TARGET=static npm run test:e2e   # Playwright gegen den statischen Export
+node scripts/lighthouse.mjs     # Lighthouse ≥ 90 gegen laufenden Server (CHROME_PATH setzen)
+node scripts/screenshots.mjs    # README-Screenshots gegen laufenden Server
 docker build -t rueckenwind . && docker run -p 3000:3000 rueckenwind   # Container
 ```
 
@@ -65,12 +67,15 @@ content/de/          Infotexte (CC BY-SA 4.0), Frontmatter: title, stage, summar
 docs/                PLAN.md, WISSEN.md
 e2e/                 Playwright-Tests (*.e2e.ts)
 public/              statische Dateien (u. a. .nojekyll für GitHub Pages)
-scripts/             Hilfsskripte (Preview-Server, Standalone-Assets kopieren)
+scripts/             Hilfsskripte (postbuild, Preview-Server, Icons, Screenshots, Lighthouse)
 src/app/             Routen, Layout, globals.css
 src/components/      UI-Komponenten
 src/lib/config.ts    APP_NAME, APP_SUBTITLE, APP_TITLE – der Name ist vorläufig, nur hier pflegen
 src/lib/domain/      reine Logik ohne Framework, voll getestet
-src/lib/data/        Dexie, Repository-Funktionen, Export/Import
+src/lib/data/        Dexie, Repository-Funktionen, Export/Import, Hooks (hooks.ts nur im Client)
+src/lib/content/     Markdown aus content/de laden und prüfen (nur zur Build-Zeit)
+src/lib/pdf/         Nachweis-PDF (Definition testbar, pdfmake per dynamischem Import)
+src/sw.ts            Service Worker
 src/lib/i18n/        UI-Texte
 ```
 

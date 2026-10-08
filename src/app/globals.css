@@ -457,6 +457,10 @@ legend {
 	margin-top: var(--space-1);
 }
 
+.next-task-pending {
+	visibility: hidden;
+}
+
 .next-task .eyebrow {
 	color: var(--color-accent);
 }

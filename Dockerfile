@@ -12,10 +12,11 @@ RUN npm ci
 
 FROM node:${NODE_VERSION}-alpine AS build
 WORKDIR /app
-ENV NEXT_TELEMETRY_DISABLED=1
+ENV NEXT_TELEMETRY_DISABLED=1 \
+	NO_UPDATE_NOTIFIER=1
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npx next build
+RUN npm run build
 
 FROM node:${NODE_VERSION}-alpine AS runner
 WORKDIR /app

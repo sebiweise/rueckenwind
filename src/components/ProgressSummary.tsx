@@ -9,7 +9,17 @@ import { t } from '@/lib/i18n';
 export function ProgressSummary({ linkToContacts = false }: { linkToContacts?: boolean }) {
 	const practices = usePractices();
 	const attempts = useAttempts();
-	if (!practices || !attempts) return <p className="muted">{t('common.loading')}</p>;
+	// Prerendered and shown until the data has loaded: the same card with its fixed texts,
+	// so the page does not jump and the largest text is painted right away.
+	if (!practices || !attempts) {
+		return (
+			<section className="card progress" aria-labelledby="progress-title" aria-busy="true">
+				<h2 id="progress-title">{t('progress.title')}</h2>
+				<p className="progress-count muted">{t('common.loading')}</p>
+				<p className="muted">{t('progress.orientation')}</p>
+			</section>
+		);
+	}
 
 	const progress = computeProgress(practices, attempts);
 	const count =

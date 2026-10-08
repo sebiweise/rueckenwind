@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
-import { getDb } from '@/lib/data';
+import { getDb } from '@/lib/data/db';
 import { usePractices } from '@/lib/data/hooks';
 import { recordContact } from '@/lib/data/repository';
 import {
