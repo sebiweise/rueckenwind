@@ -7,7 +7,7 @@ import { t } from '@/lib/i18n';
 const noSubscription = () => () => {};
 
 /** Shows a calm hint when a page was not reviewed for twelve months, judged on the reader's date. */
-export function ReviewNotice({ lastReviewed }: { lastReviewed: string }) {
+export function ReviewNotice({ lastReviewed }: Readonly<{ lastReviewed: string }>) {
 	const overdue = useSyncExternalStore(
 		noSubscription,
 		() => isReviewOverdue(lastReviewed),

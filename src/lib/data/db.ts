@@ -32,7 +32,7 @@ let shared: RueckenwindDb | null = null;
 /** The app-wide database, opened on first use (never during server rendering). */
 export function getDb(): RueckenwindDb {
 	if (typeof indexedDB === 'undefined') {
-		throw new Error('IndexedDB is not available here.');
+		throw new TypeError('IndexedDB is not available here.');
 	}
 	shared ??= createDb();
 	return shared;

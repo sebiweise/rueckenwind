@@ -77,11 +77,11 @@ function PracticeForm({
 	initial,
 	onSave,
 	onCancel
-}: {
+}: Readonly<{
 	initial?: Practice;
 	onSave: (values: PracticeValues) => Promise<void>;
 	onCancel?: () => void;
-}) {
+}>) {
 	const id = useId();
 	const empty = { name: '', kind: 'kassenpraxis' as PracticeKind };
 	const [values, setValues] = useState<PracticeValues>(initial ?? empty);
@@ -147,7 +147,10 @@ function PracticeForm({
 	);
 }
 
-function PracticeCard({ practice, attempts }: { practice: Practice; attempts: ContactAttempt[] }) {
+function PracticeCard({
+	practice,
+	attempts
+}: Readonly<{ practice: Practice; attempts: ContactAttempt[] }>) {
 	const [editing, setEditing] = useState(false);
 	const titleId = useId();
 
@@ -172,7 +175,7 @@ function PracticeCard({ practice, attempts }: { practice: Practice; attempts: Co
 								<>
 									<dt>{t('contacts.phone')}</dt>
 									<dd>
-										<a href={`tel:${practice.phone.replace(/[^\d+]/g, '')}`}>{practice.phone}</a>
+										<a href={`tel:${practice.phone.replaceAll(/[^\d+]/g, '')}`}>{practice.phone}</a>
 									</dd>
 								</>
 							)}
@@ -204,7 +207,7 @@ function PracticeCard({ practice, attempts }: { practice: Practice; attempts: Co
 							type="button"
 							className="button button-quiet"
 							onClick={() => {
-								if (window.confirm(t('contacts.deletePracticeConfirm'))) {
+								if (globalThis.confirm(t('contacts.deletePracticeConfirm'))) {
 									void deletePractice(getDb(), practice.id);
 								}
 							}}
@@ -231,7 +234,7 @@ function PracticeCard({ practice, attempts }: { practice: Practice; attempts: Co
 	);
 }
 
-function AttemptRow({ attempt }: { attempt: ContactAttempt }) {
+function AttemptRow({ attempt }: Readonly<{ attempt: ContactAttempt }>) {
 	const [editing, setEditing] = useState(false);
 	const id = useId();
 	const [at, setAt] = useState(toDateTimeLocal(attempt.at));
@@ -339,7 +342,7 @@ function AttemptRow({ attempt }: { attempt: ContactAttempt }) {
 					type="button"
 					className="button button-quiet"
 					onClick={() => {
-						if (window.confirm(t('contacts.deleteAttemptConfirm'))) {
+						if (globalThis.confirm(t('contacts.deleteAttemptConfirm'))) {
 							void deleteAttempt(getDb(), attempt.id);
 						}
 					}}
