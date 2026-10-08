@@ -6,7 +6,7 @@
 
 Rückenwind ist eine Open-Source-Web-App (PWA), die gesetzlich Versicherte in Deutschland auf dem Weg zu einem ambulanten Psychotherapieplatz begleitet. Sie erklärt die Schritte verständlich, schlägt immer genau eine nächste kleine Aufgabe vor und dokumentiert jeden Kontaktversuch nebenbei. Am Ende entsteht daraus ein Nachweis-PDF für das Kostenerstattungsverfahren.
 
-> **Status:** Im Aufbau (Phase 2 von 6: lokale Datenhaltung). Noch nicht für den Einsatz gedacht.
+> **Status:** Im Aufbau (Phase 3 von 6: Infotexte, Krisen- und Hinweisseite). Noch nicht für den Einsatz gedacht.
 
 > **Akute Krise?** Warte nicht auf einen Therapieplatz. Notruf **112**, Telefonseelsorge **0800 111 0 111** oder **0800 111 0 222** (kostenfrei, rund um die Uhr, auch Chat auf [telefonseelsorge.de](https://www.telefonseelsorge.de)) oder die psychiatrische Notaufnahme einer Klinik in deiner Nähe.
 
@@ -41,6 +41,7 @@ npm run check       # Typprüfung (tsc)
 npm test            # Unit-Tests (Vitest)
 npm run test:coverage   # Unit-Tests mit Abdeckung (Domäne ≥ 90 %)
 npm run test:e2e    # E2E-Tests (Playwright + axe-core); vorher einmal: npx playwright install chromium
+                    # oder vorhandenes Chromium nutzen: PLAYWRIGHT_CHROMIUM_PATH=/pfad/zu/chrome
 npm run build       # Produktions-Build (Standalone-Server)
 npm start           # Produktions-Build starten (http://localhost:3000)
 ```
@@ -97,7 +98,7 @@ Die GitHub-Pages-Variante baut und veröffentlicht der Workflow `pages.yml` bei 
 
 ## Mitmachen
 
-Korrekturen an Infotexten sind besonders willkommen, auch ohne Programmierkenntnisse. Wie das geht, steht in [CONTRIBUTING.md](CONTRIBUTING.md). Bitte beachte den [Verhaltenskodex](CODE_OF_CONDUCT.md).
+Die Infotexte liegen als Markdown in [`content/de/`](content/de/README.md). Korrekturen daran sind besonders willkommen, auch ohne Programmierkenntnisse. Wie das geht, steht in [CONTRIBUTING.md](CONTRIBUTING.md). Bitte beachte den [Verhaltenskodex](CODE_OF_CONDUCT.md).
 
 ## Lizenz
 
