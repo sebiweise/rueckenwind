@@ -8,7 +8,10 @@ import type { ContentStep } from '@/lib/content/schema';
 import { t } from '@/lib/i18n';
 
 /** The small tasks of one stage as checkboxes, plus "Hier stehe ich gerade". */
-export function StageTasks({ stage, steps }: { stage: StageNumber; steps: ContentStep[] }) {
+export function StageTasks({
+	stage,
+	steps
+}: Readonly<{ stage: StageNumber; steps: ContentStep[] }>) {
 	const journey = useJourney();
 	if (!journey) return null;
 	const isCurrent = journey.currentStage === stage;

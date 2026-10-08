@@ -68,7 +68,9 @@ test('inline scripts need a hash: the CSP has no unsafe-inline for scripts', asy
 			})
 	);
 	expect(blocked).toBe('script-src-elem');
-	expect(await page.evaluate(() => (window as { injected?: boolean }).injected)).toBeUndefined();
+	expect(
+		await page.evaluate(() => (globalThis as { injected?: boolean }).injected)
+	).toBeUndefined();
 });
 
 test('dark mode has no accessibility violations on every page', async ({ page }) => {
