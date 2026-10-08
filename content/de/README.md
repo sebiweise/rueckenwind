@@ -8,6 +8,7 @@ Hier liegen die Infotexte als Markdown. Sie werden beim Build in die App gerende
 | `krise.md`                | Krisenhilfe (`/krise/`)                           |
 | `hinweis.md`              | Disclaimer (`/hinweis/`)                          |
 | `ueber.md`                | Über die App (`/ueber/`)                          |
+| `hilfen.md`               | Nützliche Hilfen, externe Angebote (`/hilfen/`)   |
 | `impressum.md` (optional) | wird auf der Über-Seite angehängt, wenn vorhanden |
 
 ## Aufbau einer Datei

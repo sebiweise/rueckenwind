@@ -48,6 +48,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 							<Link href="/hinweis/">{t('footer.disclaimer')}</Link>
 						</p>
 						<p>
+							<Link href="/hilfen/">{t('nav.helpers')}</Link>
+						</p>
+						<p>
 							<Link href="/ueber/">{t('nav.about')}</Link>
 						</p>
 					</footer>
