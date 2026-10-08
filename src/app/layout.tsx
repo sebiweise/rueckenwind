@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import Link from 'next/link';
 import { APP_NAME, APP_TITLE } from '@/lib/config';
 import { contentSecurityPolicy } from '@/lib/csp';
 import { t } from '@/lib/i18n';
@@ -28,11 +29,21 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 			<body>
 				<div className="shell">
 					<header className="site-header">
-						<span className="brand">{APP_NAME}</span>
+						<Link href="/" className="brand">
+							{APP_NAME}
+						</Link>
+						<Link href="/krise/" className="crisis-button">
+							{t('nav.crisisShort')}
+						</Link>
 					</header>
 					<main>{children}</main>
 					<footer className="site-footer">
-						<p>{t('footer.disclaimer')}</p>
+						<p>
+							<Link href="/hinweis/">{t('footer.disclaimer')}</Link>
+						</p>
+						<p>
+							<Link href="/ueber/">{t('nav.about')}</Link>
+						</p>
 					</footer>
 				</div>
 			</body>
