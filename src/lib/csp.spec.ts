@@ -16,3 +16,18 @@ describe('contentSecurityPolicy', () => {
 		expect(csp).toContain("connect-src 'self' ws:");
 	});
 });
+
+describe('contentSecurityPolicy with script hashes', () => {
+	it('replaces unsafe-inline for scripts with the hashes', () => {
+		const csp = contentSecurityPolicy(false, ['abc=', 'def=']);
+		const scriptSrc = csp.split('; ').find((d) => d.startsWith('script-src'));
+		expect(scriptSrc).toBe("script-src 'self' 'sha256-abc=' 'sha256-def='");
+	});
+
+	it('allows no inline scripts at all without hashes on the page', () => {
+		const scriptSrc = contentSecurityPolicy(false, [])
+			.split('; ')
+			.find((d) => d.startsWith('script-src'));
+		expect(scriptSrc).toBe("script-src 'self'");
+	});
+});
