@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
+import { PlusIcon } from '@/components/Icons';
 import { getDb } from '@/lib/data/db';
 import { usePractices } from '@/lib/data/hooks';
 import { recordContact } from '@/lib/data/repository';
@@ -109,7 +110,8 @@ export function QuickCapture() {
 	return (
 		<>
 			<button type="button" className="fab" onClick={open}>
-				<span aria-hidden="true">+</span> {t('capture.open')}
+				<PlusIcon />
+				<span className="fab-label">{t('capture.open')}</span>
 			</button>
 
 			<p className="toast" role="status" aria-live="polite">

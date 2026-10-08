@@ -19,19 +19,19 @@ Bei Zielkonflikten gewinnen Datenschutz und Einfachheit.
 
 ## Tech-Stack
 
-| Bereich  | Wahl                                                                                                                                                 |
-| -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| App      | Next.js 16 (App Router) + React 19 + TypeScript                                                                                                      |
-| Hosting  | Standalone-Server (Standard, Dockerfile, GHCR) oder statischer Export (`NEXT_OUTPUT=export`, GitHub Pages)                                           |
-| Speicher | IndexedDB über Dexie.js (Phase 2)                                                                                                                    |
-| Inhalte  | Markdown in `content/de/`, zur Build-Zeit gerendert (Phase 3)                                                                                        |
-| PDF      | pdfmake, clientseitig (Phase 5)                                                                                                                      |
-| PWA      | Serwist `@serwist/next` (Phase 6)                                                                                                                    |
-| Styling  | Plain CSS mit Custom Properties in `src/app/globals.css`, System-Font-Stack                                                                          |
-| i18n     | JSON-Schlüssel in `src/lib/i18n/de.json`, Zugriff über `t()`                                                                                         |
-| Tests    | Vitest (Unit), Playwright + `@axe-core/playwright` (E2E)                                                                                             |
-| Qualität | ESLint (`eslint-config-next`), Prettier, `tsc --noEmit`                                                                                              |
-| CI/CD    | GitHub Actions: `ci.yml` (Lint, Check, Test, beide Builds, E2E für beide), `docker.yml` (Image bauen, prüfen, nach GHCR), `pages.yml` (GitHub Pages) |
+| Bereich  | Wahl                                                                                                                                                                    |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| App      | Next.js 16 (App Router) + React 19 + TypeScript                                                                                                                         |
+| Hosting  | Standalone-Server (Standard, Dockerfile, GHCR) oder statischer Export (`NEXT_OUTPUT=export`, GitHub Pages)                                                              |
+| Speicher | IndexedDB über Dexie.js (Phase 2)                                                                                                                                       |
+| Inhalte  | Markdown in `content/de/`, zur Build-Zeit gerendert (Phase 3)                                                                                                           |
+| PDF      | pdfmake, clientseitig (Phase 5)                                                                                                                                         |
+| PWA      | Serwist `@serwist/next` (Phase 6)                                                                                                                                       |
+| Styling  | Plain CSS mit Custom Properties in `src/app/globals.css`, System-Font-Stack; Farbthemen per `data-palette` (`src/lib/theme`), Thema Himmel nutzt Nunito selbst gehostet |
+| i18n     | JSON-Schlüssel in `src/lib/i18n/de.json`, Zugriff über `t()`                                                                                                            |
+| Tests    | Vitest (Unit), Playwright + `@axe-core/playwright` (E2E)                                                                                                                |
+| Qualität | ESLint (`eslint-config-next`), Prettier, `tsc --noEmit`                                                                                                                 |
+| CI/CD    | GitHub Actions: `ci.yml` (Lint, Check, Test, beide Builds, E2E für beide), `docker.yml` (Image bauen, prüfen, nach GHCR), `pages.yml` (GitHub Pages)                    |
 
 Next.js 16 weicht in Teilen von älterem Wissen ab: vor neuem Code die passende Anleitung in `node_modules/next/dist/docs/` lesen (siehe `AGENTS.md`). Zwei Build-Ziele aus einer Codebasis (`next.config.ts`): Standalone (Standard) und statischer Export. Die App muss in beiden funktionieren, CI baut und testet beide. Deshalb: keine Route Handler, Server Actions, Middleware/Proxy, dynamischen Server-Funktionen (`cookies()`, `headers()`) und kein `next/image`-Optimizer. Der Server liefert nur die App aus, Nutzerdaten bleiben im Browser. Keine `next/font/google` (lädt von Google); System-Fonts verwenden.
 

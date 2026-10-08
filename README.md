@@ -32,7 +32,7 @@ Screenshots neu erzeugen: Server starten (`npm start` mit `PORT=4173`), dann `no
 - **Kontakte und Fortschritt:** alle Praxen mit Telefonzeiten und Kontaktversuchen. Absagen zählen sichtbar als gesammelte Nachweise.
 - **Nachweis-PDF:** eine Liste aller Anfragen für den Antrag auf Kostenerstattung, erzeugt im Browser.
 - **Sichern, wiederherstellen, löschen:** als JSON-Datei, ohne Konto.
-- **Offline nutzbar und installierbar** (PWA), hell und dunkel, barrierearm (WCAG 2.2 AA als Ziel).
+- **Offline nutzbar und installierbar** (PWA), hell und dunkel, drei Farbthemen zur Wahl (Salbei, Pfirsich, Himmel), barrierearm (WCAG 2.2 AA als Ziel).
 - **Krisenhilfe** auf jeder Seite erreichbar.
 
 ## Datenschutz-Versprechen

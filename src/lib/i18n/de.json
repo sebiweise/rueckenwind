@@ -163,5 +163,18 @@
 	"proof.creating": "PDF wird erstellt …",
 	"proof.created": "Dein Nachweis-PDF ist fertig.",
 	"proof.error": "Das PDF konnte nicht erstellt werden. Versuch es bitte noch einmal.",
-	"progress.createProof": "Nachweis-PDF erstellen"
+	"progress.createProof": "Nachweis-PDF erstellen",
+	"theme.title": "Farben",
+	"theme.lead": "Such dir die Farben aus, die sich für dich gut anfühlen. Die Wahl gilt nur auf diesem Gerät.",
+	"theme.salbei": "Salbei",
+	"theme.salbeiText": "Ruhiges Grün auf zartem Pfirsich. Die Standardfarben.",
+	"theme.pfirsich": "Pfirsich",
+	"theme.pfirsichText": "Warm wie Morgenlicht, mit Pflaume und Rosé.",
+	"theme.himmel": "Himmel",
+	"theme.himmelText": "Lavendelblau und Mint, besonders rund und leicht.",
+	"nav.homeShort": "Weg",
+	"nav.dataShort": "Nachweis",
+	"nav.more": "Mehr",
+	"more.title": "Mehr",
+	"more.lead": "Hilfen, Infos zur App und deine Farben."
 }

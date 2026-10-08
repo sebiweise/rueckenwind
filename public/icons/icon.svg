@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-	<!-- Placeholder icon until colours and logo are decided (issue #3). -->
-	<rect width="512" height="512" rx="112" fill="#2f6f62"/>
-	<g fill="none" stroke="#fbf8f4" stroke-linecap="round" stroke-width="36">
-		<path d="M112 196h208a48 48 0 1 0-48-48"/>
-		<path d="M112 276h268a52 52 0 1 1-52 52"/>
-		<path d="M112 356h120"/>
+	<!-- Rückenwind: three soft wind lines (same mark as src/components/Logo.tsx), Salbei palette. -->
+	<rect width="512" height="512" rx="128" fill="#3d6b57"/>
+	<g fill="none" stroke="#fcf3ee" stroke-linecap="round" stroke-width="2.6" transform="translate(-8 10) scale(16)">
+		<path d="M7 12.5c4.5-2.2 9 .8 13.5-.8 2.2-.8 2.6-3.4.6-4"/>
+		<path d="M6.5 17.5c6-1.6 11.5.9 18-.8"/>
+		<path d="M9.5 22.5c3.6-.9 7 .3 10.5-.6"/>
 	</g>
 </svg>
