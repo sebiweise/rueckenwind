@@ -5,7 +5,8 @@ summary: >-
   Hol dir jetzt Hilfe. Du bist damit nicht allein.
 lastReviewed: 2026-10-08
 sources:
-  - https://www.telefonseelsorge.de
+  - url: https://www.telefonseelsorge.de
+    title: TelefonSeelsorge
 ---
 
 ## Notruf

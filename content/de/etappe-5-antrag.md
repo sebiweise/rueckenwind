@@ -8,10 +8,14 @@ summary: >-
   Wird der Antrag abgelehnt, kannst du Widerspruch einlegen.
 lastReviewed: 2026-10-08
 sources:
-  - https://www.biallo.de/soziales/ratgeber/psychotherapie-kostenerstattung-krankenkasse/
-  - https://www.therapie.de/psyche/info/fragen/wichtigste-fragen/psychotherapie-kostenerstattung/
-  - https://www.betanet.de/kostenerstattung-psychotherapie-privatpraxis.html
-  - https://kjp-dauch.de/portfolio/kosten/DPtV-Faltblatt_Kosten.pdf
+  - url: https://www.biallo.de/soziales/ratgeber/psychotherapie-kostenerstattung-krankenkasse/
+    title: 'Psychotherapie: Kostenerstattung für Privatpraxen'
+  - url: https://www.therapie.de/psyche/info/fragen/wichtigste-fragen/psychotherapie-kostenerstattung/
+    title: Psychotherapie per Kostenerstattung
+  - url: https://www.betanet.de/kostenerstattung-psychotherapie-privatpraxis.html
+    title: Fallbeispiel Kostenerstattung
+  - url: https://kjp-dauch.de/portfolio/kosten/DPtV-Faltblatt_Kosten.pdf
+    title: DPtV – Patienteninformation Kostenerstattung
 steps:
   - id: antrag-kasse-fragen
     title: Frag deine Kasse, welche Unterlagen sie braucht.
