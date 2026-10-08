@@ -6,7 +6,7 @@ Alle wichtigen Änderungen an Rückenwind. Format nach [Keep a Changelog](https:
 
 ## [0.1.0] – noch offen
 
-Erste Version mit dem vollen MVP-Umfang aus [docs/PLAN.md](docs/PLAN.md). Vor der Veröffentlichung stehen noch die fachliche Prüfung der Infotexte und die Markenrecherche aus.
+Erste Version mit dem vollen MVP-Umfang aus [docs/PLAN.md](docs/PLAN.md). Vor der Veröffentlichung stehen noch die fachliche Prüfung der Infotexte (#11) und die Markenrecherche (#4) aus. Zum Ausprobieren gibt es vorher Testversionen (`v0.1.0-beta.1`, 2026-10-08).
 
 ### Neu
 
