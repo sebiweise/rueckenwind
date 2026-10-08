@@ -13,3 +13,12 @@ describe('t', () => {
 		}
 	});
 });
+
+describe('t with values', () => {
+	it('fills placeholders and keeps unknown ones', () => {
+		expect(t('content.lastReviewed', { date: '8. Oktober 2026' })).toBe(
+			'Zuletzt geprüft am 8. Oktober 2026'
+		);
+		expect(t('content.lastReviewed', {})).toBe('Zuletzt geprüft am {date}');
+	});
+});
