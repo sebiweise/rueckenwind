@@ -1,6 +1,9 @@
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vitest/config';
 
+// Dates in snapshots (PDF layout) must not depend on the machine's time zone.
+process.env.TZ = 'UTC';
+
 export default defineConfig({
 	resolve: {
 		alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) }
