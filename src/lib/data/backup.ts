@@ -11,6 +11,9 @@ import {
 import { SCHEMA_VERSION, type RueckenwindDb } from './db';
 import { clearAll, getJourney } from './repository';
 
+// The CSP forbids eval; without this, zod probes `new Function` and causes a CSP violation report.
+z.config({ jitless: true });
+
 export const EXPORT_APP_ID = 'rueckenwind';
 
 const isoDate = z.string().refine((value) => !Number.isNaN(Date.parse(value)), 'invalid date');
