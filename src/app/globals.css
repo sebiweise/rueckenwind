@@ -21,6 +21,9 @@
 	--color-crisis-text: #6a3f1d;
 	--shadow-card: none;
 	--shadow-float: 0 6px 16px -6px rgb(47 87 69 / 0.55);
+	/* Soft colour glow behind the page, as in the Pfirsich mockup */
+	--glow-1: #fbcfb2;
+	--glow-2: #d6e6d3;
 
 	--font-sans:
 		system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
@@ -50,6 +53,8 @@
 	--shadow-card: 0 8px 22px -14px rgb(122 61 93 / 0.45);
 	--shadow-float: 0 6px 16px -6px rgb(138 74 107 / 0.6);
 	--radius: 1.25rem;
+	--glow-1: #fcc9a6;
+	--glow-2: #efc6de;
 }
 
 :root[data-palette='himmel'] {
@@ -69,6 +74,8 @@
 	--shadow-float: 0 6px 16px -6px rgb(74 88 173 / 0.6);
 	--font-sans: 'Nunito Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 	--radius: 1.5rem;
+	--glow-1: #d6dafb;
+	--glow-2: #cdeee0;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -87,6 +94,8 @@
 		--color-crisis-text: #f1cba6;
 		--shadow-card: none;
 		--shadow-float: 0 6px 16px -6px rgb(0 0 0 / 0.7);
+		--glow-1: #4d3022;
+		--glow-2: #21382b;
 	}
 
 	:root[data-palette='pfirsich'] {
@@ -102,6 +111,8 @@
 		--color-highlight: #33232b;
 		--color-crisis-bg: #352a44;
 		--color-crisis-text: #e1cbf1;
+		--glow-1: #5a3423;
+		--glow-2: #4d2a42;
 		--shadow-card: none;
 	}
 
@@ -118,6 +129,8 @@
 		--color-highlight: #212842;
 		--color-crisis-bg: #3f2a25;
 		--color-crisis-text: #f6cbb8;
+		--glow-1: #3a2f63;
+		--glow-2: #1d3d38;
 		--shadow-card: none;
 	}
 }
@@ -139,6 +152,27 @@ body {
 	font-family: var(--font-sans);
 	font-size: 1.0625rem;
 	line-height: 1.6;
+}
+
+/* Two soft colour glows behind everything, fixed to the screen. Purely decorative.
+ * At 75 % strength muted text and links keep 4.5:1 contrast even at the glow centre. */
+body::before {
+	content: '';
+	position: fixed;
+	inset: 0;
+	z-index: -1;
+	background:
+		radial-gradient(
+			28rem 24rem at 100% 0%,
+			color-mix(in srgb, var(--glow-1) 75%, transparent),
+			transparent 70%
+		),
+		radial-gradient(
+			24rem 22rem at 0% 18%,
+			color-mix(in srgb, var(--glow-2) 75%, transparent),
+			transparent 70%
+		);
+	pointer-events: none;
 }
 
 a {
