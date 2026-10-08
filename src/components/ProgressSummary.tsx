@@ -33,9 +33,10 @@ export function ProgressSummary({ linkToContacts = false }: { linkToContacts?: b
 			)}
 			{progress.tssContacted && <p>{t('progress.tss')}</p>}
 			<p className="muted">{t('progress.orientation')}</p>
-			{linkToContacts && progress.attemptCount > 0 && (
-				<p>
-					<Link href="/kontakte/">{t('nav.contacts')}</Link>
+			{progress.attemptCount > 0 && (
+				<p className="hint-actions">
+					{linkToContacts && <Link href="/kontakte/">{t('nav.contacts')}</Link>}
+					<Link href="/daten/#nachweis">{t('progress.createProof')}</Link>
 				</p>
 			)}
 		</section>
