@@ -10,7 +10,7 @@ describe('content files', () => {
 		expect(stages.map((page) => page.stage)).toEqual([...STAGES]);
 	});
 
-	it.each(['krise', 'hinweis', 'ueber'])('has the page "%s"', (slug) => {
+	it.each(['krise', 'hinweis', 'ueber', 'hilfen'])('has the page "%s"', (slug) => {
 		const page = loadPage(slug);
 		expect(page.title).not.toBe('');
 		expect(page.sources.length).toBeGreaterThan(0);
@@ -45,6 +45,17 @@ describe('content files', () => {
 		for (const number of ['tel:112', 'tel:08001110111', 'tel:08001110222']) {
 			expect(html).toContain(number);
 		}
+	});
+
+	it('links helpers externally only, opening in a new tab', () => {
+		const html = loadPage('hilfen')
+			.sections.map((s) => s.html)
+			.join('');
+		expect(html).toContain(
+			'<a href="https://hdsunflower.com/" rel="noopener noreferrer" target="_blank"'
+		);
+		expect(html).not.toMatch(/<(img|script|iframe)\b/);
+		expect(html).not.toContain('TODO');
 	});
 
 	it('loads one stage and treats a missing optional page as absent', () => {
