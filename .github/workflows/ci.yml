@@ -54,3 +54,22 @@ jobs:
           name: playwright-report-${{ matrix.target }}
           path: test-results/
           retention-days: 7
+
+  lighthouse:
+    name: Lighthouse (≥ 90)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - name: Lighthouse gegen den Standalone-Server
+        run: |
+          PORT=4173 HOSTNAME=localhost npm start &
+          for i in $(seq 30); do curl -sf http://localhost:4173/ > /dev/null && break; sleep 1; done
+          CHROME_PATH=$(node -e "console.log(require('@playwright/test').chromium.executablePath())") \
+            node scripts/lighthouse.mjs http://localhost:4173/

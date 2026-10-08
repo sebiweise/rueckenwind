@@ -13,6 +13,7 @@ export default defineConfig([
 		'next-env.d.ts',
 		'test-results/**',
 		'playwright-report/**',
-		'coverage/**'
+		'coverage/**',
+		'public/sw.js*'
 	])
 ]);
