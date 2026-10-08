@@ -8,7 +8,7 @@ import { tmpdir } from 'node:os';
 import path from 'node:path';
 
 const base = process.argv[2] ?? 'http://localhost:4173/';
-const pages = ['', 'kontakte/', 'daten/', 'etappe/3/', 'krise/'];
+const pages = ['', 'app/', 'kontakte/', 'daten/', 'etappe/3/', 'krise/'];
 const categories = ['performance', 'accessibility', 'best-practices'];
 const minimum = 0.9;
 const runs = 3;

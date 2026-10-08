@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
 test('the app works offline after the first visit', async ({ page, context }) => {
-	await page.goto('./');
+	await page.goto('app/');
 	await page.evaluate(async () => {
 		await navigator.serviceWorker.ready;
 	});
@@ -15,7 +15,8 @@ test('the app works offline after the first visit', async ({ page, context }) =>
 		['etappe/3/', 'Platzsuche'],
 		['kontakte/', 'Kontakte'],
 		['krise/', 'Hilfe in der Krise'],
-		['./', 'Rückenwind']
+		['./', 'Rückenwind'],
+		['app/', 'Rückenwind']
 	]) {
 		await page.goto(path);
 		await expect(page.getByRole('heading', { level: 1 })).toContainText(heading);
@@ -39,6 +40,8 @@ test('the web app manifest is valid and installable', async ({ page, request }) 
 	expect(href).toBeTruthy();
 	const manifest = await (await request.get(new URL(href!, page.url()).href)).json();
 	expect(manifest).toMatchObject({ short_name: 'Rückenwind', display: 'standalone', lang: 'de' });
+	// The installed app opens the app, not the start page.
+	expect(new URL(manifest.start_url, page.url()).pathname).toMatch(/\/app\/$/);
 	for (const icon of manifest.icons) {
 		const response = await request.get(new URL(icon.src, page.url()).href);
 		expect(response.ok()).toBe(true);
@@ -75,7 +78,7 @@ test('inline scripts need a hash: the CSP has no unsafe-inline for scripts', asy
 
 test('dark mode has no accessibility violations on every page', async ({ page }) => {
 	await page.emulateMedia({ colorScheme: 'dark', reducedMotion: 'reduce' });
-	for (const path of ['./', 'kontakte/', 'daten/', 'etappe/5/', 'krise/', 'ueber/']) {
+	for (const path of ['./', 'app/', 'kontakte/', 'daten/', 'etappe/5/', 'krise/', 'ueber/']) {
 		await page.goto(path);
 		await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 		expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);

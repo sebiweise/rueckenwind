@@ -1,9 +1,5 @@
 import type { Metadata, Viewport } from 'next';
 import Link from 'next/link';
-import { HeartIcon } from '@/components/Icons';
-import { Logo } from '@/components/Logo';
-import { MainNav } from '@/components/MainNav';
-import { QuickCapture } from '@/components/QuickCapture';
 import { ServiceWorker } from '@/components/ServiceWorker';
 import { APP_NAME, APP_TITLE } from '@/lib/config';
 import { contentSecurityPolicy } from '@/lib/csp';
@@ -51,18 +47,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 			</head>
 			<body>
 				<div className="shell">
-					<header className="site-header">
-						<Link href="/" className="brand">
-							<Logo />
-							{APP_NAME}
-						</Link>
-						<Link href="/krise/" className="crisis-button">
-							<HeartIcon />
-							{t('nav.crisisShort')}
-						</Link>
-					</header>
-					<MainNav />
-					<main>{children}</main>
+					{/* Header and main come from the start page or the app layout in (app)/. */}
+					{children}
 					<footer className="site-footer">
 						<p>
 							<Link href="/hinweis/">{t('footer.disclaimer')}</Link>
@@ -74,7 +60,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 							<Link href="/ueber/">{t('nav.about')}</Link>
 						</p>
 					</footer>
-					<QuickCapture />
 					<ServiceWorker />
 				</div>
 			</body>

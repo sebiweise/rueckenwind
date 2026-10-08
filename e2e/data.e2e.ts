@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
 
 test('export, delete all and import restore the same data', async ({ page }) => {
-	await page.goto('./');
+	await page.goto('app/');
 	await page.getByRole('button', { name: 'Kontakt notieren' }).click();
 	await page
 		.getByLabel('Was ist passiert? Eine Zeile reicht.')
