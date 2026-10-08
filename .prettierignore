@@ -9,3 +9,4 @@ playwright-report/
 docs/
 content/LICENSE
 AGENTS.md
+coverage/

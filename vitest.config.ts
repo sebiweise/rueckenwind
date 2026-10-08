@@ -8,6 +8,14 @@ export default defineConfig({
 	test: {
 		environment: 'node',
 		include: ['src/**/*.{test,spec}.{ts,tsx}'],
-		expect: { requireAssertions: true }
+		expect: { requireAssertions: true },
+		coverage: {
+			provider: 'v8',
+			include: ['src/lib/**/*.ts'],
+			exclude: ['src/lib/**/*.spec.ts', 'src/lib/**/index.ts'],
+			thresholds: {
+				'src/lib/domain/**': { statements: 90, branches: 90, functions: 90, lines: 90 }
+			}
+		}
 	}
 });
