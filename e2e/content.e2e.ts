@@ -9,7 +9,8 @@ const PAGES = [
 	'etappe/5/',
 	'krise/',
 	'hinweis/',
-	'ueber/'
+	'ueber/',
+	'hilfen/'
 ];
 
 for (const path of PAGES) {
