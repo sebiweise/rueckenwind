@@ -2,6 +2,8 @@ name: Release
 
 # Ein Tag wie v0.1.0 erzeugt ein GitHub-Release mit dem passenden Abschnitt aus CHANGELOG.md
 # und dem statischen Export als Zip. Das Docker-Image baut docker.yml für denselben Tag.
+# Ein Tag mit Zusatz wie v0.1.0-beta.1 wird als Vorabversion (Testversion) veröffentlicht
+# und nutzt den CHANGELOG-Abschnitt der Version ohne Zusatz.
 on:
   push:
     tags: ['v*']
@@ -24,7 +26,12 @@ jobs:
       - name: Release-Notizen aus CHANGELOG.md
         run: |
           version="${GITHUB_REF_NAME#v}"
+          version="${version%%-*}"
           awk -v v="$version" '$0 ~ "^## \\[" v "\\]" {found=1; next} found && /^## \[/ {exit} found {print}' CHANGELOG.md > notes.md
-      - run: gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes-file notes.md "rueckenwind-${GITHUB_REF_NAME}-static.zip"
+      - name: Release anlegen
+        run: |
+          prerelease=""
+          case "$GITHUB_REF_NAME" in *-*) prerelease="--prerelease" ;; esac
+          gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes-file notes.md $prerelease "rueckenwind-${GITHUB_REF_NAME}-static.zip"
         env:
           GH_TOKEN: ${{ github.token }}
