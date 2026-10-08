@@ -75,8 +75,6 @@
 	"capture.saved.other": "Notiert.",
 	"capture.error": "Das hat leider nicht geklappt. Versuch es bitte noch einmal.",
 	"progress.title": "Dein Nachweis",
-	"progress.count": "{count} Nachweise gesammelt",
-	"progress.countOne": "1 Nachweis gesammelt",
 	"progress.countNone": "Noch keine Nachweise. Jeder Anruf zählt, auch eine Absage.",
 	"progress.orientation": "Viele Kassen verlangen etwa 5 bis 10. Frag am besten bei deiner Kasse nach.",
 	"progress.attempts": "{count} Kontaktversuche bei {practices} Stellen",
@@ -176,5 +174,8 @@
 	"nav.dataShort": "Nachweis",
 	"nav.more": "Mehr",
 	"more.title": "Mehr",
-	"more.lead": "Hilfen, Infos zur App und deine Farben."
+	"more.lead": "Hilfen, Infos zur App und deine Farben.",
+	"progress.countLabel": "Nachweise gesammelt",
+	"progress.countLabelOne": "Nachweis gesammelt",
+	"journey.stageCompleted": "(erledigt)"
 }

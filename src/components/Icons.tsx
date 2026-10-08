@@ -76,3 +76,20 @@ export function HeartIcon(props: Readonly<IconProps>) {
 		</Svg>
 	);
 }
+
+export function CheckIcon(props: Readonly<IconProps>) {
+	return (
+		<Svg {...props}>
+			<path d="M5 12.5l4.5 4.5L19 7.5" />
+		</Svg>
+	);
+}
+
+export function CheckCircleIcon(props: Readonly<IconProps>) {
+	return (
+		<Svg {...props}>
+			<circle cx="12" cy="12" r="9.5" />
+			<path d="M7.5 12.5l3 3 6-6.5" />
+		</Svg>
+	);
+}
