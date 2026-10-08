@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { getDb } from '@/lib/data';
+import { getDb } from '@/lib/data/db';
 import { useJourney } from '@/lib/data/hooks';
 import { setStepDone, updateJourney } from '@/lib/data/repository';
 import { nextStep, suggestedStage, type StageNumber } from '@/lib/domain';

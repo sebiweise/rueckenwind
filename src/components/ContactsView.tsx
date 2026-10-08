@@ -1,7 +1,7 @@
 'use client';
 
 import { useId, useState } from 'react';
-import { getDb } from '@/lib/data';
+import { getDb } from '@/lib/data/db';
 import { useAttempts, usePractices } from '@/lib/data/hooks';
 import {
 	createPractice,
