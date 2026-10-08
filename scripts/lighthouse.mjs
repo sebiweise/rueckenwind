@@ -47,6 +47,13 @@ function audit(url) {
 		{ stdio: 'inherit', env: { ...process.env, NO_UPDATE_NOTIFIER: '1' } }
 	);
 	const report = JSON.parse(readFileSync(output, 'utf8'));
+	// One line per run, so a failing CI job shows which metric pulled the score down.
+	const metrics = ['largest-contentful-paint', 'total-blocking-time', 'cumulative-layout-shift'];
+	console.log(
+		`  ${url}`,
+		`performance ${Math.round(report.categories.performance.score * 100)}`,
+		metrics.map((id) => `${id} ${report.audits[id].displayValue}`).join(', ')
+	);
 	return Object.fromEntries(categories.map((id) => [id, report.categories[id].score]));
 }
 
