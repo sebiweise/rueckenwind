@@ -1,0 +1,11 @@
+package-lock.json
+.next/
+out/
+next-env.d.ts
+test-results/
+playwright-report/
+
+# Docs and licence texts are kept verbatim
+docs/
+content/LICENSE
+AGENTS.md
