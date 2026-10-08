@@ -5,10 +5,14 @@ summary: >-
   Die Links führen zu anderen Websites.
 lastReviewed: 2026-10-08
 sources:
-  - https://hdsunflower.com/
-  - https://ber.berlin-airport.de/de/ausgewaehlt/sunflower.html
-  - https://www.munich-airport.com/sunflower-program-35634627
-  - https://www.frankfurt-airport.com/de/reisevorbereitung/besondere-beduerfnisse/sunflower.html
+  - url: https://hdsunflower.com/
+    title: Hidden Disabilities Sunflower
+  - url: https://ber.berlin-airport.de/de/ausgewaehlt/sunflower.html
+    title: Flughafen BER – Sunflower
+  - url: https://www.munich-airport.com/sunflower-program-35634627
+    title: Flughafen München – Sunflower
+  - url: https://www.frankfurt-airport.com/de/reisevorbereitung/besondere-beduerfnisse/sunflower.html
+    title: Flughafen Frankfurt – Sunflower
 ---
 
 ## Sonnenblume für nicht sichtbare Beeinträchtigungen

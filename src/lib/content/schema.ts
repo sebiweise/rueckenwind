@@ -6,12 +6,36 @@ const stepSchema = z.object({
 	title: z.string().min(1)
 });
 
+/** A source is a bare URL or a URL with a readable title. */
+const sourceSchema = z
+	.union([z.url(), z.object({ url: z.url(), title: z.string().min(1) })])
+	.transform((entry) => describeSource(typeof entry === 'string' ? { url: entry } : entry));
+
+export interface ContentSource {
+	url: string;
+	/** Readable title from the frontmatter, if given. */
+	title?: string;
+	/** Host name without "www.", e.g. "therapie.de". */
+	site: string;
+	pdf: boolean;
+}
+
+export function describeSource({ url, title }: { url: string; title?: string }): ContentSource {
+	const parsed = new URL(url);
+	return {
+		url,
+		...(title ? { title } : {}),
+		site: parsed.hostname.replace(/^www\./, ''),
+		pdf: /\.pdf$/i.test(parsed.pathname)
+	};
+}
+
 export const frontmatterSchema = z.object({
 	title: z.string().min(1),
 	stage: z.union(STAGES.map((stage) => z.literal(stage))).optional(),
 	summary: z.string().min(1),
 	lastReviewed: z.iso.date(),
-	sources: z.array(z.url()).min(1),
+	sources: z.array(sourceSchema).min(1),
 	steps: z.array(stepSchema).optional()
 });
 

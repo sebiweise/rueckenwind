@@ -5,7 +5,8 @@ summary: >-
   und ersetzt keine Beratung durch Fachleute.
 lastReviewed: 2026-10-08
 sources:
-  - https://www.therapie.de/psyche/info/fragen/wichtigste-fragen/psychotherapie-kostenerstattung/
+  - url: https://www.therapie.de/psyche/info/fragen/wichtigste-fragen/psychotherapie-kostenerstattung/
+    title: Psychotherapie per Kostenerstattung
 ---
 
 ## Was Rückenwind ist

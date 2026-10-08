@@ -7,8 +7,10 @@ summary: >-
   Du musst nicht alles auf einmal verstehen. Hier bekommst du einen ruhigen Überblick.
 lastReviewed: 2026-10-08
 sources:
-  - https://www.therapie.de/psyche/info/fragen/wichtigste-fragen/psychotherapie-kostenerstattung/
-  - https://www.krankenkasseninfo.de/ratgeber/62714/kein-therapieplatz-in-sicht-diese-moeglichkeiten-sind-oft-nicht-bekannt.html
+  - url: https://www.therapie.de/psyche/info/fragen/wichtigste-fragen/psychotherapie-kostenerstattung/
+    title: Psychotherapie per Kostenerstattung
+  - url: https://www.krankenkasseninfo.de/ratgeber/62714/kein-therapieplatz-in-sicht-diese-moeglichkeiten-sind-oft-nicht-bekannt.html
+    title: Kein Therapieplatz in Sicht?
 steps:
   - id: orientierung-ueberblick
     title: Lies dir den Überblick in Ruhe durch.

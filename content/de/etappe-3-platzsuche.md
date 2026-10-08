@@ -7,9 +7,12 @@ summary: >-
   Notier jeden Versuch in einer Zeile, auch Absagen. Jede Absage zählt für deinen Nachweis.
 lastReviewed: 2026-10-08
 sources:
-  - https://www.biallo.de/soziales/ratgeber/psychotherapie-kostenerstattung-krankenkasse/
-  - https://www.therapie.de/psyche/info/fragen/wichtigste-fragen/psychotherapie-kostenerstattung/
-  - https://www.betanet.de/kostenerstattung-psychotherapie-privatpraxis.html
+  - url: https://www.biallo.de/soziales/ratgeber/psychotherapie-kostenerstattung-krankenkasse/
+    title: 'Psychotherapie: Kostenerstattung für Privatpraxen'
+  - url: https://www.therapie.de/psyche/info/fragen/wichtigste-fragen/psychotherapie-kostenerstattung/
+    title: Psychotherapie per Kostenerstattung
+  - url: https://www.betanet.de/kostenerstattung-psychotherapie-privatpraxis.html
+    title: Fallbeispiel Kostenerstattung
 steps:
   - id: platzsuche-erster-anruf
     title: Ruf eine Praxis an und notier kurz, wie es lief.

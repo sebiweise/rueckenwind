@@ -5,7 +5,8 @@ summary: >-
   Die App ist kostenlos, quelloffen und kommt ohne Konto aus.
 lastReviewed: 2026-10-08
 sources:
-  - https://github.com/sebiweise/rueckenwind
+  - url: https://github.com/sebiweise/rueckenwind
+    title: Quellcode von Rückenwind
 ---
 
 ## Deine Daten
