@@ -222,11 +222,33 @@ h1 {
 	min-height: var(--touch-target);
 	display: inline-flex;
 	align-items: center;
+	gap: var(--space-2);
+}
+
+.logo {
+	width: 2rem;
+	height: 2rem;
+	flex-shrink: 0;
+}
+
+.logo-bg {
+	fill: var(--color-soft);
+}
+
+.logo-lines {
+	stroke: var(--color-accent);
+}
+
+.icon {
+	width: 1.5rem;
+	height: 1.5rem;
+	flex-shrink: 0;
 }
 
 .crisis-button {
 	display: inline-flex;
 	align-items: center;
+	gap: var(--space-2);
 	min-height: var(--touch-target);
 	padding: 0 var(--space-3);
 	border: 2px solid transparent;
@@ -239,6 +261,11 @@ h1 {
 
 .crisis-button:hover {
 	border-color: currentColor;
+}
+
+.crisis-button .icon {
+	width: 1.125rem;
+	height: 1.125rem;
 }
 
 .site-footer {
@@ -343,25 +370,120 @@ details > ul {
 	margin-left: auto;
 }
 
-/* Navigation */
+/* Navigation: a bar at the bottom on phones, a row of links below the header on wider screens */
 
 .main-nav {
-	display: flex;
-	flex-wrap: wrap;
-	gap: var(--space-3);
-	border-bottom: 1px solid var(--color-border);
+	position: fixed;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 9;
+	display: grid;
+	grid-template-columns: repeat(5, 1fr);
+	padding: var(--space-1) var(--space-2) max(var(--space-1), env(safe-area-inset-bottom));
+	border-top: 1px solid var(--color-border);
+	background: var(--color-surface);
 }
 
-.main-nav a {
-	display: inline-flex;
+.nav-link {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 2px;
+	min-height: 3.25rem;
+	border-radius: var(--radius);
+	color: var(--color-text-muted);
+	font-size: 0.8125rem;
+	text-decoration: none;
+}
+
+.nav-link[aria-current='page'] {
+	color: var(--color-accent);
+	font-weight: 600;
+}
+
+.nav-link[aria-current='page'] .icon {
+	border-radius: 999px;
+	background: var(--color-soft);
+	box-shadow: 0 0 0 0.25rem var(--color-soft);
+}
+
+/* Room for the bottom bar and the button above it at the end of every page */
+.shell {
+	padding-bottom: calc(6rem + env(safe-area-inset-bottom));
+}
+
+@media (max-width: 47.99rem) {
+	/* Himmel: the bar floats, like a soft cloud */
+	:root[data-palette='himmel'] .main-nav {
+		right: var(--space-2);
+		bottom: max(var(--space-2), env(safe-area-inset-bottom));
+		left: var(--space-2);
+		padding-bottom: var(--space-1);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius);
+		box-shadow: var(--shadow-card);
+	}
+}
+
+@media (min-width: 48rem) {
+	.main-nav {
+		position: static;
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2);
+		padding: var(--space-2) 0;
+		border-top: 0;
+		border-bottom: 1px solid var(--color-border);
+		background: transparent;
+	}
+
+	.nav-link {
+		flex-direction: row;
+		gap: var(--space-2);
+		min-height: var(--touch-target);
+		padding: 0 var(--space-3);
+		border-radius: 999px;
+		font-size: 1rem;
+	}
+
+	.nav-link[aria-current='page'] {
+		background: var(--color-soft);
+	}
+
+	.nav-link[aria-current='page'] .icon {
+		box-shadow: none;
+	}
+
+	.nav-gap {
+		display: none;
+	}
+
+	.shell {
+		padding-bottom: calc(var(--touch-target) + var(--space-5));
+	}
+}
+
+.link-list {
+	display: grid;
+	gap: var(--space-2);
+	margin: var(--space-3) 0;
+	padding: 0;
+	list-style: none;
+}
+
+.link-list a {
+	display: flex;
 	align-items: center;
 	min-height: var(--touch-target);
-	color: var(--color-text);
-}
-
-/* Room for the floating button at the end of every page */
-.shell {
-	padding-bottom: calc(var(--touch-target) + var(--space-5));
+	padding: var(--space-2) var(--space-3);
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius);
+	background: var(--color-surface);
+	box-shadow: var(--shadow-card);
+	font-weight: 600;
+	text-decoration: none;
 }
 
 /* Buttons and forms */
@@ -650,9 +772,36 @@ legend {
 	cursor: pointer;
 }
 
-.fab span {
-	font-size: 1.5rem;
-	line-height: 1;
+/* On phones the button sits round in the middle of the bottom bar */
+@media (max-width: 47.99rem) {
+	.fab {
+		right: auto;
+		bottom: calc(max(var(--space-1), env(safe-area-inset-bottom)) + 1.5rem);
+		left: 50%;
+		justify-content: center;
+		width: 3.75rem;
+		min-height: 3.75rem;
+		padding: 0;
+		transform: translateX(-50%);
+	}
+
+	.fab .icon {
+		width: 1.75rem;
+		height: 1.75rem;
+	}
+
+	.fab-label {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip: rect(0 0 0 0);
+		white-space: nowrap;
+	}
+
+	:root[data-palette='himmel'] .fab {
+		bottom: calc(max(var(--space-2), env(safe-area-inset-bottom)) + 2rem);
+	}
 }
 
 .capture {
@@ -743,7 +892,7 @@ legend {
 .toast {
 	position: fixed;
 	left: 50%;
-	bottom: calc(3.5rem + 2 * var(--space-3));
+	bottom: calc(6.5rem + env(safe-area-inset-bottom));
 	z-index: 11;
 	transform: translateX(-50%);
 	width: max-content;

@@ -8,7 +8,7 @@ test('a chosen colour theme stays after reload, without errors', async ({ page }
 	});
 	page.on('pageerror', (error) => errors.push(error.message));
 
-	await page.goto('daten/');
+	await page.goto('mehr/');
 	const root = page.locator('html');
 	await expect(page.getByRole('radio', { name: /Salbei/ })).toBeChecked();
 	await expect(root).not.toHaveAttribute('data-palette');
@@ -18,7 +18,7 @@ test('a chosen colour theme stays after reload, without errors', async ({ page }
 
 	await page.goto('./');
 	await expect(root).toHaveAttribute('data-palette', 'himmel');
-	await page.goto('daten/');
+	await page.goto('mehr/');
 	await expect(page.getByRole('radio', { name: /Himmel/ })).toBeChecked();
 
 	await page.getByRole('radio', { name: /Salbei/ }).check();
@@ -33,7 +33,7 @@ for (const palette of ['pfirsich', 'himmel'] as const) {
 			await page.addInitScript((value) => {
 				localStorage.setItem('rueckenwind.palette', value);
 			}, palette);
-			for (const path of ['./', 'daten/']) {
+			for (const path of ['./', 'mehr/', 'daten/']) {
 				await page.goto(path);
 				await expect(page.locator('html')).toHaveAttribute('data-palette', palette);
 				const results = await new AxeBuilder({ page }).analyze();

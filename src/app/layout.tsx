@@ -1,5 +1,8 @@
 import type { Metadata, Viewport } from 'next';
 import Link from 'next/link';
+import { HeartIcon } from '@/components/Icons';
+import { Logo } from '@/components/Logo';
+import { MainNav } from '@/components/MainNav';
 import { QuickCapture } from '@/components/QuickCapture';
 import { ServiceWorker } from '@/components/ServiceWorker';
 import { APP_NAME, APP_TITLE } from '@/lib/config';
@@ -50,17 +53,15 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 				<div className="shell">
 					<header className="site-header">
 						<Link href="/" className="brand">
+							<Logo />
 							{APP_NAME}
 						</Link>
 						<Link href="/krise/" className="crisis-button">
+							<HeartIcon />
 							{t('nav.crisisShort')}
 						</Link>
 					</header>
-					<nav className="main-nav" aria-label={t('nav.main')}>
-						<Link href="/">{t('nav.home')}</Link>
-						<Link href="/kontakte/">{t('nav.contacts')}</Link>
-						<Link href="/daten/">{t('nav.data')}</Link>
-					</nav>
+					<MainNav />
 					<main>{children}</main>
 					<footer className="site-footer">
 						<p>

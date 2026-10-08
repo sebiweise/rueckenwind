@@ -171,5 +171,10 @@
 	"theme.pfirsich": "Pfirsich",
 	"theme.pfirsichText": "Warm wie Morgenlicht, mit Pflaume und Rosé.",
 	"theme.himmel": "Himmel",
-	"theme.himmelText": "Lavendelblau und Mint, besonders rund und leicht."
+	"theme.himmelText": "Lavendelblau und Mint, besonders rund und leicht.",
+	"nav.homeShort": "Weg",
+	"nav.dataShort": "Nachweis",
+	"nav.more": "Mehr",
+	"more.title": "Mehr",
+	"more.lead": "Hilfen, Infos zur App und deine Farben."
 }
