@@ -1,9 +1,12 @@
 'use client';
 
 import { useId, useState } from 'react';
-import { createExport, exportFileName, getDb, hasData, importData, parseImport } from '@/lib/data';
+import { getDb } from '@/lib/data/db';
 import { clearAll, updateJourney } from '@/lib/data/repository';
 import { t } from '@/lib/i18n';
+
+// Export and import need zod; loading them on demand keeps it out of every page's first load.
+const loadBackup = () => import('@/lib/data/backup');
 
 /** Backup as a file, restore from a file, delete everything. Nothing leaves the device. */
 export function DataView() {
@@ -11,6 +14,7 @@ export function DataView() {
 	const id = useId();
 
 	async function exportFile() {
+		const { createExport, exportFileName } = await loadBackup();
 		const db = getDb();
 		const now = new Date();
 		const data = await createExport(db, now);
@@ -29,6 +33,7 @@ export function DataView() {
 		const file = event.target.files?.[0];
 		event.target.value = '';
 		if (!file) return;
+		const { hasData, importData, parseImport } = await loadBackup();
 		const parsed = parseImport(await file.text());
 		if (!parsed.ok) {
 			setMessage(t(`data.importError.${parsed.error}`));
