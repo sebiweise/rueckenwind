@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ContentView } from '@/components/ContentView';
+import { StageTasks } from '@/components/StageTasks';
 import { APP_NAME } from '@/lib/config';
 import { loadStage, loadStages } from '@/lib/content';
 import { STAGES, type StageNumber } from '@/lib/domain';
@@ -29,6 +30,7 @@ export default async function StagePage({ params }: Props) {
 	return (
 		<>
 			<ContentView page={page} collapsible eyebrow={t('stage.label', { stage })} />
+			<StageTasks stage={stage} steps={page.steps} />
 			<nav className="pager" aria-label={t('nav.stages')}>
 				{previous && (
 					<Link href={`/etappe/${previous.stage}/`} rel="prev">

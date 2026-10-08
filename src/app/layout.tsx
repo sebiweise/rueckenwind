@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import Link from 'next/link';
+import { QuickCapture } from '@/components/QuickCapture';
 import { APP_NAME, APP_TITLE } from '@/lib/config';
 import { contentSecurityPolicy } from '@/lib/csp';
 import { t } from '@/lib/i18n';
@@ -36,6 +37,11 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 							{t('nav.crisisShort')}
 						</Link>
 					</header>
+					<nav className="main-nav" aria-label={t('nav.main')}>
+						<Link href="/">{t('nav.home')}</Link>
+						<Link href="/kontakte/">{t('nav.contacts')}</Link>
+						<Link href="/daten/">{t('nav.data')}</Link>
+					</nav>
 					<main>{children}</main>
 					<footer className="site-footer">
 						<p>
@@ -45,6 +51,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 							<Link href="/ueber/">{t('nav.about')}</Link>
 						</p>
 					</footer>
+					<QuickCapture />
 				</div>
 			</body>
 		</html>
