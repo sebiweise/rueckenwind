@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect } from 'react';
+// Starts listening for the browser's install dialog on every page, see InstallBanner.
+import '@/lib/install/prompt';
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
 

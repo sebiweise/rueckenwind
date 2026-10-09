@@ -1856,7 +1856,8 @@ a.tag {
 	color: var(--color-text-muted);
 }
 
-.start-steps {
+.start-steps,
+.install-steps {
 	display: grid;
 	gap: var(--space-3);
 	margin: var(--space-3) 0;
@@ -1865,14 +1866,16 @@ a.tag {
 	counter-reset: step;
 }
 
-.start-steps li {
+.start-steps li,
+.install-steps li {
 	display: flex;
 	align-items: center;
 	gap: var(--space-3);
 	counter-increment: step;
 }
 
-.start-steps li::before {
+.start-steps li::before,
+.install-steps li::before {
 	content: counter(step);
 	display: inline-flex;
 	align-items: center;
@@ -2391,4 +2394,55 @@ a.tag {
 .practice .history {
 	border: 0;
 	background: transparent;
+}
+
+/* Install: banner on the way, status and steps on /installieren/ */
+.install-banner {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--space-3);
+	margin: var(--space-3) 0;
+}
+
+.install-banner p {
+	margin: var(--space-1) 0;
+}
+
+.install-banner-icon {
+	display: grid;
+	flex-shrink: 0;
+	place-items: center;
+	width: 2.5rem;
+	height: 2.5rem;
+	border-radius: 50%;
+	background: var(--color-soft);
+	color: var(--color-accent);
+}
+
+.install-banner-body {
+	min-width: 0;
+}
+
+.install-banner-title {
+	font-weight: 600;
+}
+
+.icon-inline {
+	width: 1.125rem;
+	height: 1.125rem;
+	margin-right: var(--space-1);
+	vertical-align: -0.2em;
+	color: var(--color-accent);
+}
+
+.install-status {
+	margin: var(--space-3) 0;
+}
+
+.install-status p {
+	margin: var(--space-1) 0;
+}
+
+.home .install-banner {
+	margin: 0;
 }
