@@ -12,13 +12,13 @@ function notify() {
 	for (const listener of listeners) listener();
 }
 
-if (typeof window !== 'undefined') {
-	window.addEventListener('beforeinstallprompt', (event) => {
+if (typeof document !== 'undefined') {
+	globalThis.addEventListener('beforeinstallprompt', (event) => {
 		event.preventDefault();
 		deferred = event as InstallPromptEvent;
 		notify();
 	});
-	window.addEventListener('appinstalled', () => {
+	globalThis.addEventListener('appinstalled', () => {
 		deferred = null;
 		notify();
 	});
@@ -42,6 +42,11 @@ export async function showInstallPrompt(): Promise<boolean> {
 	await event.prompt();
 	const { outcome } = await event.userChoice;
 	return outcome === 'accepted';
+}
+
+/** For click handlers: opens the dialog; a refused or failed dialog changes nothing. */
+export function installNow(): void {
+	showInstallPrompt().catch(() => undefined);
 }
 
 /** Lets the hooks re-read local state (for example after "Nicht jetzt"). */

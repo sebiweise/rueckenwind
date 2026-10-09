@@ -1,7 +1,7 @@
 'use client';
 
 import { useInstallWay, useStandalone } from '@/lib/install/hooks';
-import { showInstallPrompt } from '@/lib/install/prompt';
+import { installNow } from '@/lib/install/prompt';
 import { t } from '@/lib/i18n';
 import { CheckCircleIcon } from './Icons';
 
@@ -23,11 +23,7 @@ export function InstallStatus() {
 		<div className="notice install-status">
 			<p>{t('install.ready')}</p>
 			<p>
-				<button
-					type="button"
-					className="button button-primary"
-					onClick={() => void showInstallPrompt()}
-				>
+				<button type="button" className="button button-primary" onClick={installNow}>
 					{t('install.button')}
 				</button>
 			</p>

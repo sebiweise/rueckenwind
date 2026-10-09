@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { dismissInstall } from '@/lib/install';
 import { installStorage, useInstallDismissed, useInstallWay } from '@/lib/install/hooks';
-import { refreshInstallState, showInstallPrompt } from '@/lib/install/prompt';
+import { refreshInstallState, installNow } from '@/lib/install/prompt';
 import { t } from '@/lib/i18n';
 import { HomeScreenIcon, ShareIcon } from './Icons';
 
@@ -40,11 +40,7 @@ export function InstallBanner() {
 				)}
 				<p className="hint-actions">
 					{way === 'prompt' ? (
-						<button
-							type="button"
-							className="button button-primary"
-							onClick={() => void showInstallPrompt()}
-						>
+						<button type="button" className="button button-primary" onClick={installNow}>
 							{t('install.button')}
 						</button>
 					) : (
