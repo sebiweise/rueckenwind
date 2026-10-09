@@ -6,7 +6,11 @@ export function sectionOf(pathname: string): Section | null {
 	if (path === '/app' || path.startsWith('/etappe')) return 'home';
 	if (path.startsWith('/kontakte')) return 'contacts';
 	if (path.startsWith('/daten')) return 'data';
-	if (['/mehr', '/hilfen', '/ueber', '/hinweis'].some((prefix) => path.startsWith(prefix))) {
+	if (
+		['/mehr', '/hilfen', '/installieren', '/ueber', '/hinweis'].some((prefix) =>
+			path.startsWith(prefix)
+		)
+	) {
 		return 'more';
 	}
 	return null;

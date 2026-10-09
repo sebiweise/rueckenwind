@@ -78,7 +78,16 @@ test('inline scripts need a hash: the CSP has no unsafe-inline for scripts', asy
 
 test('dark mode has no accessibility violations on every page', async ({ page }) => {
 	await page.emulateMedia({ colorScheme: 'dark', reducedMotion: 'reduce' });
-	for (const path of ['./', 'app/', 'kontakte/', 'daten/', 'etappe/5/', 'krise/', 'ueber/']) {
+	for (const path of [
+		'./',
+		'app/',
+		'kontakte/',
+		'daten/',
+		'etappe/5/',
+		'krise/',
+		'ueber/',
+		'installieren/'
+	]) {
 		await page.goto(path);
 		await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 		expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);

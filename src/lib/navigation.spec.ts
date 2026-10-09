@@ -10,6 +10,7 @@ describe('sectionOf', () => {
 		expect(sectionOf('/daten')).toBe('data');
 		expect(sectionOf('/mehr/')).toBe('more');
 		expect(sectionOf('/hilfen/')).toBe('more');
+		expect(sectionOf('/installieren/')).toBe('more');
 		expect(sectionOf('/ueber/')).toBe('more');
 		expect(sectionOf('/krise/')).toBeNull();
 		// The start page is outside the app.
