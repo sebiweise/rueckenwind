@@ -69,6 +69,9 @@ export default function StartPage() {
 					<div className="card next-task">
 						<h3>{t('start.installTitle')}</h3>
 						<p>{t('start.installText')}</p>
+						<p>
+							<Link href="/installieren/">{t('start.installLink')}</Link>
+						</p>
 					</div>
 				</section>
 

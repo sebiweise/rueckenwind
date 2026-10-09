@@ -229,3 +229,20 @@ export function PaletteIcon(props: Readonly<IconProps>) {
 		</Svg>
 	);
 }
+
+export function ShareIcon(props: Readonly<IconProps>) {
+	return (
+		<Svg {...props}>
+			<path d="M12 15V3M8 7l4-4 4 4M8 11H6a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-8a1 1 0 0 0-1-1h-2" />
+		</Svg>
+	);
+}
+
+export function HomeScreenIcon(props: Readonly<IconProps>) {
+	return (
+		<Svg {...props}>
+			<rect x="6" y="2.5" width="12" height="19" rx="2.5" />
+			<path d="M12 9v6M9 12h6M11 18.5h2" />
+		</Svg>
+	);
+}

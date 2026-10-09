@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Hints } from '@/components/Hints';
+import { InstallBanner } from '@/components/InstallBanner';
 import { JourneyView } from '@/components/JourneyView';
 import { ProgressSummary } from '@/components/ProgressSummary';
 import { RecentContacts } from '@/components/RecentContacts';
@@ -27,6 +28,7 @@ export default function JourneyPage() {
 					<p className="muted">{t('home.tagline')}</p>
 				</header>
 				<Hints />
+				<InstallBanner />
 				<JourneyView stages={stages} steps={steps} />
 			</div>
 			<div className="home-side">

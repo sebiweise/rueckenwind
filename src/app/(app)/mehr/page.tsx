@@ -5,6 +5,7 @@ import {
 	DownloadIcon,
 	FlowerIcon,
 	HeartIcon,
+	HomeScreenIcon,
 	InfoIcon,
 	WindIcon
 } from '@/components/Icons';
@@ -17,6 +18,7 @@ export const metadata: Metadata = { title: `${t('more.title')} – ${APP_NAME}` 
 const HELP = [
 	{ href: '/krise/', label: t('nav.crisis'), icon: <HeartIcon />, quiet: true },
 	{ href: '/hilfen/', label: t('nav.helpers'), icon: <FlowerIcon /> },
+	{ href: '/installieren/', label: t('install.title'), icon: <HomeScreenIcon /> },
 	{ href: '/hinweis/', label: t('footer.disclaimer'), icon: <InfoIcon /> },
 	{ href: '/ueber/', label: t('nav.about'), icon: <WindIcon /> }
 ];
