@@ -1,7 +1,15 @@
 'use client';
 
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
-import { CheckCircleIcon, PlusIcon } from '@/components/Icons';
+import {
+	CalendarIcon,
+	CheckCircleIcon,
+	ClockIcon,
+	CloseIcon,
+	ListIcon,
+	PhoneIcon
+} from '@/components/Icons';
+import { CAPTURE_EVENT, type CaptureRequest } from '@/lib/capture';
 import { getDb } from '@/lib/data/db';
 import { usePractices } from '@/lib/data/hooks';
 import { recordContact } from '@/lib/data/repository';
@@ -11,16 +19,21 @@ import {
 	parseContactInput,
 	type ContactResult
 } from '@/lib/domain';
-import { formatDateTime, formatWaitTime, fromDateTimeLocal, toDateTimeLocal } from '@/lib/format';
+import {
+	formatRelativeDateTime,
+	formatWaitTime,
+	fromDateTimeLocal,
+	toDateTimeLocal
+} from '@/lib/format';
 import { t } from '@/lib/i18n';
 
 /** Results offered as one-tap buttons, as an alternative to typing. */
-const QUICK_RESULTS: ContactResult[] = [
-	'not_reached',
-	'rejected',
-	'waitlist',
-	'callback_pending',
-	'appointment'
+const QUICK_RESULTS: [ContactResult, React.ComponentType][] = [
+	['not_reached', PhoneIcon],
+	['rejected', CloseIcon],
+	['waitlist', ListIcon],
+	['callback_pending', ClockIcon],
+	['appointment', CalendarIcon]
 ];
 
 /** Below this confidence a chip is marked as unsure and invites a correction. */
@@ -36,8 +49,8 @@ interface Overrides {
 }
 
 /**
- * The floating "Kontakt notieren" button and its dialog: one line of text,
- * parsed locally into chips that can be corrected with a tap, saved with one more.
+ * The "Kontakt notieren" sheet: one line of text, parsed locally into chips that can be
+ * corrected with a tap, saved with one more. Opened through `openCapture()`.
  */
 export function QuickCapture() {
 	const dialogRef = useRef<HTMLDialogElement>(null);
@@ -72,10 +85,16 @@ export function QuickCapture() {
 		setEditor(null);
 	}
 
-	function open() {
-		reset();
-		dialogRef.current?.showModal();
-	}
+	useEffect(() => {
+		function open(event: Event) {
+			setOverrides({});
+			setEditor(null);
+			setText((event as CustomEvent<CaptureRequest>).detail?.text ?? '');
+			dialogRef.current?.showModal();
+		}
+		globalThis.addEventListener(CAPTURE_EVENT, open);
+		return () => globalThis.removeEventListener(CAPTURE_EVENT, open);
+	}, []);
 
 	function close() {
 		dialogRef.current?.close();
@@ -109,11 +128,6 @@ export function QuickCapture() {
 
 	return (
 		<>
-			<button type="button" className="fab" onClick={open}>
-				<PlusIcon />
-				<span className="fab-label">{t('capture.open')}</span>
-			</button>
-
 			<p className="toast" role="status" aria-live="polite">
 				{message && (
 					<>
@@ -125,7 +139,17 @@ export function QuickCapture() {
 
 			<dialog ref={dialogRef} className="capture" aria-labelledby={`${ids}-title`} onClose={reset}>
 				<form onSubmit={save}>
-					<h2 id={`${ids}-title`}>{t('capture.title')}</h2>
+					<div className="sheet-head">
+						<h2 id={`${ids}-title`}>{t('capture.title')}</h2>
+						<button
+							type="button"
+							className="icon-button"
+							aria-label={t('common.close')}
+							onClick={close}
+						>
+							<CloseIcon />
+						</button>
+					</div>
 
 					<label htmlFor={`${ids}-text`}>{t('capture.inputLabel')}</label>
 					<input
@@ -138,26 +162,6 @@ export function QuickCapture() {
 						value={text}
 						onChange={(event) => setText(event.target.value)}
 					/>
-
-					<fieldset className="quick-buttons">
-						<legend>{t('capture.quickLabel')}</legend>
-						{QUICK_RESULTS.map((quick) => (
-							<button
-								key={quick}
-								type="button"
-								className="button"
-								aria-pressed={overrides.result === quick}
-								onClick={() =>
-									setOverrides((current) => ({
-										...current,
-										result: current.result === quick ? undefined : quick
-									}))
-								}
-							>
-								{t(`result.${quick}`)}
-							</button>
-						))}
-					</fieldset>
 
 					{hasInput && (
 						<section className="preview" aria-label={t('capture.preview')}>
@@ -192,7 +196,7 @@ export function QuickCapture() {
 								<li>
 									<Chip
 										label={t('capture.date')}
-										value={formatDateTime(at)}
+										value={formatRelativeDateTime(at)}
 										expanded={editor === 'date'}
 										onClick={() => toggle('date')}
 									/>
@@ -276,12 +280,30 @@ export function QuickCapture() {
 						</section>
 					)}
 
-					<div className="actions">
+					<fieldset className="quick-buttons">
+						<legend>{t('capture.quickLabel')}</legend>
+						{QUICK_RESULTS.map(([quick, Icon]) => (
+							<button
+								key={quick}
+								type="button"
+								className="button choice"
+								aria-pressed={overrides.result === quick}
+								onClick={() =>
+									setOverrides((current) => ({
+										...current,
+										result: current.result === quick ? undefined : quick
+									}))
+								}
+							>
+								<Icon />
+								{t(`result.${quick}`)}
+							</button>
+						))}
+					</fieldset>
+
+					<div className="sheet-actions">
 						<button type="submit" className="button button-primary" disabled={!hasInput}>
 							{t('common.save')}
-						</button>
-						<button type="button" className="button" onClick={close}>
-							{t('common.cancel')}
 						</button>
 					</div>
 				</form>

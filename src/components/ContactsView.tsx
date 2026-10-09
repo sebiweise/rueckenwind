@@ -1,6 +1,9 @@
 'use client';
 
 import { useId, useState } from 'react';
+import { ChevronIcon, ClockIcon, MoreIcon, PhoneIcon, PlusIcon } from '@/components/Icons';
+import { PracticeAvatar } from '@/components/PracticeAvatar';
+import { openCapture } from '@/lib/capture';
 import { getDb } from '@/lib/data/db';
 import { useAttempts, usePractices } from '@/lib/data/hooks';
 import {
@@ -14,13 +17,20 @@ import {
 	CONTACT_CHANNELS,
 	CONTACT_RESULTS,
 	PRACTICE_KINDS,
+	computeProgress,
 	type ContactAttempt,
 	type ContactChannel,
 	type ContactResult,
 	type Practice,
 	type PracticeKind
 } from '@/lib/domain';
-import { formatDateTime, formatWaitTime, fromDateTimeLocal, toDateTimeLocal } from '@/lib/format';
+import {
+	formatDateTime,
+	formatRelativeDateTime,
+	formatWaitTime,
+	fromDateTimeLocal,
+	toDateTimeLocal
+} from '@/lib/format';
 import { t } from '@/lib/i18n';
 
 /** Practices with their contact attempts; practices with recent contact first. */
@@ -37,19 +47,33 @@ export function ContactsView() {
 		(latest.get(b.id) ?? b.createdAt).localeCompare(latest.get(a.id) ?? a.createdAt)
 	);
 
+	const progress = computeProgress(practices, attempts);
+
 	return (
 		<>
-			<details className="add-practice">
-				<summary>{t('contacts.add')}</summary>
-				<PracticeForm
-					onSave={async (values) => {
-						await createPractice(getDb(), values);
-					}}
-				/>
-			</details>
+			{practices.length > 0 && (
+				<dl className="stats">
+					<div>
+						<dt>{t('contacts.statPractices')}</dt>
+						<dd>{practices.length}</dd>
+					</div>
+					<div>
+						<dt>{t('contacts.statProof')}</dt>
+						<dd>{progress.proofCount}</dd>
+					</div>
+					<div>
+						<dt>
+							{progress.byResult.appointment === 1
+								? t('contacts.statAppointment')
+								: t('contacts.statAppointments')}
+						</dt>
+						<dd>{progress.byResult.appointment}</dd>
+					</div>
+				</dl>
+			)}
 
 			{sorted.length === 0 ? (
-				<p>{t('contacts.empty')}</p>
+				<p className="empty">{t('contacts.empty')}</p>
 			) : (
 				<ul className="practice-list">
 					{sorted.map((practice) => (
@@ -58,12 +82,24 @@ export function ContactsView() {
 								practice={practice}
 								attempts={attempts
 									.filter((attempt) => attempt.practiceId === practice.id)
-									.sort((a, b) => a.at.localeCompare(b.at))}
+									.sort((a, b) => b.at.localeCompare(a.at))}
 							/>
 						</li>
 					))}
 				</ul>
 			)}
+
+			<details className="add-practice">
+				<summary className="button">
+					<PlusIcon />
+					{t('contacts.add')}
+				</summary>
+				<PracticeForm
+					onSave={async (values) => {
+						await createPractice(getDb(), values);
+					}}
+				/>
+			</details>
 		</>
 	);
 }
@@ -153,10 +189,31 @@ function PracticeCard({
 }: Readonly<{ practice: Practice; attempts: ContactAttempt[] }>) {
 	const [editing, setEditing] = useState(false);
 	const titleId = useId();
+	const latest = attempts[0];
+	const showKind = practice.kind !== 'kassenpraxis' && practice.kind !== 'tss';
 
 	return (
 		<article className="card practice" aria-labelledby={titleId}>
-			<h2 id={titleId}>{practice.name}</h2>
+			<div className="practice-head">
+				<PracticeAvatar practice={practice} />
+				<div className="practice-title">
+					<h2 id={titleId}>{practice.name}</h2>
+					<p className="muted">
+						{latest ? formatRelativeDateTime(latest.at) : t('contacts.noAttempts')}
+						{attempts.length > 1 && ` · ${t('contacts.attemptCount', { count: attempts.length })}`}
+					</p>
+				</div>
+				<PracticeMenu
+					name={practice.name}
+					onEdit={() => setEditing(true)}
+					onDelete={() => {
+						if (globalThis.confirm(t('contacts.deletePracticeConfirm'))) {
+							void deletePractice(getDb(), practice.id);
+						}
+					}}
+				/>
+			</div>
+
 			{editing ? (
 				<PracticeForm
 					initial={practice}
@@ -168,69 +225,117 @@ function PracticeCard({
 				/>
 			) : (
 				<>
-					<p className="muted">{t(`kind.${practice.kind}`)}</p>
-					{(practice.phone || practice.phoneHours || practice.address || practice.notes) && (
-						<dl className="facts">
-							{practice.phone && (
-								<>
-									<dt>{t('contacts.phone')}</dt>
-									<dd>
-										<a href={`tel:${practice.phone.replaceAll(/[^\d+]/g, '')}`}>{practice.phone}</a>
-									</dd>
-								</>
+					{(latest || showKind || practice.phone || practice.phoneHours) && (
+						<p className="tags">
+							{latest && (
+								<span className={`result-pill result-${latest.result}`}>
+									{t(`result.${latest.result}`)}
+									{latest.waitTimeWeeks ? ` · ${formatWaitTime(latest.waitTimeWeeks)}` : ''}
+								</span>
 							)}
+							{showKind && <span className="tag">{t(`kind.${practice.kind}`)}</span>}
 							{practice.phoneHours && (
-								<>
-									<dt>{t('contacts.phoneHours')}</dt>
-									<dd>{practice.phoneHours}</dd>
-								</>
+								<span className="tag">
+									<ClockIcon />
+									<span className="visually-hidden">{t('contacts.phoneHours')}: </span>
+									{practice.phoneHours}
+								</span>
 							)}
-							{practice.address && (
-								<>
-									<dt>{t('contacts.address')}</dt>
-									<dd>{practice.address}</dd>
-								</>
+							{practice.phone && (
+								<a className="tag" href={`tel:${practice.phone.replaceAll(/[^\d+]/g, '')}`}>
+									<PhoneIcon />
+									{practice.phone}
+								</a>
 							)}
-							{practice.notes && (
-								<>
-									<dt>{t('contacts.notes')}</dt>
-									<dd>{practice.notes}</dd>
-								</>
-							)}
-						</dl>
+						</p>
 					)}
-					<div className="actions">
-						<button type="button" className="button" onClick={() => setEditing(true)}>
-							{t('common.edit')}
-						</button>
-						<button
-							type="button"
-							className="button button-quiet"
-							onClick={() => {
-								if (globalThis.confirm(t('contacts.deletePracticeConfirm'))) {
-									void deletePractice(getDb(), practice.id);
-								}
-							}}
-						>
-							{t('common.delete')}
-						</button>
-					</div>
+					{(practice.address || practice.notes) && (
+						<p className="muted practice-notes">
+							{[practice.address, practice.notes].filter(Boolean).join(' · ')}
+						</p>
+					)}
 				</>
 			)}
 
-			<h3>{t('contacts.attempts')}</h3>
-			{attempts.length === 0 ? (
-				<p className="muted">{t('contacts.noAttempts')}</p>
-			) : (
-				<ol className="attempts">
-					{attempts.map((attempt) => (
-						<li key={attempt.id}>
-							<AttemptRow attempt={attempt} />
-						</li>
-					))}
-				</ol>
+			{attempts.length > 0 && (
+				<details className="history">
+					<summary>
+						{t('contacts.history', { count: attempts.length })}
+						<ChevronIcon />
+					</summary>
+					<ol className="attempts">
+						{attempts.map((attempt) => (
+							<li key={attempt.id}>
+								<AttemptRow attempt={attempt} />
+							</li>
+						))}
+					</ol>
+				</details>
 			)}
+
+			<button
+				type="button"
+				className="button button-small"
+				onClick={() => openCapture({ text: `${practice.name}, ` })}
+			>
+				<PlusIcon />
+				{t('contacts.again')}
+				<span className="visually-hidden">: {practice.name}</span>
+			</button>
 		</article>
+	);
+}
+
+/** Edit and delete live behind a small "…" button, out of the way. */
+function PracticeMenu({
+	name,
+	onEdit,
+	onDelete
+}: Readonly<{ name: string; onEdit: () => void; onDelete: () => void }>) {
+	const [open, setOpen] = useState(false);
+	const id = useId();
+
+	return (
+		<div
+			className="menu"
+			onBlur={(event) => {
+				if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
+			}}
+			onKeyDown={(event) => {
+				if (event.key === 'Escape') setOpen(false);
+			}}
+		>
+			<button
+				type="button"
+				className="icon-button"
+				aria-expanded={open}
+				aria-controls={id}
+				aria-label={t('contacts.actions', { name })}
+				onClick={() => setOpen((value) => !value)}
+			>
+				<MoreIcon />
+			</button>
+			<div id={id} className="menu-items" hidden={!open}>
+				<button
+					type="button"
+					onClick={() => {
+						setOpen(false);
+						onEdit();
+					}}
+				>
+					{t('common.edit')}
+				</button>
+				<button
+					type="button"
+					onClick={() => {
+						setOpen(false);
+						onDelete();
+					}}
+				>
+					{t('common.delete')}
+				</button>
+			</div>
+		</div>
 	);
 }
 
@@ -246,12 +351,10 @@ function AttemptRow({ attempt }: Readonly<{ attempt: ContactAttempt }>) {
 	if (!editing) {
 		return (
 			<div className="attempt">
-				<p>
-					<time dateTime={attempt.at}>{formatDateTime(attempt.at)}</time>
+				<p className="attempt-head">
+					<strong>{t(`result.${attempt.result}`)}</strong>
 					{' · '}
-					<strong className={`result-pill result-${attempt.result}`}>
-						{t(`result.${attempt.result}`)}
-					</strong>
+					<time dateTime={attempt.at}>{formatRelativeDateTime(attempt.at)}</time>
 					{attempt.waitTimeWeeks ? ` · ${formatWaitTime(attempt.waitTimeWeeks)}` : ''}
 				</p>
 				{(attempt.notes || attempt.rawInput) && (
@@ -259,7 +362,7 @@ function AttemptRow({ attempt }: Readonly<{ attempt: ContactAttempt }>) {
 				)}
 				<button
 					type="button"
-					className="button button-quiet"
+					className="button button-quiet button-small"
 					onClick={() => setEditing(true)}
 					aria-label={`${t('contacts.editAttempt')}: ${formatDateTime(attempt.at)}`}
 				>
