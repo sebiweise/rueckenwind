@@ -34,7 +34,7 @@ test('stage details open on demand and stages link to each other', async ({ page
 	await expect(details).not.toHaveAttribute('open');
 	await details.locator('summary').click();
 	await expect(details).toHaveAttribute('open');
-	await page.getByRole('link', { name: 'Weiter: Platzsuche' }).click();
+	await page.getByRole('link', { name: /^Weiter\W+Platzsuche$/ }).click();
 	await expect(page.getByRole('heading', { level: 1 })).toHaveText('Platzsuche');
 });
 

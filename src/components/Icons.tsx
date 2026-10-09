@@ -110,3 +110,122 @@ export function ChevronIcon(props: Readonly<IconProps>) {
 		</Svg>
 	);
 }
+
+export function ChevronRightIcon(props: Readonly<IconProps>) {
+	return (
+		<Svg {...props}>
+			<path d="M9 6l6 6-6 6" />
+		</Svg>
+	);
+}
+
+export function ChevronLeftIcon(props: Readonly<IconProps>) {
+	return (
+		<Svg {...props}>
+			<path d="M15 6l-6 6 6 6" />
+		</Svg>
+	);
+}
+
+export function PhoneIcon(props: Readonly<IconProps>) {
+	return (
+		<Svg {...props}>
+			<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z" />
+		</Svg>
+	);
+}
+
+export function ClockIcon(props: Readonly<IconProps>) {
+	return (
+		<Svg {...props}>
+			<circle cx="12" cy="12" r="8.5" />
+			<path d="M12 7.5V12l3 2" />
+		</Svg>
+	);
+}
+
+export function CalendarIcon(props: Readonly<IconProps>) {
+	return (
+		<Svg {...props}>
+			<rect x="4" y="5" width="16" height="15" rx="3" />
+			<path d="M4 10h16M9 3v4M15 3v4" />
+		</Svg>
+	);
+}
+
+export function CloseIcon(props: Readonly<IconProps>) {
+	return (
+		<Svg {...props}>
+			<path d="M7 7l10 10M17 7L7 17" />
+		</Svg>
+	);
+}
+
+export function ListIcon(props: Readonly<IconProps>) {
+	return (
+		<Svg {...props}>
+			<path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01" />
+		</Svg>
+	);
+}
+
+export function DownloadIcon(props: Readonly<IconProps>) {
+	return (
+		<Svg {...props}>
+			<path d="M12 4v11M7 10l5 5 5-5M5 20h14" />
+		</Svg>
+	);
+}
+
+export function UploadIcon(props: Readonly<IconProps>) {
+	return (
+		<Svg {...props}>
+			<path d="M12 15V4M7 9l5-5 5 5M5 20h14" />
+		</Svg>
+	);
+}
+
+export function TrashIcon(props: Readonly<IconProps>) {
+	return (
+		<Svg {...props}>
+			<path d="M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13" />
+		</Svg>
+	);
+}
+
+export function InfoIcon(props: Readonly<IconProps>) {
+	return (
+		<Svg {...props}>
+			<circle cx="12" cy="12" r="9" />
+			<path d="M12 11v5M12 8h.01" />
+		</Svg>
+	);
+}
+
+export function FlowerIcon(props: Readonly<IconProps>) {
+	return (
+		<Svg {...props}>
+			<circle cx="12" cy="12" r="2.5" />
+			<path d="M12 9.5a3 3 0 1 1 0-6 3 3 0 1 1 0 6M12 14.5a3 3 0 1 0 0 6 3 3 0 1 0 0-6M9.5 12a3 3 0 1 1-6 0 3 3 0 1 1 6 0M14.5 12a3 3 0 1 0 6 0 3 3 0 1 0-6 0" />
+		</Svg>
+	);
+}
+
+export function WindIcon(props: Readonly<IconProps>) {
+	return (
+		<Svg {...props}>
+			<path d="M3 8h10a3 3 0 1 0-3-3M3 12h15a3 3 0 1 1-3 3M3 16h7" />
+		</Svg>
+	);
+}
+
+export function PaletteIcon(props: Readonly<IconProps>) {
+	return (
+		<Svg {...props}>
+			<path d="M12 3a9 9 0 0 0 0 18c1.4 0 2-1 2-2s-1-1.5-1-2.5S14 15 15 15h2a4 4 0 0 0 4-4c0-4.4-4-8-9-8z" />
+			<circle cx="7.5" cy="11" r="1" />
+			<circle cx="10" cy="7" r="1" />
+			<circle cx="15" cy="7.5" r="1" />
+		</Svg>
+	);
+}

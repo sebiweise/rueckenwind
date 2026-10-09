@@ -46,3 +46,42 @@ export function suggestedStage(
 	}
 	return current;
 }
+
+/** Done and all steps of one stage, for "1 von 3 Aufgaben". */
+export function stageStepCount(
+	steps: readonly StageStep[],
+	completed: readonly string[],
+	stage: StageNumber
+): { done: number; total: number } {
+	const inStage = steps.filter((step) => step.stage === stage);
+	return {
+		done: inStage.filter((step) => completed.includes(step.id)).length,
+		total: inStage.length
+	};
+}
+
+/** How many stages have all their steps done. */
+export function stagesDone(steps: readonly StageStep[], completed: readonly string[]): number {
+	return STAGES.filter((stage) => stageCompletion(steps, completed, stage) === 1).length;
+}
+
+/** What "Dein Weg" shows on top: the next task, a finished stage, or the end of all tasks. */
+export type TodayState<T extends StageStep> =
+	{ kind: 'task'; step: T } | { kind: 'stageDone'; next: StageNumber } | { kind: 'allDone' };
+
+/**
+ * The next task of the current stage. When the stage has none left, the next stage with
+ * open steps (later ones first, then earlier ones). The stage is never changed here:
+ * moving on is the person's own step.
+ */
+export function todayState<T extends StageStep>(
+	steps: readonly T[],
+	completed: readonly string[],
+	current: StageNumber
+): TodayState<T> {
+	const step = nextStep(steps, completed, current);
+	if (step) return { kind: 'task', step };
+	const order = [...STAGES.filter((s) => s > current), ...STAGES.filter((s) => s < current)];
+	const next = order.find((stage) => nextStep(steps, completed, stage));
+	return next ? { kind: 'stageDone', next } : { kind: 'allDone' };
+}

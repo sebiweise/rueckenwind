@@ -15,6 +15,7 @@ sources:
 steps:
   - id: sprechstunde-termin
     title: Vereinbare einen Termin für eine Sprechstunde.
+    action: capture
   - id: sprechstunde-ptv11
     title: Leg dein PTV 11 an einen sicheren Ort.
 ---

@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ContentView } from '@/components/ContentView';
+import { ChevronLeftIcon } from '@/components/Icons';
+import { StageDots } from '@/components/StageDots';
 import { StageTasks } from '@/components/StageTasks';
 import { APP_NAME } from '@/lib/config';
 import { loadStage, loadStages } from '@/lib/content';
@@ -26,20 +28,39 @@ export default async function StagePage({ params }: Readonly<Props>) {
 	const page = stages[stage - 1];
 	const previous = stages[stage - 2];
 	const next = stages[stage];
+	const steps = stages.flatMap((entry) => entry.steps);
 
 	return (
 		<>
-			<ContentView page={page} collapsible eyebrow={t('stage.label', { stage })} />
-			<StageTasks stage={stage} steps={page.steps} />
+			<Link href="/app/" className="back-link">
+				<ChevronLeftIcon />
+				{t('nav.home')}
+			</Link>
+			<ContentView
+				page={page}
+				collapsible
+				eyebrow={t('stage.label', { stage, total: STAGES.length })}
+				header={<StageDots stage={stage} steps={steps} />}
+			>
+				<StageTasks stage={stage} steps={page.steps} />
+			</ContentView>
 			<nav className="pager" aria-label={t('nav.stages')}>
 				{previous && (
 					<Link href={`/etappe/${previous.stage}/`} rel="prev">
-						{t('stage.previous', { title: previous.title })}
+						<span className="pager-label">
+							{t('stage.previousLabel')}
+							<span className="visually-hidden">:</span>
+						</span>{' '}
+						<span className="pager-title">{previous.title}</span>
 					</Link>
 				)}
 				{next && (
 					<Link href={`/etappe/${next.stage}/`} rel="next">
-						{t('stage.next', { title: next.title })}
+						<span className="pager-label">
+							{t('stage.nextLabel')}
+							<span className="visually-hidden">:</span>
+						</span>{' '}
+						<span className="pager-title">{next.title}</span>
 					</Link>
 				)}
 			</nav>

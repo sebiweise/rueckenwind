@@ -17,6 +17,7 @@ sources:
 steps:
   - id: planb-institut
     title: Frag bei einem Ausbildungsinstitut in deiner Nähe nach.
+    action: capture
   - id: planb-privatpraxis
     title: Such eine Privatpraxis, die dich behandeln würde.
 ---

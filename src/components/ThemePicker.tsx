@@ -26,10 +26,11 @@ export function ThemePicker() {
 	);
 
 	return (
-		<section className="card" aria-labelledby={`${id}-title`}>
-			<h2 id={`${id}-title`}>{t('theme.title')}</h2>
-			<p>{t('theme.lead')}</p>
-			<fieldset className="palette-options">
+		<section aria-labelledby={`${id}-title`}>
+			<h2 id={`${id}-title`} className="group-title">
+				{t('theme.title')}
+			</h2>
+			<fieldset className="palette-options" aria-describedby={`${id}-lead`}>
 				<legend className="visually-hidden">{t('theme.title')}</legend>
 				{PALETTES.map((name) => (
 					<label key={name} className="palette-option">
@@ -40,18 +41,18 @@ export function ThemePicker() {
 							checked={palette === name}
 							onChange={() => choose(name)}
 						/>
-						<span className="palette-text">
-							<span className="palette-name">{t(`theme.${name}`)}</span>
-							<span className="muted">{t(`theme.${name}Text`)}</span>
-						</span>
 						<span className="palette-swatches" data-palette={name} aria-hidden="true">
 							<span />
 							<span />
-							<span />
 						</span>
+						<span className="palette-name">{t(`theme.${name}`)}</span>
+						<span className="visually-hidden">{t(`theme.${name}Text`)}</span>
 					</label>
 				))}
 			</fieldset>
+			<p id={`${id}-lead`} className="muted group-note">
+				{t('theme.lead')}
+			</p>
 		</section>
 	);
 }

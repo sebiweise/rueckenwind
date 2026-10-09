@@ -1,6 +1,8 @@
 'use client';
 
 import { useId, useState } from 'react';
+import { DocumentIcon } from '@/components/Icons';
+import { ProgressDetails } from '@/components/ProgressSummary';
 import { getDb } from '@/lib/data/db';
 import { useJourney } from '@/lib/data/hooks';
 import { listAttempts, listPractices, updateJourney } from '@/lib/data/repository';
@@ -43,9 +45,11 @@ export function ProofExport() {
 	}
 
 	return (
-		<section className="card" id="nachweis" aria-labelledby={`${id}-title`}>
-			<h2 id={`${id}-title`}>{t('proof.title')}</h2>
-			<p>{t('proof.text')}</p>
+		<section className="feature" id="nachweis" aria-labelledby={`${id}-title`}>
+			<h2 id={`${id}-title`} className="visually-hidden">
+				{t('proof.title')}
+			</h2>
+			<ProgressDetails />
 			<div className="form">
 				<label htmlFor={`${id}-name`}>{t('proof.name')}</label>
 				<input
@@ -60,10 +64,16 @@ export function ProofExport() {
 					{t('proof.nameHint')}
 				</p>
 			</div>
-			<button type="button" className="button button-primary" onClick={create} disabled={busy}>
+			<button
+				type="button"
+				className="button button-primary button-wide"
+				onClick={create}
+				disabled={busy}
+			>
+				<DocumentIcon />
 				{t('proof.create')}
 			</button>
-			<p role="status" aria-live="polite">
+			<p className="proof-status" role="status" aria-live="polite">
 				{status}
 			</p>
 		</section>
