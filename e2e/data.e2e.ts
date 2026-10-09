@@ -27,7 +27,7 @@ test('export, delete all and import restore the same data', async ({ page }) => 
 	await expect(page.getByText('Noch keine Kontakte.')).toBeVisible();
 
 	await page.goto('daten/');
-	await page.getByLabel('Sicherungsdatei wählen').setInputFiles(file);
+	await page.getByLabel('Sicherung einspielen').setInputFiles(file);
 	await expect(status).toHaveText('Sicherung eingespielt.');
 	await page.goto('kontakte/');
 	await expect(page.getByRole('heading', { name: 'Praxis Weber' })).toBeVisible();
@@ -36,7 +36,7 @@ test('export, delete all and import restore the same data', async ({ page }) => 
 
 test('a foreign file is rejected without changes', async ({ page }) => {
 	await page.goto('daten/');
-	await page.getByLabel('Sicherungsdatei wählen').setInputFiles({
+	await page.getByLabel('Sicherung einspielen').setInputFiles({
 		name: 'fremd.json',
 		mimeType: 'application/json',
 		buffer: Buffer.from('{"app":"andere"}')

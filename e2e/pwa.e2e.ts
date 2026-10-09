@@ -16,7 +16,7 @@ test('the app works offline after the first visit', async ({ page, context }) =>
 		['kontakte/', 'Kontakte'],
 		['krise/', 'Hilfe in der Krise'],
 		['./', 'Rückenwind'],
-		['app/', 'Rückenwind']
+		['app/', 'Dein Weg']
 	]) {
 		await page.goto(path);
 		await expect(page.getByRole('heading', { level: 1 })).toContainText(heading);
@@ -27,7 +27,7 @@ test('the app works offline after the first visit', async ({ page, context }) =>
 	await page.getByRole('button', { name: 'Speichern' }).click();
 	await expect(page.locator('.progress')).toContainText('1 Nachweis gesammelt');
 
-	await page.getByRole('link', { name: 'Nachweis-PDF erstellen' }).click();
+	await page.getByRole('link', { name: 'Nachweis ansehen' }).click();
 	const download = page.waitForEvent('download');
 	await page.getByRole('button', { name: 'PDF erstellen' }).click();
 	expect((await download).suggestedFilename()).toMatch(/\.pdf$/);

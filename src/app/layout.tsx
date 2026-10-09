@@ -50,13 +50,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 					{/* Header and main come from the start page or the app layout in (app)/. */}
 					{children}
 					<footer className="site-footer">
-						<p>
+						<p>{t('footer.privacy')}</p>
+						<p className="site-footer-links">
 							<Link href="/hinweis/">{t('footer.disclaimer')}</Link>
-						</p>
-						<p>
-							<Link href="/hilfen/">{t('nav.helpers')}</Link>
-						</p>
-						<p>
 							<Link href="/ueber/">{t('nav.about')}</Link>
 						</p>
 					</footer>

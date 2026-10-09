@@ -74,12 +74,18 @@ test('three rejections on one day bring a gentle pause hint', async ({ page }) =
 
 test('the next task can be marked as done', async ({ page }) => {
 	await page.goto('app/');
-	const task = page.locator('.next-task');
-	await expect(task).toContainText('Lies dir den Überblick in Ruhe durch.');
-	await task.getByRole('button', { name: 'Erledigt' }).click();
-	// Stage 1 is done, so stage 2 becomes the current one.
+	const today = page.locator('.today');
+	await expect(today).toContainText('Lies dir den Überblick in Ruhe durch.');
+	await today.getByRole('button', { name: 'Erledigt' }).click();
+	// Stage 1 is done: a small moment of success, moving on is the person's own step.
+	await expect(today).toContainText('Etappe 1 geschafft');
+	await expect(page.locator('[aria-current="step"]')).toContainText('Orientierung');
+	await today.getByRole('button', { name: 'Weiter zu Sprechstunde' }).click();
 	await expect(page.locator('[aria-current="step"]')).toContainText('Sprechstunde');
-	await expect(page.locator('.next-task')).toContainText('Vereinbare einen Termin');
+	await expect(today).toContainText('Vereinbare einen Termin');
+	// Tasks about a contact offer to note it right away.
+	await today.getByRole('button', { name: 'Anruf notieren' }).click();
+	await expect(page.getByRole('dialog')).toBeVisible();
 });
 
 test('stages can be chosen freely', async ({ page }) => {
@@ -107,6 +113,7 @@ test('practices can be added with phone hours, edited and deleted', async ({ pag
 	);
 
 	page.on('dialog', (dialog) => dialog.accept());
+	await card.getByRole('button', { name: 'Aktionen für Praxis Sonne' }).click();
 	await card.getByRole('button', { name: 'Löschen' }).click();
 	await expect(card).toBeHidden();
 });
@@ -117,6 +124,7 @@ test('a saved attempt can be edited later', async ({ page }) => {
 	await page.getByRole('button', { name: 'Speichern' }).click();
 	await expect(page.getByRole('status')).not.toBeEmpty();
 	await page.goto('kontakte/');
+	await page.getByText('Verlauf (1)').click();
 	await page.getByRole('button', { name: /Kontaktversuch bearbeiten/ }).click();
 	await page.getByLabel('Ergebnis').selectOption('rejected');
 	await page.getByLabel('Datum').fill('2026-09-01T08:30');

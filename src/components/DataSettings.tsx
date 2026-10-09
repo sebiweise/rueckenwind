@@ -1,8 +1,11 @@
 'use client';
 
 import { useId, useState } from 'react';
+import { ChevronRightIcon, DownloadIcon, TrashIcon, UploadIcon } from '@/components/Icons';
 import { getDb } from '@/lib/data/db';
+import { useJourney } from '@/lib/data/hooks';
 import { clearAll, updateJourney } from '@/lib/data/repository';
+import { formatDate } from '@/lib/format';
 import { t } from '@/lib/i18n';
 
 // Export and import need zod; loading them on demand keeps it out of every page's first load.
@@ -11,6 +14,7 @@ const loadBackup = () => import('@/lib/data/backup');
 /** Backup as a file, restore from a file, delete everything. Nothing leaves the device. */
 export function DataSettings() {
 	const [message, setMessage] = useState('');
+	const journey = useJourney();
 	const id = useId();
 
 	async function exportFile() {
@@ -54,41 +58,65 @@ export function DataSettings() {
 		setMessage(t('data.deleted'));
 	}
 
+	let lastExport = '';
+	if (journey) {
+		lastExport = journey.lastExportAt
+			? t('data.lastExport', { date: formatDate(journey.lastExportAt) })
+			: t('data.neverExported');
+	}
+
 	return (
-		<>
+		<section id="daten" aria-labelledby={`${id}-title`}>
+			<h2 id={`${id}-title`} className="group-title">
+				{t('data.groupTitle')}
+			</h2>
 			<p className="toast toast-inline" role="status" aria-live="polite">
 				{message}
 			</p>
-
-			<section className="card" aria-labelledby={`${id}-export`}>
-				<h2 id={`${id}-export`}>{t('data.exportTitle')}</h2>
-				<p>{t('data.exportText')}</p>
-				<button type="button" className="button button-primary" onClick={exportFile}>
-					{t('data.export')}
-				</button>
-			</section>
-
-			<section className="card" aria-labelledby={`${id}-import`}>
-				<h2 id={`${id}-import`}>{t('data.importTitle')}</h2>
-				<p>{t('data.importText')}</p>
-				<label className="button file-button">
-					{t('data.import')}
-					<input
-						type="file"
-						accept="application/json,.json"
-						className="visually-hidden"
-						onChange={importFile}
-					/>
-				</label>
-			</section>
-
-			<section className="card" aria-labelledby={`${id}-delete`}>
-				<h2 id={`${id}-delete`}>{t('data.deleteTitle')}</h2>
-				<p>{t('data.deleteText')}</p>
-				<button type="button" className="button" onClick={deleteAll}>
-					{t('data.delete')}
-				</button>
-			</section>
-		</>
+			<ul className="rows">
+				<li>
+					<button type="button" className="row" onClick={exportFile}>
+						<span className="row-icon">
+							<DownloadIcon />
+						</span>
+						<span className="row-text">
+							{t('data.export')}
+							<small>{lastExport || t('data.exportText')}</small>
+						</span>
+						<ChevronRightIcon className="icon row-chevron" />
+					</button>
+				</li>
+				<li>
+					<label className="row file-button">
+						<span className="row-icon">
+							<UploadIcon />
+						</span>
+						<span className="row-text">
+							{t('data.import')}
+							<small>{t('data.importText')}</small>
+						</span>
+						<ChevronRightIcon className="icon row-chevron" />
+						<input
+							type="file"
+							accept="application/json,.json"
+							className="visually-hidden"
+							onChange={importFile}
+						/>
+					</label>
+				</li>
+				<li>
+					<button type="button" className="row row-quiet" onClick={deleteAll}>
+						<span className="row-icon">
+							<TrashIcon />
+						</span>
+						<span className="row-text">
+							{t('data.delete')}
+							<small>{t('data.deleteText')}</small>
+						</span>
+						<ChevronRightIcon className="icon row-chevron" />
+					</button>
+				</li>
+			</ul>
+		</section>
 	);
 }

@@ -18,7 +18,7 @@ test('the proof PDF is created in the browser, without requests to other origins
 	await page.getByRole('button', { name: 'Speichern' }).click();
 	await expect(page.getByRole('status').first()).not.toBeEmpty();
 
-	await page.getByRole('link', { name: 'Nachweis-PDF erstellen' }).click();
+	await page.getByRole('link', { name: 'Nachweis ansehen' }).click();
 	await page.getByLabel('Dein Name für das PDF (freiwillig)').fill('Jürgen Weiß');
 	const downloadPromise = page.waitForEvent('download');
 	await page.getByRole('button', { name: 'PDF erstellen' }).click();

@@ -9,8 +9,10 @@ export const metadata: Metadata = { title: `${t('data.title')} – ${APP_NAME}` 
 export default function DataPage() {
 	return (
 		<>
-			<h1>{t('data.title')}</h1>
-			<p className="lead">{t('data.lead')}</p>
+			<header className="page-head">
+				<h1>{t('data.title')}</h1>
+				<p className="muted">{t('data.lead')}</p>
+			</header>
 			<ProofExport />
 			<DataSettings />
 		</>

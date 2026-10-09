@@ -25,7 +25,8 @@ for (const colorScheme of ['light', 'dark']) {
 		await page.getByRole('button', { name: 'Speichern' }).click();
 		await page.getByRole('dialog').waitFor({ state: 'hidden' });
 	}
-	await page.locator('.next-task button').click();
+	await page.locator('.today').getByRole('button', { name: 'Erledigt' }).click();
+	await page.getByRole('button', { name: 'Weiter zu Sprechstunde' }).click();
 	await page.reload();
 	await page.waitForSelector('.progress');
 	await shot('start');

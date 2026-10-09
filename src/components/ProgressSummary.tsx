@@ -1,23 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { CheckIcon } from '@/components/Icons';
+import { CheckIcon, ChevronRightIcon } from '@/components/Icons';
 import { useAttempts, usePractices } from '@/lib/data/hooks';
-import { computeProgress, proofPebbles } from '@/lib/domain';
+import { computeProgress, proofPebbles, type Progress } from '@/lib/domain';
 import { t } from '@/lib/i18n';
 
-/** "4 Nachweise gesammelt": rejections shown as collected proof, never as failure. */
-function ProofCount({ proofCount }: Readonly<{ proofCount: number }>) {
-	if (proofCount === 0) return <p className="progress-count">{t('progress.countNone')}</p>;
-	return (
-		<p className="progress-count">
-			<span className="progress-number">{proofCount}</span>{' '}
-			{proofCount === 1 ? t('progress.countLabelOne') : t('progress.countLabel')}
-		</p>
-	);
-}
-
-/** One stone per proof, then a few fading open ones. Decorative: the count above says it. */
+/** One stone per proof, then a few fading open ones. Decorative: the count says it. */
 function Pebbles({ proofCount }: Readonly<{ proofCount: number }>) {
 	const { filled, open, more } = proofPebbles(proofCount);
 	return (
@@ -33,32 +22,71 @@ function Pebbles({ proofCount }: Readonly<{ proofCount: number }>) {
 	);
 }
 
-export function ProgressSummary({
-	linkToContacts = false
-}: Readonly<{ linkToContacts?: boolean }>) {
+/** "3 Nachweise gesammelt": rejections shown as collected proof, never as failure. */
+function ProofCount({ progress }: Readonly<{ progress: Progress | undefined }>) {
+	if (!progress) return <p className="progress-count muted">{t('common.loading')}</p>;
+	if (progress.proofCount === 0) {
+		return <p className="progress-count progress-none">{t('progress.countNone')}</p>;
+	}
+	return (
+		<p className="progress-count">
+			<span className="progress-number">{progress.proofCount}</span>{' '}
+			<span>
+				{progress.proofCount === 1 ? t('progress.countLabelOne') : t('progress.countLabel')}
+			</span>
+		</p>
+	);
+}
+
+function useProgress(): Progress | undefined {
 	const practices = usePractices();
 	const attempts = useAttempts();
-	// Prerendered and shown until the data has loaded: the same card with its fixed texts,
+	// Undefined while prerendering and loading: the card keeps its shape with fixed texts,
 	// so the page does not jump and the largest text is painted right away.
-	if (!practices || !attempts) {
-		return (
-			<section className="card progress" aria-labelledby="progress-title" aria-busy="true">
-				<h2 id="progress-title">{t('progress.title')}</h2>
-				<p className="progress-count muted">{t('common.loading')}</p>
-				<Pebbles proofCount={0} />
-				<p className="muted">{t('progress.orientation')}</p>
-			</section>
-		);
-	}
+	return practices && attempts ? computeProgress(practices, attempts) : undefined;
+}
 
-	const progress = computeProgress(practices, attempts);
-
+/** The small proof card on "Dein Weg": count, stones and the way to the proof page. */
+export function ProgressSummary() {
+	const progress = useProgress();
 	return (
-		<section className="card progress" aria-labelledby="progress-title">
-			<h2 id="progress-title">{t('progress.title')}</h2>
-			<ProofCount proofCount={progress.proofCount} />
-			<Pebbles proofCount={progress.proofCount} />
-			{progress.attemptCount > 0 && (
+		<section className="card progress" aria-labelledby="progress-title" aria-busy={!progress}>
+			<h2 id="progress-title" className="visually-hidden">
+				{t('progress.title')}
+			</h2>
+			<ProofCount progress={progress} />
+			{progress && progress.attemptCount > 0 && (
+				<p className="muted progress-sub">
+					{t('progress.attempts', {
+						count: progress.attemptCount,
+						practices: progress.practiceCount
+					})}
+				</p>
+			)}
+			<Pebbles proofCount={progress?.proofCount ?? 0} />
+			<Link href="/daten/" className="row-link">
+				{t('progress.open')}
+				<ChevronRightIcon />
+			</Link>
+		</section>
+	);
+}
+
+/** The proof in detail, on top of the proof page. */
+export function ProgressDetails() {
+	const progress = useProgress();
+	return (
+		<div className="progress progress-details" aria-busy={!progress}>
+			<div className="paper" aria-hidden="true">
+				<span />
+				<span />
+				<span />
+				<span />
+				<span />
+			</div>
+			<ProofCount progress={progress} />
+			<Pebbles proofCount={progress?.proofCount ?? 0} />
+			{progress && progress.attemptCount > 0 && (
 				<p className="check-line">
 					<CheckIcon />
 					{t('progress.attempts', {
@@ -67,19 +95,13 @@ export function ProgressSummary({
 					})}
 				</p>
 			)}
-			{progress.tssContacted && (
+			{progress?.tssContacted && (
 				<p className="check-line">
 					<CheckIcon />
 					{t('progress.tss')}
 				</p>
 			)}
 			<p className="muted">{t('progress.orientation')}</p>
-			{progress.attemptCount > 0 && (
-				<p className="hint-actions">
-					{linkToContacts && <Link href="/kontakte/">{t('nav.contacts')}</Link>}
-					<Link href="/daten/#nachweis">{t('progress.createProof')}</Link>
-				</p>
-			)}
-		</section>
+		</div>
 	);
 }

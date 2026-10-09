@@ -16,10 +16,13 @@ sources:
 steps:
   - id: platzsuche-erster-anruf
     title: Ruf eine Praxis an und notier kurz, wie es lief.
+    action: capture
   - id: platzsuche-tss
     title: Frag parallel bei der Terminservicestelle nach.
+    action: capture
   - id: platzsuche-weiter
     title: Sammle weitere Kontaktversuche, in deinem Tempo.
+    action: capture
 ---
 
 ## Telefonzeiten nutzen

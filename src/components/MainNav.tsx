@@ -2,13 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { DocumentIcon, MoreIcon, PathIcon, PeopleIcon } from '@/components/Icons';
+import { DocumentIcon, MoreIcon, PathIcon, PeopleIcon, PlusIcon } from '@/components/Icons';
+import { openCapture } from '@/lib/capture';
 import { t } from '@/lib/i18n';
 import { sectionOf, type Section } from '@/lib/navigation';
 
 /**
- * Main navigation. On phones a bar at the bottom, with a gap in the middle for the
- * "Kontakt notieren" button; on wider screens a row of links below the header.
+ * Main navigation. On phones a bar at the bottom with the round "Kontakt notieren"
+ * button in the middle; on wider screens a row below the header with the button at the end.
  */
 export function MainNav() {
 	const section = sectionOf(usePathname() ?? '/app/');
@@ -26,7 +27,10 @@ export function MainNav() {
 		<nav className="main-nav" aria-label={t('nav.main')}>
 			{item('home', '/app/', t('nav.homeShort'), <PathIcon />)}
 			{item('contacts', '/kontakte/', t('nav.contacts'), <PeopleIcon />)}
-			<span className="nav-gap" aria-hidden="true" />
+			<button type="button" className="fab" onClick={() => openCapture()}>
+				<PlusIcon />
+				<span className="fab-label">{t('capture.open')}</span>
+			</button>
 			{item('data', '/daten/', t('nav.dataShort'), <DocumentIcon />)}
 			{item('more', '/mehr/', t('nav.more'), <MoreIcon />)}
 		</nav>

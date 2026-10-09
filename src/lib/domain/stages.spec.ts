@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { isStage, nextStep, stageCompletion, suggestedStage, type StageStep } from './stages';
+import {
+	isStage,
+	nextStep,
+	stageCompletion,
+	stagesDone,
+	stageStepCount,
+	suggestedStage,
+	todayState,
+	type StageStep
+} from './stages';
 
 const STEPS: StageStep[] = [
 	{ id: 'orientierung-lesen', stage: 1 },
@@ -49,5 +58,53 @@ describe('suggestedStage', () => {
 
 	it('keeps the current stage when everything ahead is done', () => {
 		expect(suggestedStage(STEPS, ['antrag-stellen'], 5)).toBe(5);
+	});
+});
+
+describe('stageStepCount', () => {
+	it('counts done and all steps of a stage', () => {
+		expect(stageStepCount(STEPS, [], 2)).toEqual({ done: 0, total: 2 });
+		expect(stageStepCount(STEPS, ['ptv11-aufbewahren'], 2)).toEqual({ done: 1, total: 2 });
+		expect(stageStepCount(STEPS, ['praxen-anrufen'], 4)).toEqual({ done: 0, total: 0 });
+	});
+});
+
+describe('stagesDone', () => {
+	it('counts the stages whose steps are all done', () => {
+		expect(stagesDone(STEPS, [])).toBe(0);
+		expect(stagesDone(STEPS, ['orientierung-lesen', 'sprechstunde-buchen'])).toBe(1);
+		expect(
+			stagesDone(STEPS, ['orientierung-lesen', 'sprechstunde-buchen', 'ptv11-aufbewahren'])
+		).toBe(2);
+	});
+});
+
+describe('todayState', () => {
+	it('offers the next open step of the current stage', () => {
+		const state = todayState(STEPS, ['sprechstunde-buchen'], 2);
+		expect(state).toEqual({ kind: 'task', step: STEPS[2] });
+	});
+
+	it('celebrates a finished stage and points to the next one with open steps', () => {
+		expect(todayState(STEPS, ['orientierung-lesen'], 1)).toEqual({ kind: 'stageDone', next: 2 });
+		expect(todayState(STEPS, ['praxen-anrufen'], 3)).toEqual({ kind: 'stageDone', next: 5 });
+	});
+
+	it('points back to an earlier open stage when nothing ahead is open', () => {
+		expect(todayState(STEPS, ['antrag-stellen'], 5)).toEqual({ kind: 'stageDone', next: 1 });
+	});
+
+	it('treats a stage without steps like a finished one', () => {
+		expect(todayState(STEPS, [], 4)).toEqual({ kind: 'stageDone', next: 5 });
+	});
+
+	it('says when every step is done', () => {
+		expect(
+			todayState(
+				STEPS,
+				STEPS.map((step) => step.id),
+				5
+			)
+		).toEqual({ kind: 'allDone' });
 	});
 });

@@ -8,6 +8,22 @@ export function formatDateTime(iso: string): string {
 	return dateTime.format(new Date(iso));
 }
 
+const time = new Intl.DateTimeFormat('de-DE', { timeStyle: 'short' });
+
+function dayDifference(a: Date, b: Date): number {
+	const day = (d: Date) => Date.UTC(d.getFullYear(), d.getMonth(), d.getDate());
+	return Math.round((day(b) - day(a)) / 86_400_000);
+}
+
+/** "Heute, 09:30", "Gestern, 09:30" or the full date and time for older entries. */
+export function formatRelativeDateTime(iso: string, now: Date = new Date()): string {
+	const d = new Date(iso);
+	const days = dayDifference(d, now);
+	if (days === 0) return t('date.today', { time: time.format(d) });
+	if (days === 1) return t('date.yesterday', { time: time.format(d) });
+	return formatDateTime(iso);
+}
+
 /** "8. Okt. 2026" in the reader's time zone. */
 export function formatDate(iso: string): string {
 	return date.format(new Date(iso));

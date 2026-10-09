@@ -3,7 +3,9 @@ import { STAGES } from '@/lib/domain';
 
 const stepSchema = z.object({
 	id: z.string().regex(/^[a-z0-9-]+$/, 'step ids are kebab-case'),
-	title: z.string().min(1)
+	title: z.string().min(1),
+	/** "capture": the task is about a contact, so the app offers to note it right away. */
+	action: z.literal('capture').optional()
 });
 
 /** A source is a bare URL or a URL with a readable title. */

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
 	formatDate,
 	formatDateTime,
+	formatRelativeDateTime,
 	formatWaitTime,
 	fromDateTimeLocal,
 	toDateTimeLocal
@@ -39,5 +40,23 @@ describe('date helpers', () => {
 		const iso = new Date(2026, 9, 8, 9, 30).toISOString();
 		expect(formatDate(iso)).toBe('08.10.2026');
 		expect(formatDateTime(iso)).toBe('08.10.2026, 09:30');
+	});
+});
+
+describe('formatRelativeDateTime', () => {
+	const now = new Date(2026, 9, 9, 18, 0);
+
+	it('says today and yesterday in words', () => {
+		expect(formatRelativeDateTime(new Date(2026, 9, 9, 8, 30).toISOString(), now)).toBe(
+			'Heute, 08:30'
+		);
+		expect(formatRelativeDateTime(new Date(2026, 9, 8, 22, 15).toISOString(), now)).toBe(
+			'Gestern, 22:15'
+		);
+	});
+
+	it('falls back to the full date for older entries', () => {
+		const iso = new Date(2026, 8, 1, 8, 30).toISOString();
+		expect(formatRelativeDateTime(iso, now)).toBe(formatDateTime(iso));
 	});
 });

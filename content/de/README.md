@@ -26,6 +26,7 @@ sources:
 steps: # nur bei Etappen: kleine Aufgaben, die die Startseite vorschlägt
   - id: sprechstunde-termin # stabil halten, gespeicherte Fortschritte hängen daran
     title: Vereinbare einen Termin für eine Sprechstunde.
+    action: capture # optional: bietet bei der Aufgabe „Anruf notieren“ an
 ---
 ## Überschrift
 
