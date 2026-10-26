@@ -89,3 +89,17 @@ src/lib/i18n/        UI-Texte
 - **UI-Texte** nur in `src/lib/i18n/de.json`, nie hart im Komponentencode. Ton: Du-Form, Sätze unter 20 Wörtern, kein Druck, keine roten Warnungen, keine Streaks.
 - **Barrierefreiheit:** WCAG 2.2 AA, Touch-Ziele ≥ 44 px (`--touch-target`), `prefers-reduced-motion`, Hell- und Dunkelmodus. axe-core in E2E muss fehlerfrei sein.
 - **Am Ende jeder Phase:** README aktualisieren, offene Punkte als GitHub-Issues formulieren, Einsteigeraufgaben mit `good first issue` markieren.
+
+## graphify
+
+Unter `graphify-out/` liegt ein Wissensgraph des Codes ([Graphify](https://github.com/Graphify-Labs/graphify)): Module, Funktionen, Aufrufe und Importe über Dateigrenzen hinweg. Er erspart das erneute Erkunden der App in jeder Sitzung.
+
+Regeln:
+
+- Wenn `graphify` installiert ist: vor dem ersten Grep, der ersten Suche oder dem ersten Lesen von Quelldateien zu einer Codefrage `graphify query "<Frage>"` ausführen. Diese Regel in jeden Subagent-Prompt übernehmen, der Code erkundet. Rohdateien nur für Stellen lesen, die der Graph oder ein früherer Read schon gefunden hat.
+- Abfragen treffen Bezeichner aus dem Code, keine deutschen Sätze: `graphify query "contact repository save"` statt „Wie wird ein Kontakt gespeichert?“.
+- `graphify path "<A>" "<B>"` für Beziehungen, `graphify explain "<Name>"` für einzelne Dateien oder Funktionen. Beide liefern einen kleinen Teilgraphen statt ganzer Dateien.
+- `graphify-out/GRAPH_REPORT.md` für einen Architekturüberblick lesen, auch ohne installiertes `graphify`.
+- Nach Codeänderungen `graphify update .` ausführen und `graphify-out/` mitcommitten (nur AST, offline, keine API-Kosten).
+- `graph.json` wird bei jedem Bau komplett neu geschrieben. Ein großer Diff daran im PR ist normal und kein Befund.
+- Installation: `uv tool install graphifyy` (oder `pipx install graphifyy`). Die Hooks in `.claude/settings.json` tun nichts, solange `graphify` fehlt.

@@ -11,3 +11,5 @@ docs
 !content/**/*.md
 Dockerfile
 .dockerignore
+graphify-out
+.claude

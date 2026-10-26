@@ -1,0 +1,12 @@
+# Was Graphify beim Bau des Wissensgraphen überspringt (zusätzlich zu .gitignore).
+# Bilder, Lockfiles und generierte Dateien bringen keinen Strukturgewinn.
+package-lock.json
+public/
+graphify-out/
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.svg
+*.ico
+*.woff2
