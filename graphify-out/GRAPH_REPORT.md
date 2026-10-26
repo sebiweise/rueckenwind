@@ -1,54 +1,48 @@
 # Graph Report - rueckenwind  (2026-10-26)
 
 ## Corpus Check
-- 136 files · ~37,142 words
+- 136 files · ~37,328 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 10 file(s) not represented in the graph (top: (none) 8, .properties 1, .css 1)
 
 ## Summary
-- 885 nodes · 1891 edges · 55 communities (49 shown, 6 thin omitted)
+- 886 nodes · 1892 edges · 48 communities (43 shown, 5 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 28 edges (avg confidence: 0.88)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `9773cf93`
+- Built from commit: `cfb5ea6a`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
 ## Community Hubs (Navigation)
 - JourneyView.tsx
-- t
+- next
 - Icons.tsx
 - parser.ts
 - with
 - @playwright/test
-- app/layout.tsx
+- mehr/page.tsx
 - with
 - install/hooks.ts
 - pages.yml
 - ContactsView.tsx
-- ProofExport.tsx
-- progress.ts
-- backup.ts
+- t
+- 2. Der Weg zur ambulanten Psychotherapie (GKV)
 - steps
 - devDependencies
 - compilerOptions
 - dependencies
-- repository.ts
 - inhalt-korrigieren.yml
 - scripts
-- getDb
 - body
 - package.json
-- QuickCapture.tsx
 - Rückenwind – Wissensstand
 - body
 - README.md
 - Rückenwind – Umsetzungsplan
 - Rückenwind – Therapieplatz finden
 - rueckenwind
-- react
-- Umsetzungsschritte
 - eslint.config.mjs
 - @serwist/next
 - CLAUDE.md
@@ -64,7 +58,6 @@
 - etappe-2-sprechstunde.md
 - etappe-4-plan-b.md
 - krise.md
-- vitest
 - pull_request_template.md
 - repository
 - prettier.config.js
@@ -87,35 +80,35 @@
 ## Surprising Connections (you probably didn't know these)
 - `Tech-Stack` --references--> `t()`  [INFERRED]
   CLAUDE.md → src/lib/i18n/index.ts
-- `Datenhaltung` --references--> `recordContact()`  [INFERRED]
-  src/lib/data/README.md → src/lib/data/repository.ts
 - `Domäne` --references--> `ContactResult`  [INFERRED]
   src/lib/domain/README.md → src/lib/domain/types.ts
 - `addCsp()` --calls--> `contentSecurityPolicy()`  [EXTRACTED]
   scripts/postbuild.mjs → src/lib/csp.ts
 - `Datenhaltung` --references--> `createDb()`  [INFERRED]
   src/lib/data/README.md → src/lib/data/db.ts
+- `Datenhaltung` --references--> `getDb()`  [INFERRED]
+  src/lib/data/README.md → src/lib/data/db.ts
 
 ## Import Cycles
 - None detected.
 
-## Communities (55 total, 6 thin omitted)
+## Communities (48 total, 5 thin omitted)
 
 ### Community 0 - "JourneyView.tsx"
-Cohesion: 0.08
-Nodes (53): dynamicParams, generateMetadata(), Props, StagePage(), Props, CheckIcon(), PhoneIcon(), JourneyView() (+45 more)
+Cohesion: 0.07
+Nodes (57): JourneyPage(), metadata, dynamicParams, generateMetadata(), Props, StagePage(), Props, CheckIcon() (+49 more)
 
-### Community 1 - "t"
-Cohesion: 0.10
-Nodes (39): next, JourneyPage(), metadata, DataPage(), metadata, GUIDES, InstallPage(), metadata (+31 more)
+### Community 1 - "next"
+Cohesion: 0.06
+Nodes (36): nextConfig, securityHeaders, next, addCsp(), htmlFiles(), pages, metadata, Page (+28 more)
 
 ### Community 2 - "Icons.tsx"
-Cohesion: 0.08
-Nodes (43): metadata, Page, metadata, Page, metadata, Page, AppLayout(), HELP (+35 more)
+Cohesion: 0.10
+Nodes (35): react, ContentView(), dateFormat, DataSettings(), exportFile(), importFile(), loadBackup(), ExpandableLead() (+27 more)
 
 ### Community 3 - "parser.ts"
-Cohesion: 0.08
-Nodes (38): correctTypos(), DURATION, durationConfidence(), findTime(), foldToken(), isStopToken(), KEYWORDS, NAME_MARKERS (+30 more)
+Cohesion: 0.10
+Nodes (34): correctTypos(), DURATION, durationConfidence(), findTime(), foldToken(), isStopToken(), KEYWORDS, NAME_MARKERS (+26 more)
 
 ### Community 4 - "with"
 Cohesion: 0.06
@@ -125,37 +118,33 @@ Nodes (40): name, runs-on, steps, concurrency, cancel-in-progress, group, name, 
 Cohesion: 0.07
 Nodes (12): PAGES, @axe-core/playwright@^4.13.0, @playwright/test@^1.64.0, @axe-core/playwright, @playwright/test, icons, categories, dir (+4 more)
 
-### Community 6 - "app/layout.tsx"
-Cohesion: 0.10
-Nodes (22): nextConfig, securityHeaders, addCsp(), htmlFiles(), pages, metadata, RootLayout(), viewport (+14 more)
+### Community 6 - "mehr/page.tsx"
+Cohesion: 0.16
+Nodes (16): HELP, metadata, MorePage(), Row(), choose(), listeners, subscribe(), ThemePicker() (+8 more)
 
 ### Community 7 - "with"
 Cohesion: 0.06
 Nodes (34): concurrency, cancel-in-progress, group, name, runs-on, steps, jobs, image (+26 more)
 
 ### Community 8 - "install/hooks.ts"
-Cohesion: 0.15
-Nodes (26): ShareIcon(), InstallBanner(), later(), InstallStatus(), readStandalone(), readStorage(), serverFalse(), serverNull() (+18 more)
+Cohesion: 0.11
+Nodes (31): GUIDES, InstallPage(), metadata, HomeScreenIcon(), ShareIcon(), InstallBanner(), later(), InstallStatus() (+23 more)
 
 ### Community 9 - "pages.yml"
 Cohesion: 0.06
 Nodes (32): runs-on, steps, concurrency, cancel-in-progress, group, environment, needs, runs-on (+24 more)
 
 ### Community 10 - "ContactsView.tsx"
-Cohesion: 0.19
-Nodes (20): AttemptRow(), PracticeCard(), PracticeMenu(), PracticeValues, ClockIcon(), PracticeAvatar(), practiceInitials(), deleteAttempt() (+12 more)
+Cohesion: 0.05
+Nodes (85): AppLayout(), AttemptRow(), ContactsView(), PracticeCard(), PracticeForm(), PracticeMenu(), PracticeValues, deleteAll() (+77 more)
 
-### Community 11 - "ProofExport.tsx"
-Cohesion: 0.18
-Nodes (16): pdfmake, ProofExport(), create(), listAttempts(), listPractices(), attemptPeriod(), formatDate(), createPdfBlob() (+8 more)
+### Community 11 - "t"
+Cohesion: 0.07
+Nodes (44): pdfmake@^0.3.11, vitest@^5.0.3, pdfmake, vitest, DataPage(), metadata, Hints(), Pebbles() (+36 more)
 
-### Community 12 - "progress.ts"
-Cohesion: 0.15
-Nodes (18): Overrides, ContactRecord, ParsedContact, COUNTED_RESULTS, EXPORT_REMINDER_AFTER, MAX_PEBBLES, OPEN_PEBBLES, PAUSE_AFTER_REJECTIONS (+10 more)
-
-### Community 13 - "backup.ts"
-Cohesion: 0.13
-Nodes (20): attemptSchema, createExport(), EXPORT_APP_ID, ExportFile, exportFileName(), exportSchema, hasData(), importData() (+12 more)
+### Community 12 - "2. Der Weg zur ambulanten Psychotherapie (GKV)"
+Cohesion: 0.33
+Nodes (6): 2. Der Weg zur ambulanten Psychotherapie (GKV), Aktuelle Entwicklungen (beobachten), Begriffe, Etappen in der App, Kostenerstattung: typische Unterlagen, Krisenhilfe (für Krisenseite)
 
 ### Community 14 - "steps"
 Cohesion: 0.11
@@ -163,7 +152,7 @@ Nodes (18): GH_TOKEN, jobs, release, name, permissions, contents, tags, runs-on 
 
 ### Community 15 - "devDependencies"
 Cohesion: 0.11
-Nodes (19): devDependencies, esbuild@^0.28.2, pdfjs-dist@^6.4.299, prettier@^3.9.9, @serwist/cli@^9.5.13, @types/node@^22.20.5, @types/pdfmake@^0.3.3, @types/react@^19.3.0 (+11 more)
+Nodes (19): devDependencies, esbuild@^0.28.2, fake-indexeddb@^6.2.5, prettier@^3.9.9, @types/node@^22.20.5, @types/pdfmake@^0.3.3, @types/react@^19.3.0, @types/react-dom@^19.3.0 (+11 more)
 
 ### Community 16 - "compilerOptions"
 Cohesion: 0.11
@@ -171,11 +160,7 @@ Nodes (18): compilerOptions, allowJs, esModuleInterop, incremental, isolatedModu
 
 ### Community 17 - "dependencies"
 Cohesion: 0.12
-Nodes (17): dependencies, dexie@^4.4.6, dexie-react-hooks@^4.4.0, @fontsource-variable/nunito@^5.3.0, marked@^18.1.0, next@^16.4.0, pdfmake@^0.3.11, react-dom@^19.3.0 (+9 more)
-
-### Community 18 - "repository.ts"
-Cohesion: 0.21
-Nodes (12): DB_NAME, RueckenwindDb, SCHEMA_VERSION, AttemptInput, PracticeInput, Domäne, Freitext-Parser, Zählregel (+4 more)
+Nodes (17): dependencies, dexie@^4.4.6, dexie-react-hooks@^4.4.0, @fontsource-variable/nunito@^5.3.0, marked@^18.1.0, next@^16.4.0, react@^19.3.0, react-dom@^19.3.0 (+9 more)
 
 ### Community 19 - "inhalt-korrigieren.yml"
 Cohesion: 0.13
@@ -185,25 +170,17 @@ Nodes (14): description, label, placeholder, value, body, attributes, id, type (
 Cohesion: 0.13
 Nodes (15): scripts, build, build:static, check, dev, format, lint, postbuild (+7 more)
 
-### Community 21 - "getDb"
-Cohesion: 0.25
-Nodes (13): DataSettings(), deleteAll(), exportFile(), importFile(), loadBackup(), TrashIcon(), UploadIcon(), createDb() (+5 more)
-
 ### Community 22 - "body"
 Cohesion: 0.15
 Nodes (12): label, placeholder, value, body, attributes, id, type, validations (+4 more)
 
 ### Community 23 - "package.json"
 Cohesion: 0.15
-Nodes (12): description, fake-indexeddb@^6.2.5, @types/react-dom@^19.3.0, engines, node, license, name, private (+4 more)
-
-### Community 24 - "QuickCapture.tsx"
-Cohesion: 0.23
-Nodes (10): Chip(), ChipProps, Editor, QUICK_RESULTS, QuickCapture(), close(), save(), findPracticeByName() (+2 more)
+Nodes (12): description, pdfjs-dist@^6.4.299, @serwist/cli@^9.5.13, engines, node, license, name, private (+4 more)
 
 ### Community 25 - "Rückenwind – Wissensstand"
-Cohesion: 0.17
-Nodes (12): 1. Projektkontext, 2. Der Weg zur ambulanten Psychotherapie (GKV), 3. Getroffene Entscheidungen, 4. Offene Entscheidungen, 5. Name, 6. Quellen, Aktuelle Entwicklungen (beobachten), Begriffe (+4 more)
+Cohesion: 0.33
+Nodes (6): 1. Projektkontext, 3. Getroffene Entscheidungen, 4. Offene Entscheidungen, 5. Name, 6. Quellen, Rückenwind – Wissensstand
 
 ### Community 26 - "body"
 Cohesion: 0.17
@@ -214,8 +191,8 @@ Cohesion: 0.22
 Nodes (3): Aufbau einer Datei, Infotexte (Deutsch), Regeln
 
 ### Community 28 - "Rückenwind – Umsetzungsplan"
-Cohesion: 0.18
-Nodes (11): Arbeitsanweisungen für Claude Code, Backlog nach dem MVP, Datenmodell, Datenschutz, Recht, Risiken, Entscheidungen und Leitprinzipien, Fachlicher Hintergrund (Kurzfassung), Funktionsumfang MVP, Rückenwind – Umsetzungsplan (+3 more)
+Cohesion: 0.11
+Nodes (19): Arbeitsanweisungen für Claude Code, Backlog nach dem MVP, Datenmodell, Datenschutz, Recht, Risiken, Entscheidungen und Leitprinzipien, Fachlicher Hintergrund (Kurzfassung), Funktionsumfang MVP, Phase 0 – Repo-Fundament (+11 more)
 
 ### Community 29 - "Rückenwind – Therapieplatz finden"
 Cohesion: 0.18
@@ -224,14 +201,6 @@ Nodes (11): Datenschutz-Versprechen, Entwicklung, Hinweis, Hosting, Lizenz, Mitm
 ### Community 30 - "rueckenwind"
 Cohesion: 0.22
 Nodes (8): build, image, ports, read_only, restart, tmpfs, services, rueckenwind
-
-### Community 31 - "react"
-Cohesion: 0.31
-Nodes (6): react@^19.3.0, react, noSubscription(), ReviewNotice(), isReviewOverdue(), REVIEW_INTERVAL_MONTHS
-
-### Community 32 - "Umsetzungsschritte"
-Cohesion: 0.25
-Nodes (8): Phase 0 – Repo-Fundament, Phase 1 – Domänenlogik, Phase 2 – Datenhaltung, Phase 3 – Inhalte, Phase 4 – Kern-UI, Phase 5 – Nachweis-PDF, Phase 6 – PWA, Feinschliff, Release, Umsetzungsschritte
 
 ### Community 33 - "eslint.config.mjs"
 Cohesion: 0.29
@@ -242,8 +211,8 @@ Cohesion: 0.29
 Nodes (6): serwist@^9.5.13, @serwist/next@^9.5.13, serwist, @serwist/next, serwist, WorkerGlobalScope
 
 ### Community 35 - "CLAUDE.md"
-Cohesion: 0.33
-Nodes (5): Arbeitsweise, Befehle, Leitprinzipien, Struktur, Tech-Stack
+Cohesion: 0.29
+Nodes (6): Arbeitsweise, Befehle, graphify, Leitprinzipien, Struktur, Tech-Stack
 
 ### Community 36 - "Verhaltenskodex"
 Cohesion: 0.33
@@ -298,22 +267,22 @@ Cohesion: 0.67
 Nodes (3): repository, type, url
 
 ## Knowledge Gaps
-- **6 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **5 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `t()` connect `t` to `JourneyView.tsx`, `Icons.tsx`, `CLAUDE.md`, `app/layout.tsx`, `install/hooks.ts`, `ContactsView.tsx`, `ProofExport.tsx`, `getDb`, `QuickCapture.tsx`, `react`?**
-  _High betweenness centrality (0.164) - this node is a cross-community bridge._
+- **Why does `t()` connect `t` to `JourneyView.tsx`, `next`, `Icons.tsx`, `CLAUDE.md`, `mehr/page.tsx`, `install/hooks.ts`, `ContactsView.tsx`?**
+  _High betweenness centrality (0.165) - this node is a cross-community bridge._
 - **Should `JourneyView.tsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.07869742198100407 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.07355242566510173 - nodes in this community are weakly interconnected._
 - **Why does `Tech-Stack` connect `CLAUDE.md` to `t`?**
-  _High betweenness centrality (0.106) - this node is a cross-community bridge._
-- **Should `t` be split into smaller, more focused modules?**
-  _Cohesion score 0.09962406015037593 - nodes in this community are weakly interconnected._
-- **Why does `next` connect `t` to `JourneyView.tsx`, `Icons.tsx`, `app/layout.tsx`, `install/hooks.ts`, `dependencies`, `package.json`?**
+  _High betweenness centrality (0.107) - this node is a cross-community bridge._
+- **Should `next` be split into smaller, more focused modules?**
+  _Cohesion score 0.06453634085213032 - nodes in this community are weakly interconnected._
+- **Why does `next` connect `next` to `JourneyView.tsx`, `Icons.tsx`, `mehr/page.tsx`, `install/hooks.ts`, `ContactsView.tsx`, `t`, `dependencies`, `package.json`?**
   _High betweenness centrality (0.054) - this node is a cross-community bridge._
 - **Should `Icons.tsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.07727272727272727 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.10048309178743961 - nodes in this community are weakly interconnected._
 - **Should `parser.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.08478513356562137 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.1006006006006006 - nodes in this community are weakly interconnected._
