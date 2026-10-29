@@ -1,15 +1,13 @@
-// Runs after `next build` for both targets:
+// Runs after `next build` (static export to out/):
 // 1. adds a CSP <meta> to every prerendered page that allows only that page's inline scripts (by hash),
 // 2. builds the service worker (sw.js) with a precache list of all pages and assets,
-// 3. puts sw.js and public/ where each target serves them.
+// 3. copies sw.js to out/.
 import { createHash } from 'node:crypto';
 import { cpSync, existsSync, readdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { runBuildCommand } from '@serwist/cli';
 import { serwist } from '@serwist/next/config';
 import { contentSecurityPolicy } from '../src/lib/csp.ts';
-
-const isExport = process.env.NEXT_OUTPUT === 'export';
 
 function htmlFiles(dir) {
 	if (!existsSync(dir)) return [];
@@ -42,12 +40,7 @@ function addCsp(file) {
 	return true;
 }
 
-const pages = [
-	...htmlFiles('.next/server/app'),
-	...htmlFiles('.next/standalone/.next/server/app'),
-	...(isExport ? htmlFiles('out') : [])
-];
-const hardened = pages.filter(addCsp).length;
+const hardened = htmlFiles('out').filter(addCsp).length;
 if (hardened === 0) throw new Error('CSP: no prerendered page with a CSP meta tag found');
 console.log(`CSP: inline scripts hashed in ${hardened} pages`);
 
@@ -64,10 +57,4 @@ config.manifestTransforms.push((entries) => ({
 }));
 await runBuildCommand({ config, watch: false });
 
-if (isExport) {
-	cpSync('public/sw.js', 'out/sw.js');
-} else if (existsSync('.next/standalone')) {
-	// The standalone server does not include public/ and .next/static by default.
-	cpSync('public', '.next/standalone/public', { recursive: true });
-	cpSync('.next/static', '.next/standalone/.next/static', { recursive: true });
-}
+cpSync('public/sw.js', 'out/sw.js');

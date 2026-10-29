@@ -4,8 +4,6 @@ import { t } from '@/lib/i18n';
 
 export const dynamic = 'force-static';
 
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
-
 export default function manifest(): MetadataRoute.Manifest {
 	return {
 		name: APP_TITLE,
@@ -14,23 +12,23 @@ export default function manifest(): MetadataRoute.Manifest {
 		lang: 'de',
 		dir: 'ltr',
 		// Keeps installs from before the start page the same app; it once started at `/`.
-		id: `${basePath}/`,
+		id: '/',
 		// The installed app opens the app itself, not the start page.
-		start_url: `${basePath}/app/`,
-		scope: `${basePath}/`,
+		start_url: '/app/',
+		scope: '/',
 		display: 'standalone',
 		background_color: '#fcf3ee',
 		theme_color: '#3d6b57',
 		icons: [
-			{ src: `${basePath}/icons/icon-192.png`, sizes: '192x192', type: 'image/png' },
-			{ src: `${basePath}/icons/icon-512.png`, sizes: '512x512', type: 'image/png' },
+			{ src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+			{ src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
 			{
-				src: `${basePath}/icons/maskable-512.png`,
+				src: '/icons/maskable-512.png',
 				sizes: '512x512',
 				type: 'image/png',
 				purpose: 'maskable'
 			},
-			{ src: `${basePath}/icons/icon.svg`, sizes: 'any', type: 'image/svg+xml' }
+			{ src: '/icons/icon.svg', sizes: 'any', type: 'image/svg+xml' }
 		]
 	};
 }

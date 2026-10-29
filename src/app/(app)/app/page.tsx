@@ -28,8 +28,9 @@ export default function JourneyPage() {
 					<p className="muted">{t('home.tagline')}</p>
 				</header>
 				<Hints />
-				<InstallBanner />
 				<JourneyView stages={stages} steps={steps} />
+				{/* Below the path: the banner only appears after loading and would push it down. */}
+				<InstallBanner />
 			</div>
 			<div className="home-side">
 				<ProgressSummary />

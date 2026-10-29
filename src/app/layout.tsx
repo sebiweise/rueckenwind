@@ -9,8 +9,6 @@ import { paletteScript } from '@/lib/theme';
 import '@fontsource-variable/nunito/wght.css';
 import './globals.css';
 
-const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
-
 export const metadata: Metadata = {
 	title: APP_TITLE,
 	description: t('meta.description'),
@@ -18,8 +16,8 @@ export const metadata: Metadata = {
 	applicationName: APP_NAME,
 	appleWebApp: { capable: true, title: APP_NAME, statusBarStyle: 'default' },
 	icons: {
-		icon: [{ url: `${basePath}/icons/icon.svg`, type: 'image/svg+xml' }],
-		apple: `${basePath}/icons/apple-touch-icon.png`
+		icon: [{ url: '/icons/icon.svg', type: 'image/svg+xml' }],
+		apple: '/icons/apple-touch-icon.png'
 	}
 };
 

@@ -27,15 +27,10 @@ jobs:
       - run: npm run check
       - run: npm run test:coverage
       - run: npm run build
-      - run: npm run build:static
 
   e2e:
-    name: E2E-Tests ${{ matrix.target }} (Playwright + axe)
+    name: E2E-Tests (Playwright + axe)
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        target: [standalone, static]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -47,11 +42,10 @@ jobs:
       - run: npm run test:e2e
         env:
           CI: true
-          E2E_TARGET: ${{ matrix.target }}
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: playwright-report-${{ matrix.target }}
+          name: playwright-report
           path: test-results/
           retention-days: 7
 
@@ -67,9 +61,9 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       - run: npm run build
-      - name: Lighthouse gegen den Standalone-Server
+      - name: Lighthouse gegen den statischen Export
         run: |
-          PORT=4173 HOSTNAME=localhost npm start &
+          PORT=4173 npm start &
           for i in $(seq 30); do curl -sf http://localhost:4173/ > /dev/null && break; sleep 1; done
           CHROME_PATH=$(node -e "console.log(require('@playwright/test').chromium.executablePath())") \
             node scripts/lighthouse.mjs http://localhost:4173/

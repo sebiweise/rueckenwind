@@ -6,7 +6,7 @@ import type { ContentPage, ContentStep } from './schema';
 
 /**
  * Build-time only: reads content/de/*.md. Pages that use it are prerendered,
- * so neither the standalone server nor the static export reads files at runtime.
+ * so the static export never reads files at runtime.
  */
 const CONTENT_DIR = path.join(process.cwd(), 'content', 'de');
 
