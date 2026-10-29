@@ -1,6 +1,7 @@
 package-lock.json
 .next/
 out/
+.vercel/
 next-env.d.ts
 test-results/
 playwright-report/

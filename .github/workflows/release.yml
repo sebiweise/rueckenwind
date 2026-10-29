@@ -1,7 +1,7 @@
 name: Release
 
 # Ein Tag wie v0.1.0 erzeugt ein GitHub-Release mit dem passenden Abschnitt aus CHANGELOG.md
-# und dem statischen Export als Zip. Das Docker-Image baut docker.yml für denselben Tag.
+# und dem statischen Export als Zip.
 # Ein Tag mit Zusatz wie v0.1.0-beta.1 wird als Vorabversion (Testversion) veröffentlicht
 # und nutzt den CHANGELOG-Abschnitt der Version ohne Zusatz.
 on:
