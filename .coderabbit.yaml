@@ -19,7 +19,7 @@ reviews:
     enabled: true
     drafts: false
     base_branches:
-      - master
+      - '^master$'
     ignore_usernames:
       - dependabot[bot]
 
@@ -47,7 +47,8 @@ reviews:
         Fokusreihenfolge, Touch-Ziele über --touch-target (≥ 44 px),
         prefers-reduced-motion, Hell- und Dunkelmodus. Der Krisen-Button muss
         auf jedem Screen erreichbar bleiben. Keine Pflichtfelder, keine
-        mehrseitigen Formulare. Inline-Skripte und -Styles brechen die CSP.
+        mehrseitigen Formulare. Keine eigenen Inline-Skripte: die CSP lässt im
+        Build nur gehashte Next.js-Skripte zu.
     - path: 'src/lib/domain/**'
       instructions: >-
         Reine Logik ohne Framework-Abhängigkeiten, voll getestet (Abdeckung
@@ -61,8 +62,11 @@ reviews:
         ablehnen. hooks.ts nur im Client.
     - path: 'src/lib/csp.ts'
       instructions: >-
-        Die CSP erlaubt nur 'self'. Jede Lockerung ('unsafe-inline',
-        'unsafe-eval', fremde Origins) braucht eine sehr gute Begründung.
+        Die CSP erlaubt nur 'self' als Origin. Skripte laufen im Build über
+        Hashes aus scripts/postbuild.mjs, 'unsafe-inline' nur im HTTP-Header
+        für Hydration-Skripte und für Styles, 'unsafe-eval' nur im Dev-Server.
+        Jede weitere Lockerung (fremde Origins, neue Ausnahmen) braucht eine
+        sehr gute Begründung.
     - path: 'src/lib/pdf/**'
       instructions: >-
         Nachweis-PDF mit pdfmake, clientseitig per dynamischem Import. Die
