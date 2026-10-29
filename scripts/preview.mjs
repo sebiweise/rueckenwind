@@ -37,13 +37,21 @@ async function resolveFile(urlPath) {
 	return null;
 }
 
+/** True if Accept-Encoding allows gzip, i.e. lists it (or *) without q=0. */
+function acceptsGzip(header = '') {
+	return header.split(',').some((part) => {
+		const [name, ...params] = part.trim().toLowerCase().split(';');
+		const q = params.map((p) => p.trim()).find((p) => p.startsWith('q='));
+		return (name === 'gzip' || name === '*') && (q === undefined || Number(q.slice(2)) > 0);
+	});
+}
+
 createServer(async (request, response) => {
 	const { pathname } = new URL(request.url ?? '/', 'http://localhost');
 	const file = (await resolveFile(pathname)) ?? join(root, '404.html');
 	const type = types[extname(file)] ?? 'application/octet-stream';
 	// Compress text like Vercel does, so Lighthouse measures realistic transfer sizes.
-	const gzip =
-		!type.startsWith('image/png') && /\bgzip\b/.test(request.headers['accept-encoding'] ?? '');
+	const gzip = !type.startsWith('image/png') && acceptsGzip(request.headers['accept-encoding']);
 	response.writeHead(file.endsWith('404.html') && pathname !== '/404.html' ? 404 : 200, {
 		...headers,
 		'Content-Type': type,
