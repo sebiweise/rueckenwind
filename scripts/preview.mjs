@@ -37,13 +37,15 @@ async function resolveFile(urlPath) {
 	return null;
 }
 
-/** True if Accept-Encoding allows gzip, i.e. lists it (or *) without q=0. */
+/** True if Accept-Encoding allows gzip: an explicit gzip entry wins over *, q=0 forbids. */
 function acceptsGzip(header = '') {
-	return header.split(',').some((part) => {
+	const q = {};
+	for (const part of header.split(',')) {
 		const [name, ...params] = part.trim().toLowerCase().split(';');
-		const q = params.map((p) => p.trim()).find((p) => p.startsWith('q='));
-		return (name === 'gzip' || name === '*') && (q === undefined || Number(q.slice(2)) > 0);
-	});
+		const value = params.map((p) => p.trim()).find((p) => p.startsWith('q='));
+		q[name] = value === undefined ? 1 : Number(value.slice(2));
+	}
+	return (q.gzip ?? q['*'] ?? 0) > 0;
 }
 
 createServer(async (request, response) => {
