@@ -1,0 +1,134 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+# CodeRabbit configuration for Rückenwind.
+language: de-DE
+tone_instructions: >-
+  Sachlich und knapp auf Deutsch. Gesundheitsdaten: Risiken, dass Daten das
+  Gerät verlassen oder verloren gehen, immer zuerst und deutlich nennen.
+early_access: false
+
+reviews:
+  profile: chill
+  request_changes_workflow: false
+  high_level_summary: true
+  review_status: true
+  poem: false
+  collapse_walkthrough: true
+  sequence_diagrams: false
+
+  auto_review:
+    enabled: true
+    drafts: false
+    base_branches:
+      - master
+    ignore_usernames:
+      - dependabot[bot]
+
+  path_filters:
+    - '!package-lock.json'
+    - '!graphify-out/**'
+    - '!public/icons/**'
+    - '!**/*.png'
+
+  path_instructions:
+    - path: 'src/**/*.{ts,tsx}'
+      instructions: >-
+        Next.js 16 (App Router), React 19, TypeScript. Lokal-first ohne
+        Server: Gesundheitsdaten dürfen das Gerät nie verlassen. Melde jeden
+        fetch, jede externe URL, CDN, Font, Analytics oder API. Die App muss
+        als Standalone-Server und als statischer Export laufen, deshalb keine
+        Route Handler, Server Actions, Middleware/Proxy, cookies()/headers()
+        und kein next/image-Optimizer. Keine next/font/google. Imports aus
+        src/ über @/…. Lint und Format übernehmen ESLint und Prettier,
+        Code-Smells meldet SonarCloud: diese nicht wiederholen.
+    - path: 'src/{app,components}/**/*.tsx'
+      instructions: >-
+        UI-Texte nur über t() aus src/lib/i18n/de.json, nie hart im Code.
+        Barrierefreiheit nach WCAG 2.2 AA: semantisches HTML, Labels,
+        Fokusreihenfolge, Touch-Ziele über --touch-target (≥ 44 px),
+        prefers-reduced-motion, Hell- und Dunkelmodus. Der Krisen-Button muss
+        auf jedem Screen erreichbar bleiben. Keine Pflichtfelder, keine
+        mehrseitigen Formulare. Inline-Skripte und -Styles brechen die CSP.
+    - path: 'src/lib/domain/**'
+      instructions: >-
+        Reine Logik ohne Framework-Abhängigkeiten, voll getestet (Abdeckung
+        ≥ 90 %). Der Freitext-Parser läuft rein lokal. Keine Diagnosen,
+        Erfolgsversprechen oder feste Absagenzahl ableiten (MDR-Abgrenzung).
+    - path: 'src/lib/data/**'
+      instructions: >-
+        Dexie/IndexedDB. Prüfe Schema-Versionen und Migrationen: bestehende
+        Nutzerdaten dürfen bei Updates nie verloren gehen. Export/Import muss
+        rückwärtskompatibel bleiben und fremde oder kaputte Dateien sicher
+        ablehnen. hooks.ts nur im Client.
+    - path: 'src/lib/csp.ts'
+      instructions: >-
+        Die CSP erlaubt nur 'self'. Jede Lockerung ('unsafe-inline',
+        'unsafe-eval', fremde Origins) braucht eine sehr gute Begründung.
+    - path: 'src/lib/pdf/**'
+      instructions: >-
+        Nachweis-PDF mit pdfmake, clientseitig per dynamischem Import. Die
+        Definition bleibt testbar. Absagen als gesammelte Nachweise zeigen,
+        nie als Misserfolg.
+    - path: 'src/sw.ts'
+      instructions: >-
+        Serwist-Service-Worker. Prüfe Caching-Strategien, Offline-Verhalten
+        und dass keine Anfragen an fremde Origins entstehen.
+    - path: 'src/lib/i18n/**'
+      instructions: >-
+        Deutsche UI-Texte: Du-Form, Sätze unter 20 Wörtern, warmer und
+        ruhiger Ton, kein Druck, keine Streaks, korrekte Rechtschreibung.
+        Ungenutzte oder fehlende Schlüssel melden.
+    - path: 'content/de/**/*.md'
+      instructions: >-
+        Community-gepflegte Infotexte (CC BY-SA 4.0). Frontmatter mit title,
+        stage, summary, lastReviewed und sources. Aussagen müssen sich aus
+        docs/WISSEN.md oder den angegebenen Quellen ableiten lassen.
+        Unsichere Aussagen mit <!-- TODO: fachlich prüfen --> markieren.
+        Keine Rechts- oder Medizinberatung, keine Erfolgsgarantie.
+    - path: '{src/**/*.spec.ts,e2e/**/*.e2e.ts}'
+      instructions: >-
+        Vitest für Unit-Tests, Playwright mit @axe-core/playwright für E2E.
+        Neue Logik braucht Tests, besonders Randfälle im Parser und bei
+        Export/Import. Keine Tests überspringen oder abschwächen. E2E prüft,
+        dass keine fremden Origins angefragt werden.
+    - path: '{next.config.ts,scripts/postbuild.mjs}'
+      instructions: >-
+        Zwei Build-Ziele (Standalone und NEXT_OUTPUT=export). postbuild fügt
+        CSP-Hashes ein und baut sw.js. Änderungen müssen in beiden Zielen
+        funktionieren, auch mit BASE_PATH für GitHub Pages.
+    - path: '.github/workflows/**'
+      instructions: >-
+        Minimale permissions setzen. CI baut und testet beide Build-Ziele.
+    - path: '{README.md,docs/**/*.md,CONTRIBUTING.md}'
+      instructions: >-
+        Dokumentation auf Deutsch. Auf Verständlichkeit für Mitwirkende ohne
+        Vorwissen achten.
+
+  tools:
+    eslint:
+      enabled: true
+    biome:
+      enabled: false
+    oxc:
+      enabled: false
+    yamllint:
+      enabled: true
+    actionlint:
+      enabled: true
+    shellcheck:
+      enabled: true
+    markdownlint:
+      enabled: false
+    gitleaks:
+      enabled: true
+
+chat:
+  auto_reply: true
+
+knowledge_base:
+  code_guidelines:
+    enabled: true
+    filePatterns:
+      - 'CLAUDE.md'
+      - 'AGENTS.md'
+  learnings:
+    scope: local
