@@ -95,16 +95,15 @@ Port und Adresse lassen sich über `PORT` und `HOSTNAME` ändern.
 
 Repository importieren, fertig. Die [`vercel.json`](vercel.json) sorgt dafür, dass Vercel den statischen Export baut und mit Sicherheits-Headern ausliefert. Bitte Vercel Analytics und Speed Insights ausgeschaltet lassen, die App verzichtet bewusst auf Tracking.
 
-**3. Statischer Export** (GitHub Pages, Netlify, ein einfacher Webserver)
+**3. Statischer Export** (Netlify, ein einfacher Webserver)
 
 ```sh
 npm run build:static            # schreibt die Seite nach out/
-BASE_PATH=/rueckenwind npm run build:static   # wenn die App unter einem Unterpfad liegt
 ```
 
 Nach dem Build läuft `scripts/postbuild.mjs`: Es fügt in jede Seite eine CSP ein, die Inline-Skripte nur per Hash erlaubt, baut den Service Worker (`sw.js`, Serwist) für die Offline-Nutzung und legt alles an die richtige Stelle. Wer selbst hostet und ein Impressum braucht, legt `content/de/impressum.md` an; es erscheint dann auf der Über-Seite.
 
-Die GitHub-Pages-Variante baut und veröffentlicht der Workflow `pages.yml` bei jedem Push auf `master`. Ein statischer Host kann keine HTTP-Header setzen; die Content-Security-Policy steckt deshalb zusätzlich als Meta-Tag in jeder Seite.
+Die App muss im Wurzelverzeichnis der Domain liegen, nicht unter einem Unterpfad. Ein statischer Host kann oft keine HTTP-Header setzen; die Content-Security-Policy steckt deshalb zusätzlich als Meta-Tag in jeder Seite.
 
 ## Mitmachen
 

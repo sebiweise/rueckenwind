@@ -22,7 +22,7 @@ Bei Zielkonflikten gewinnen Datenschutz und Einfachheit.
 | Bereich  | Wahl                                                                                                                                                                    |
 | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | App      | Next.js 16 (App Router) + React 19 + TypeScript                                                                                                                         |
-| Hosting  | Standalone-Server (Standard, Node-Host) oder statischer Export (`NEXT_OUTPUT=export`, GitHub Pages, Vercel über `vercel.json`)                                          |
+| Hosting  | Standalone-Server (Standard, Node-Host) oder statischer Export (`NEXT_OUTPUT=export`, Vercel über `vercel.json`)                                                        |
 | Speicher | IndexedDB über Dexie.js (Phase 2)                                                                                                                                       |
 | Inhalte  | Markdown in `content/de/`, zur Build-Zeit gerendert (Phase 3)                                                                                                           |
 | PDF      | pdfmake, clientseitig (Phase 5)                                                                                                                                         |
@@ -31,7 +31,7 @@ Bei Zielkonflikten gewinnen Datenschutz und Einfachheit.
 | i18n     | JSON-Schlüssel in `src/lib/i18n/de.json`, Zugriff über `t()`                                                                                                            |
 | Tests    | Vitest (Unit), Playwright + `@axe-core/playwright` (E2E)                                                                                                                |
 | Qualität | ESLint (`eslint-config-next`), Prettier, `tsc --noEmit`                                                                                                                 |
-| CI/CD    | GitHub Actions: `ci.yml` (Lint, Check, Test, beide Builds, E2E für beide), `pages.yml` (GitHub Pages), `release.yml` (Release mit Zip)                                  |
+| CI/CD    | GitHub Actions: `ci.yml` (Lint, Check, Test, beide Builds, E2E für beide), `release.yml` (Release mit Zip)                                                              |
 
 Next.js 16 weicht in Teilen von älterem Wissen ab: vor neuem Code die passende Anleitung in `node_modules/next/dist/docs/` lesen (siehe `AGENTS.md`). Zwei Build-Ziele aus einer Codebasis (`next.config.ts`): Standalone (Standard) und statischer Export. Die App muss in beiden funktionieren, CI baut und testet beide. Deshalb: keine Route Handler, Server Actions, Middleware/Proxy, dynamischen Server-Funktionen (`cookies()`, `headers()`) und kein `next/image`-Optimizer. Der Server liefert nur die App aus, Nutzerdaten bleiben im Browser. Keine `next/font/google` (lädt von Google); System-Fonts verwenden.
 
@@ -52,7 +52,6 @@ npm run build       # Standalone-Build nach .next/standalone, danach postbuild (
 npm start           # Standalone-Server starten (PORT, HOSTNAME per Umgebungsvariable)
 npm run build:static            # statischer Export nach out/
 npm run preview:static          # out/ lokal auf Port 4173 ausliefern (scripts/preview.mjs)
-BASE_PATH=/rueckenwind npm run build:static   # wie auf GitHub Pages
 npm run test:e2e                # Playwright gegen den Standalone-Server (vorher: npx playwright install chromium)
 E2E_TARGET=static npm run test:e2e   # Playwright gegen den statischen Export
 node scripts/lighthouse.mjs     # Lighthouse ≥ 90 gegen laufenden Server (CHROME_PATH setzen)
@@ -65,7 +64,7 @@ node scripts/screenshots.mjs    # README-Screenshots gegen laufenden Server
 content/de/          Infotexte (CC BY-SA 4.0), Frontmatter: title, stage, summary, lastReviewed, sources
 docs/                PLAN.md, WISSEN.md
 e2e/                 Playwright-Tests (*.e2e.ts)
-public/              statische Dateien (u. a. .nojekyll für GitHub Pages)
+public/              statische Dateien (Icons, robots.txt)
 scripts/             Hilfsskripte (postbuild, Preview-Server, Icons, Screenshots, Lighthouse)
 src/app/             Startseite (page.tsx), App-Routen in (app)/ (Weg unter /app/), Layout, globals.css
 src/components/      UI-Komponenten

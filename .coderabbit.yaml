@@ -99,7 +99,7 @@ reviews:
       instructions: >-
         Zwei Build-Ziele (Standalone und NEXT_OUTPUT=export). postbuild fügt
         CSP-Hashes ein und baut sw.js. Änderungen müssen in beiden Zielen
-        funktionieren, auch mit BASE_PATH für GitHub Pages.
+        funktionieren; Vercel baut den statischen Export.
     - path: '.github/workflows/**'
       instructions: >-
         Minimale permissions setzen. CI baut und testet beide Build-Ziele.
