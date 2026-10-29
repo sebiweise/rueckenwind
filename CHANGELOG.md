@@ -8,6 +8,11 @@ Alle wichtigen Änderungen an Rückenwind. Format nach [Keep a Changelog](https:
 
 - **Schnellerfassung:** Uhrzeiten wie „8:30“, „8.30 Uhr“ oder „gestern 12 Uhr“ werden als Zeitpunkt des Kontaktversuchs übernommen (#13).
 - **Parser:** versteht mehr Alltagsformulierungen, etwa „ned erreicht“, „keine Kapa“, „nimmt grad niemand auf“ oder „Rückruf zugesagt“ (#14).
+- **Vercel:** Deployment funktioniert wieder; Vercel baut über `vercel.json` den statischen Export mit CSP und Sicherheits-Headern.
+
+### Entfernt
+
+- **Docker:** Dockerfile, Compose-Datei und das GHCR-Image entfallen. Selbst hosten geht weiter mit `npm run build && npm start` oder dem statischen Export.
 
 ## [0.1.0] – noch offen
 

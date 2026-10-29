@@ -73,12 +73,12 @@ Die App spricht wie eine ruhige, kompetente Begleitung: duzend, kurz, ohne Parag
 
 ## Tech-Stack und Architektur
 
-Entschieden (07.10.2026): eine Next.js-PWA ohne Backend für Nutzerdaten. Sie lässt sich auf mehrere Arten hosten: als Docker-Container mit dem Standalone-Server von Next.js, auf jedem Node-Host oder als statischer Export (z. B. GitHub Pages). Der Server liefert nur die App aus; Gesundheitsdaten bleiben immer im Browser.
+Entschieden (07.10.2026): eine Next.js-PWA ohne Backend für Nutzerdaten. Sie lässt sich auf mehrere Arten hosten: mit dem Standalone-Server von Next.js auf jedem Node-Host oder als statischer Export (z. B. GitHub Pages, Vercel). Der Server liefert nur die App aus; Gesundheitsdaten bleiben immer im Browser.
 
 | Bereich | Wahl | Grund |
 | --- | --- | --- |
 | Framework | Next.js (App Router) + React + TypeScript | Verbreitet, als Standalone-Server oder statischer Export baubar |
-| Hosting | Docker-Image (`output: 'standalone'`, GHCR), beliebiger Node-Host, statischer Export (`output: 'export'`) für GitHub Pages | Mehrere Optionen, kein Vendor-Lock-in |
+| Hosting | Beliebiger Node-Host (`output: 'standalone'`), statischer Export (`output: 'export'`) für GitHub Pages und Vercel | Mehrere Optionen, kein Vendor-Lock-in |
 | PWA | Serwist (`@serwist/next`) | Offline-Fähigkeit, installierbar |
 | Speicher | IndexedDB über Dexie.js | Strukturierte lokale Daten, Migrationen |
 | Inhalte | Markdown in `content/`, zur Build-Zeit gerendert (MDX bzw. remark) | Pflege per Pull Request ohne Code |
@@ -87,7 +87,7 @@ Entschieden (07.10.2026): eine Next.js-PWA ohne Backend für Nutzerdaten. Sie l�
 | i18n | Einfache JSON-Schlüssel | Spätere Übersetzungen |
 | Tests | Vitest (Parser, Datenlogik), Playwright (E2E) | Parser muss robust sein |
 | Qualität | ESLint, Prettier, axe-core in E2E | Barrierefreiheit prüfbar |
-| CI/CD | GitHub Actions: Lint, Test, Build (beide Varianten), E2E, Docker-Image nach GHCR, Deploy auf GitHub Pages | Sichtbar im Profil |
+| CI/CD | GitHub Actions: Lint, Test, Build (beide Varianten), E2E, Deploy auf GitHub Pages | Sichtbar im Profil |
 | Lizenz | Code MIT, Inhalte CC BY-SA 4.0 | Offen, Inhalte bleiben frei |
 
 **Architektur:** Drei Schichten ohne Netzwerkzugriff zur Laufzeit. Es gibt keine Route Handler oder Server Actions, die Nutzerdaten verarbeiten; die App muss jederzeit auch als statischer Export funktionieren.
