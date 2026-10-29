@@ -49,14 +49,17 @@ test('content security policy blocks requests to other origins', async ({ page }
 	expect(blocked).toBe('connect-src');
 });
 
-test('standalone server sends security headers', async ({ page }) => {
-	// The static preview server sends no HTTP headers, so only the standalone server is checked.
-	test.skip(process.env.E2E_TARGET === 'static', 'static hosts cannot send headers');
+test('sends the security headers from vercel.json', async ({ page }) => {
+	// The preview server sends the same headers as Vercel; the CSP comes from the <meta> tag.
 	const response = await page.goto('./');
 	const headers = response!.headers();
-	expect(headers['content-security-policy']).toContain("default-src 'self'");
 	expect(headers['x-content-type-options']).toBe('nosniff');
 	expect(headers['referrer-policy']).toBe('no-referrer');
+	expect(headers['x-frame-options']).toBe('DENY');
+	await expect(page.locator('meta[http-equiv="Content-Security-Policy"]')).toHaveAttribute(
+		'content',
+		/default-src 'self'/
+	);
 });
 
 test('the start page introduces the app and leads into it', async ({ page }) => {

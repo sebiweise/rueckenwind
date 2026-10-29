@@ -1,12 +1,10 @@
 /**
  * Content-Security-Policy. Local-first: only the app's own origin is allowed.
  *
- * - Standalone server: sent as HTTP header (next.config.ts). Next.js' inline
- *   hydration scripts need 'unsafe-inline' there, because one header serves all pages.
- * - Every prerendered page: scripts/postbuild.mjs adds a <meta> tag with the
- *   hashes of that page's inline scripts instead of 'unsafe-inline'. With both,
- *   the browser enforces the stricter one. Static hosts only get the <meta> tag.
- * - Development: the layout renders the tag itself (no postbuild step there).
+ * - Every exported page: scripts/postbuild.mjs adds a <meta> tag with the
+ *   hashes of that page's inline scripts instead of 'unsafe-inline'.
+ * - Development: the layout renders the tag itself (no postbuild step there),
+ *   with 'unsafe-inline' for Next.js' inline scripts.
  */
 export function contentSecurityPolicy(isDev: boolean, scriptHashes?: string[]): string {
 	const inlineScripts = scriptHashes

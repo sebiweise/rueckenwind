@@ -22,7 +22,7 @@ Bei Zielkonflikten gewinnen Datenschutz und Einfachheit.
 | Bereich  | Wahl                                                                                                                                                                    |
 | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | App      | Next.js 16 (App Router) + React 19 + TypeScript                                                                                                                         |
-| Hosting  | Standalone-Server (Standard, Node-Host) oder statischer Export (`NEXT_OUTPUT=export`, Vercel über `vercel.json`)                                                        |
+| Hosting  | Statischer Export (`output: 'export'`) nach `out/`, ausgeliefert von Vercel über `vercel.json` (`@vercel/static-build`)                                                 |
 | Speicher | IndexedDB über Dexie.js (Phase 2)                                                                                                                                       |
 | Inhalte  | Markdown in `content/de/`, zur Build-Zeit gerendert (Phase 3)                                                                                                           |
 | PDF      | pdfmake, clientseitig (Phase 5)                                                                                                                                         |
@@ -31,11 +31,11 @@ Bei Zielkonflikten gewinnen Datenschutz und Einfachheit.
 | i18n     | JSON-Schlüssel in `src/lib/i18n/de.json`, Zugriff über `t()`                                                                                                            |
 | Tests    | Vitest (Unit), Playwright + `@axe-core/playwright` (E2E)                                                                                                                |
 | Qualität | ESLint (`eslint-config-next`), Prettier, `tsc --noEmit`                                                                                                                 |
-| CI/CD    | GitHub Actions: `ci.yml` (Lint, Check, Test, beide Builds, E2E für beide), `release.yml` (Release mit Zip)                                                              |
+| CI/CD    | GitHub Actions: `ci.yml` (Lint, Check, Test, Build, E2E, Lighthouse), `release.yml` (Release mit Zip)                                                                   |
 
-Next.js 16 weicht in Teilen von älterem Wissen ab: vor neuem Code die passende Anleitung in `node_modules/next/dist/docs/` lesen (siehe `AGENTS.md`). Zwei Build-Ziele aus einer Codebasis (`next.config.ts`): Standalone (Standard) und statischer Export. Die App muss in beiden funktionieren, CI baut und testet beide. Deshalb: keine Route Handler, Server Actions, Middleware/Proxy, dynamischen Server-Funktionen (`cookies()`, `headers()`) und kein `next/image`-Optimizer. Der Server liefert nur die App aus, Nutzerdaten bleiben im Browser. Keine `next/font/google` (lädt von Google); System-Fonts verwenden.
+Next.js 16 weicht in Teilen von älterem Wissen ab: vor neuem Code die passende Anleitung in `node_modules/next/dist/docs/` lesen (siehe `AGENTS.md`). Es gibt nur ein Build-Ziel: den statischen Export (`next.config.ts`). Deshalb: keine Route Handler, Server Actions, Middleware/Proxy, dynamischen Server-Funktionen (`cookies()`, `headers()`) und kein `next/image`-Optimizer. Es gibt keinen App-Server, Nutzerdaten bleiben im Browser. Keine `next/font/google` (lädt von Google); System-Fonts verwenden.
 
-Die CSP kommt aus `src/lib/csp.ts`: als `<meta>` mit Skript-Hashes in jeder vorgerenderten Seite (von `scripts/postbuild.mjs` eingefügt, im Dev-Server vom Layout) und im Standalone-Betrieb zusätzlich als HTTP-Header samt weiterer Sicherheits-Header (`next.config.ts`). Sie erlaubt nur `'self'`. `scripts/postbuild.mjs` fügt nach jedem Build den Meta-Tag ohne `'unsafe-inline'` für Skripte ein und baut den Service Worker (`src/sw.ts` → `sw.js`, Serwist). Deshalb immer `npm run build` bzw. `npm run build:static` nutzen, nie `next build` direkt. Auch Vercel baut deshalb über `vercel.json` den statischen Export (`@vercel/static-build`, Skript `vercel-build`): Der Next.js-Builder von Vercel sammelt die Seiten schon während `next build` ein, also bevor `postbuild` die CSP einfügt. Imports aus `src/` laufen über `@/…`.
+Die CSP kommt aus `src/lib/csp.ts`: als `<meta>` mit Skript-Hashes in jeder vorgerenderten Seite (von `scripts/postbuild.mjs` eingefügt, im Dev-Server vom Layout). Sie erlaubt nur `'self'`. Die übrigen Sicherheits-Header setzt Vercel aus `vercel.json`; `scripts/preview.mjs` sendet dieselben. `scripts/postbuild.mjs` fügt nach jedem Build den Meta-Tag ohne `'unsafe-inline'` für Skripte ein und baut den Service Worker (`src/sw.ts` → `sw.js`, Serwist). Deshalb immer `npm run build` nutzen, nie `next build` direkt. Auch Vercel baut deshalb über `vercel.json` mit `@vercel/static-build` (Skript `build`): Der Next.js-Builder von Vercel sammelt die Seiten schon während `next build` ein, also bevor `postbuild` die CSP einfügt. Imports aus `src/` laufen über `@/…`.
 
 ## Befehle
 
@@ -48,12 +48,9 @@ npm run check       # tsc --noEmit (Typen)
 npm test            # Vitest einmalig
 npm run test:coverage   # Vitest mit Abdeckung (Domäne ≥ 90 %, läuft in CI)
 npm run test:unit   # Vitest im Watch-Modus
-npm run build       # Standalone-Build nach .next/standalone, danach postbuild (CSP-Hashes, sw.js, Assets)
-npm start           # Standalone-Server starten (PORT, HOSTNAME per Umgebungsvariable)
-npm run build:static            # statischer Export nach out/
-npm run preview:static          # out/ lokal auf Port 4173 ausliefern (scripts/preview.mjs)
-npm run test:e2e                # Playwright gegen den Standalone-Server (vorher: npx playwright install chromium)
-E2E_TARGET=static npm run test:e2e   # Playwright gegen den statischen Export
+npm run build       # statischer Export nach out/, danach postbuild (CSP-Hashes, sw.js)
+npm start           # out/ lokal ausliefern (scripts/preview.mjs, Port 4173 oder PORT), mit Headern aus vercel.json
+npm run test:e2e    # Playwright gegen npm start (vorher: npx playwright install chromium)
 node scripts/lighthouse.mjs     # Lighthouse ≥ 90 gegen laufenden Server (CHROME_PATH setzen)
 node scripts/screenshots.mjs    # README-Screenshots gegen laufenden Server
 ```

@@ -34,8 +34,8 @@ reviews:
       instructions: >-
         Next.js 16 (App Router), React 19, TypeScript. Lokal-first ohne
         Server: Gesundheitsdaten dürfen das Gerät nie verlassen. Melde jeden
-        fetch, jede externe URL, CDN, Font, Analytics oder API. Die App muss
-        als Standalone-Server und als statischer Export laufen, deshalb keine
+        fetch, jede externe URL, CDN, Font, Analytics oder API. Die App ist ein
+        reiner statischer Export (Vercel), deshalb keine
         Route Handler, Server Actions, Middleware/Proxy, cookies()/headers()
         und kein next/image-Optimizer. Keine next/font/google. Imports aus
         src/ über @/…. Lint und Format übernehmen ESLint und Prettier,
@@ -97,12 +97,11 @@ reviews:
         dass keine fremden Origins angefragt werden.
     - path: '{next.config.ts,scripts/postbuild.mjs}'
       instructions: >-
-        Zwei Build-Ziele (Standalone und NEXT_OUTPUT=export). postbuild fügt
-        CSP-Hashes ein und baut sw.js. Änderungen müssen in beiden Zielen
-        funktionieren; Vercel baut den statischen Export.
+        Ein Build-Ziel: statischer Export nach out/, den Vercel ausliefert.
+        postbuild fügt CSP-Hashes ein und baut sw.js.
     - path: '.github/workflows/**'
       instructions: >-
-        Minimale permissions setzen. CI baut und testet beide Build-Ziele.
+        Minimale permissions setzen. CI baut und testet den statischen Export.
     - path: '{README.md,docs/**/*.md,CONTRIBUTING.md}'
       instructions: >-
         Dokumentation auf Deutsch. Auf Verständlichkeit für Mitwirkende ohne

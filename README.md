@@ -60,8 +60,8 @@ npm test            # Unit-Tests (Vitest)
 npm run test:coverage   # Unit-Tests mit Abdeckung (Domäne ≥ 90 %)
 npm run test:e2e    # E2E-Tests (Playwright + axe-core); vorher einmal: npx playwright install chromium
                     # oder vorhandenes Chromium nutzen: PLAYWRIGHT_CHROMIUM_PATH=/pfad/zu/chrome
-npm run build       # Produktions-Build (Standalone-Server)
-npm start           # Produktions-Build starten (http://localhost:3000)
+npm run build       # Produktions-Build (statischer Export nach out/)
+npm start           # Build lokal ausliefern (http://localhost:4173)
 ```
 
 Tech-Stack: Next.js + React + TypeScript, Plain CSS, Vitest, Playwright. Details, Datenmodell und Phasen stehen im [Umsetzungsplan](docs/PLAN.md), das Fachwissen in [docs/WISSEN.md](docs/WISSEN.md).
@@ -81,29 +81,19 @@ src/lib/i18n/        UI-Texte
 
 ## Hosting
 
-Rückenwind braucht kein Backend. Der Server liefert nur die App aus, deine Daten bleiben im Browser. Du hast drei Möglichkeiten:
+Rückenwind braucht kein Backend. Der Build ist eine rein statische Seite, deine Daten bleiben im Browser.
 
-**1. Beliebiger Node-Host** (Next.js-Standalone-Server, Node 22.18 oder neuer)
+**Vercel** (so läuft die offizielle Version): Repository importieren, fertig. Die [`vercel.json`](vercel.json) sorgt dafür, dass Vercel den statischen Export baut und mit Sicherheits-Headern ausliefert. Bitte Vercel Analytics und Speed Insights ausgeschaltet lassen, die App verzichtet bewusst auf Tracking.
 
-```sh
-npm ci && npm run build && npm start
-```
-
-Port und Adresse lassen sich über `PORT` und `HOSTNAME` ändern.
-
-**2. Vercel**
-
-Repository importieren, fertig. Die [`vercel.json`](vercel.json) sorgt dafür, dass Vercel den statischen Export baut und mit Sicherheits-Headern ausliefert. Bitte Vercel Analytics und Speed Insights ausgeschaltet lassen, die App verzichtet bewusst auf Tracking.
-
-**3. Statischer Export** (Netlify, ein einfacher Webserver)
+**Jeder andere statische Host** (Netlify, ein einfacher Webserver):
 
 ```sh
-npm run build:static            # schreibt die Seite nach out/
+npm ci && npm run build   # schreibt die Seite nach out/
 ```
 
-Nach dem Build läuft `scripts/postbuild.mjs`: Es fügt in jede Seite eine CSP ein, die Inline-Skripte nur per Hash erlaubt, baut den Service Worker (`sw.js`, Serwist) für die Offline-Nutzung und legt alles an die richtige Stelle. Wer selbst hostet und ein Impressum braucht, legt `content/de/impressum.md` an; es erscheint dann auf der Über-Seite.
+Nach dem Build läuft `scripts/postbuild.mjs`: Es fügt in jede Seite eine CSP ein, die Inline-Skripte nur per Hash erlaubt, und baut den Service Worker (`sw.js`, Serwist) für die Offline-Nutzung. Wer selbst hostet und ein Impressum braucht, legt `content/de/impressum.md` an; es erscheint dann auf der Über-Seite.
 
-Die App muss im Wurzelverzeichnis der Domain liegen, nicht unter einem Unterpfad. Ein statischer Host kann oft keine HTTP-Header setzen; die Content-Security-Policy steckt deshalb zusätzlich als Meta-Tag in jeder Seite.
+Die App muss im Wurzelverzeichnis der Domain liegen, nicht unter einem Unterpfad. Die Content-Security-Policy steckt als Meta-Tag in jeder Seite. Die übrigen Sicherheits-Header aus `vercel.json` solltest du auf deinem Host nachbilden, falls er Header setzen kann.
 
 ## Mitmachen
 
