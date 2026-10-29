@@ -12,7 +12,9 @@ Alle wichtigen Änderungen an Rückenwind. Format nach [Keep a Changelog](https:
 
 ### Entfernt
 
-- **Docker:** Dockerfile, Compose-Datei und das GHCR-Image entfallen. Selbst hosten geht weiter mit `npm run build && npm start` oder dem statischen Export.
+- **GitHub Pages:** Workflow `pages.yml` und `BASE_PATH`-Unterstützung entfallen. Gehostet wird auf Vercel.
+- **Docker:** Dockerfile, Compose-Datei und das GHCR-Image entfallen.
+- **Standalone-Server:** Es gibt nur noch den statischen Export. `npm run build` schreibt ihn nach `out/`, `npm start` liefert ihn lokal aus; `build:static` und `preview:static` entfallen.
 
 ## [0.1.0] – noch offen
 
@@ -30,8 +32,8 @@ Erste Version mit dem vollen MVP-Umfang aus [docs/PLAN.md](docs/PLAN.md). Vor de
 - **Krisenseite** und Krisen-Button auf jeder Seite; Hinweis- und Über-Seite, optionales Impressum.
 - **PWA:** offline nutzbar nach dem ersten Besuch (Serwist), installierbar, Manifest und Platzhalter-Icons, Hell- und Dunkelmodus.
 - **Sicherheit:** CSP nur mit `'self'`, Inline-Skripte per Hash statt `'unsafe-inline'`.
-- **Hosting:** Docker-Image (GHCR), Node-Host oder statischer Export (GitHub Pages).
-- **Qualität:** Unit-Tests mit Abdeckungsgrenze für die Domäne, E2E-Tests mit axe-core für beide Build-Ziele, Lighthouse-Prüfung (≥ 90) in CI.
+- **Hosting:** statischer Export auf Vercel.
+- **Qualität:** Unit-Tests mit Abdeckungsgrenze für die Domäne, E2E-Tests mit axe-core, Lighthouse-Prüfung (≥ 90) in CI.
 
 [Unveröffentlicht]: https://github.com/sebiweise/rueckenwind/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/sebiweise/rueckenwind/releases/tag/v0.1.0

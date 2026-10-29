@@ -16,18 +16,14 @@
 		"dev": "next dev",
 		"build": "next build",
 		"postbuild": "node scripts/postbuild.mjs",
-		"start": "node .next/standalone/server.js",
-		"build:static": "NEXT_OUTPUT=export next build",
-		"postbuild:static": "NEXT_OUTPUT=export node scripts/postbuild.mjs",
-		"preview:static": "node scripts/preview.mjs",
+		"start": "node scripts/preview.mjs",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"check": "tsc --noEmit",
 		"test": "vitest --run",
 		"test:unit": "vitest",
 		"test:coverage": "vitest --run --coverage",
-		"test:e2e": "playwright test",
-		"vercel-build": "npm run build:static"
+		"test:e2e": "playwright test"
 	},
 	"dependencies": {
 		"@fontsource-variable/nunito": "^5.3.0",

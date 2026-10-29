@@ -1,12 +1,19 @@
-// Serves the static export in out/ for local previews and E2E tests.
-// Deliberately tiny so the repo needs no extra server dependency.
-import { createReadStream } from 'node:fs';
+// Serves the static export in out/ for local previews and E2E tests, with the same
+// security headers as Vercel (vercel.json). Deliberately tiny: no extra server dependency.
+import { createReadStream, readFileSync } from 'node:fs';
 import { stat } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { extname, join, normalize, resolve } from 'node:path';
+import { createGzip } from 'node:zlib';
 
 const root = resolve('out');
 const port = Number(process.env.PORT ?? 4173);
+// vercel.json applies one header block to every path ("/(.*)").
+const headers = Object.fromEntries(
+	JSON.parse(readFileSync('vercel.json', 'utf8')).headers.flatMap((rule) =>
+		rule.headers.map(({ key, value }) => [key, value])
+	)
+);
 const types = {
 	'.html': 'text/html; charset=utf-8',
 	'.js': 'text/javascript; charset=utf-8',
@@ -30,11 +37,28 @@ async function resolveFile(urlPath) {
 	return null;
 }
 
+/** True if Accept-Encoding allows gzip: an explicit gzip entry wins over *, q=0 forbids. */
+function acceptsGzip(header = '') {
+	const q = {};
+	for (const part of header.split(',')) {
+		const [name, ...params] = part.trim().toLowerCase().split(';');
+		const value = params.map((p) => p.trim()).find((p) => p.startsWith('q='));
+		q[name] = value === undefined ? 1 : Number(value.slice(2));
+	}
+	return (q.gzip ?? q['*'] ?? 0) > 0;
+}
+
 createServer(async (request, response) => {
 	const { pathname } = new URL(request.url ?? '/', 'http://localhost');
 	const file = (await resolveFile(pathname)) ?? join(root, '404.html');
+	const type = types[extname(file)] ?? 'application/octet-stream';
+	// Compress text like Vercel does, so Lighthouse measures realistic transfer sizes.
+	const gzip = !type.startsWith('image/png') && acceptsGzip(request.headers['accept-encoding']);
 	response.writeHead(file.endsWith('404.html') && pathname !== '/404.html' ? 404 : 200, {
-		'Content-Type': types[extname(file)] ?? 'application/octet-stream'
+		...headers,
+		'Content-Type': type,
+		...(gzip && { 'Content-Encoding': 'gzip', Vary: 'Accept-Encoding' })
 	});
-	createReadStream(file).pipe(response);
+	const stream = createReadStream(file);
+	(gzip ? stream.pipe(createGzip()) : stream).pipe(response);
 }).listen(port, () => console.log(`Preview: http://localhost:${port}/`));

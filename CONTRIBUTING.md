@@ -37,7 +37,6 @@ npm run lint
 npm run check
 npm test
 npm run test:e2e   # einmalig vorher: npx playwright install chromium
-E2E_TARGET=static npm run test:e2e
 ```
 
 Regeln für den Code:
