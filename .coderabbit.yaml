@@ -47,8 +47,9 @@ reviews:
         Fokusreihenfolge, Touch-Ziele über --touch-target (≥ 44 px),
         prefers-reduced-motion, Hell- und Dunkelmodus. Der Krisen-Button muss
         auf jedem Screen erreichbar bleiben. Keine Pflichtfelder, keine
-        mehrseitigen Formulare. Keine eigenen Inline-Skripte: die CSP lässt im
-        Build nur gehashte Next.js-Skripte zu.
+        mehrseitigen Formulare. Inline-Skripte hasht postbuild für die CSP.
+        Neue eigene Inline-Skripte nur mit gutem Grund, wie paletteScript im
+        Layout (Farbthema vor dem ersten Paint).
     - path: 'src/lib/domain/**'
       instructions: >-
         Reine Logik ohne Framework-Abhängigkeiten, voll getestet (Abdeckung
