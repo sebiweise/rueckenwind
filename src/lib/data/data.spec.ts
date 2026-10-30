@@ -154,6 +154,20 @@ describe('attempts', () => {
 		expect(practice.kind).toBe('tss');
 	});
 
+	it('keeps entries without a name apart when asked to', async () => {
+		const record = {
+			practiceName: 'Praxis ohne Namen',
+			practiceKind: 'other',
+			result: 'rejected',
+			separatePractice: true
+		} as const;
+		const first = await recordContact(db, record);
+		const second = await recordContact(db, record);
+		expect(second.practice.id).not.toBe(first.practice.id);
+		expect(second.practice.kind).toBe('other');
+		expect(await listPractices(db)).toHaveLength(2);
+	});
+
 	it('notes when an attempt was recorded and keeps it on edits', async () => {
 		const { weber } = await seed();
 		const [attempt] = await listAttempts(db, weber.id);

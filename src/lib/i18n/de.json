@@ -62,6 +62,7 @@
 	"capture.unnamedPractice": "Praxis ohne Namen",
 	"capture.weeksInput": "Wartezeit in Wochen",
 	"capture.saved.counts": "{result} notiert. Das zählt für deinen Nachweis.",
+	"capture.saved.unnamed": "{result} notiert. Trag unter Kontakte Name und Art der Praxis nach, dann kann es für deinen Nachweis zählen.",
 	"capture.saved.not_reached": "Notiert. Gut, dass du es versucht hast.",
 	"capture.saved.voicemail": "Notiert. Gut, dass du es versucht hast.",
 	"capture.saved.rejected": "Absage notiert.",
