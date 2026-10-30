@@ -15,11 +15,13 @@ import { usePractices } from '@/lib/data/hooks';
 import { listAttempts, recordContact } from '@/lib/data/repository';
 import {
 	CONTACT_RESULTS,
+	COUNTED_RESULTS,
 	MAX_TEXT_LENGTH,
 	MAX_WAIT_WEEKS,
 	computeProgress,
 	parseContactInput,
-	type ContactResult
+	type ContactResult,
+	type PracticeKind
 } from '@/lib/domain';
 import {
 	formatRelativeDateTime,
@@ -40,6 +42,13 @@ const QUICK_RESULTS: [ContactResult, React.ComponentType][] = [
 
 /** Below this confidence a chip is marked as unsure and invites a correction. */
 const SURE = 0.7;
+
+/**
+ * Kind for an entry saved without a practice name. Each such entry gets its own
+ * practice of this kind, so it does not count for the proof until the person adds
+ * a name and the kind under "Kontakte". An insurer cannot check a nameless request.
+ */
+const UNNAMED_PRACTICE_KIND: PracticeKind = 'other';
 
 type Editor = 'practice' | 'result' | 'wait' | 'date' | null;
 
@@ -110,9 +119,15 @@ export function QuickCapture() {
 		if (!hasInput) return;
 		try {
 			const db = getDb();
+			const unnamed = name.trim() === '';
+			const parsedKind = parsed.practiceKind?.value;
 			const { practice, attempt } = await recordContact(db, {
-				practiceName: name.trim() || t('capture.unnamedPractice'),
-				practiceKind: parsed.practiceKind?.value,
+				practiceName: unnamed ? t('capture.unnamedPractice') : name.trim(),
+				practiceKind:
+					unnamed && (parsedKind === undefined || parsedKind === 'kassenpraxis')
+						? UNNAMED_PRACTICE_KIND
+						: parsedKind,
+				separatePractice: unnamed,
 				result,
 				at,
 				channel: parsed.channel.value,
@@ -126,11 +141,12 @@ export function QuickCapture() {
 			const counted =
 				computeProgress([practice], attempts).proofCount >
 				computeProgress([practice], before).proofCount;
-			setMessage(
-				counted
-					? t('capture.saved.counts', { result: t(`result.${result}`) })
-					: t(`capture.saved.${result}`)
-			);
+			let saved = t(`capture.saved.${result}`);
+			if (counted) saved = t('capture.saved.counts', { result: t(`result.${result}`) });
+			else if (unnamed && COUNTED_RESULTS.includes(result)) {
+				saved = t('capture.saved.unnamed', { result: t(`result.${result}`) });
+			}
+			setMessage(saved);
 			close();
 		} catch {
 			setMessage(t('capture.error'));

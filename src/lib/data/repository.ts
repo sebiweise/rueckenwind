@@ -140,11 +140,16 @@ export interface ContactRecord {
 	waitTimeWeeks?: number;
 	rawInput?: string;
 	notes?: string;
+	/**
+	 * Always create a new practice instead of reusing one with the same name.
+	 * For entries without a name: they must not merge into one shared practice.
+	 */
+	separatePractice?: boolean;
 }
 
 /**
  * Saves a contact attempt from the quick entry: reuses a practice with the
- * same name or creates it, then adds the attempt.
+ * same name (unless `separatePractice`) or creates it, then adds the attempt.
  */
 export async function recordContact(
 	db: RueckenwindDb,
@@ -153,7 +158,7 @@ export async function recordContact(
 	return db.transaction('rw', db.practices, db.attempts, async () => {
 		const name = record.practiceName.trim().slice(0, MAX_TEXT_LENGTH);
 		const practice =
-			(await findPracticeByName(db, name)) ??
+			(record.separatePractice ? undefined : await findPracticeByName(db, name)) ??
 			(await createPractice(db, { name, kind: record.practiceKind ?? 'kassenpraxis' }));
 		const attempt = await addAttempt(db, {
 			practiceId: practice.id,
