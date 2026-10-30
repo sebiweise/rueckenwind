@@ -24,6 +24,7 @@ import {
 	exportFileName,
 	hasData,
 	importData,
+	isStrictIsoDate,
 	parseImport,
 	type ExportFile
 } from './backup';
@@ -228,23 +229,42 @@ describe('export and import', () => {
 		expect(await hasData(db)).toBe(true);
 	});
 
-	it('normalizes dates and shortens over-long values on import', async () => {
+	it('normalizes dates to UTC and keeps long values unchanged on import', async () => {
 		await seed();
 		const backup = await createExport(db);
+		const notes = 'x'.repeat(MAX_TEXT_LENGTH * 2);
 		const attempt = {
 			...backup.attempts[0],
 			at: '2026-10-08T14:30:00+02:00',
-			notes: 'x'.repeat(20_000),
-			waitTimeWeeks: 900
+			notes,
+			waitTimeWeeks: MAX_WAIT_WEEKS + 380
 		};
 		const parsed = parseImport(JSON.stringify({ ...backup, attempts: [attempt] }));
 		expect(parsed.ok).toBe(true);
 		if (!parsed.ok) return;
 		expect(parsed.data.attempts[0]).toMatchObject({
 			at: '2026-10-08T12:30:00.000Z',
-			waitTimeWeeks: MAX_WAIT_WEEKS
+			waitTimeWeeks: MAX_WAIT_WEEKS + 380,
+			notes
 		});
-		expect(parsed.data.attempts[0].notes).toHaveLength(MAX_TEXT_LENGTH);
+	});
+
+	it.each([
+		['2026-10-08T12:30:00.000Z', true],
+		['2026-10-08T14:30:00+02:00', true],
+		['2026-10-08T14:30Z', true],
+		['2026-10-08', true],
+		['2028-02-29T00:00:00Z', true],
+		['2026-02-30T10:00:00Z', false],
+		['2026-02-29T10:00:00Z', false],
+		['2026-13-01T10:00:00Z', false],
+		['2026-10-08T24:00:00Z', false],
+		['2026-10-08T12:60:00Z', false],
+		['2026-10-08T12:30:00+25:00', false],
+		['2026-10-08T12:30:00', false],
+		['October 8, 2026', false]
+	])('treats %s as a valid date: %s', (value, valid) => {
+		expect(isStrictIsoDate(value)).toBe(valid);
 	});
 
 	it('names the file after the date', () => {
@@ -273,6 +293,15 @@ describe('export and import', () => {
 			[
 				'a broken date',
 				() => JSON.stringify({ ...valid, attempts: [{ ...valid.attempts[0], at: 'gestern' }] }),
+				'invalid'
+			],
+			[
+				'an impossible date',
+				() =>
+					JSON.stringify({
+						...valid,
+						attempts: [{ ...valid.attempts[0], at: '2026-02-30T10:00:00Z' }]
+					}),
 				'invalid'
 			],
 			['an attempt without practice', () => JSON.stringify({ ...valid, practices: [] }), 'invalid'],

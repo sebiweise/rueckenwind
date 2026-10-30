@@ -2,8 +2,6 @@ import { z } from 'zod';
 import {
 	CONTACT_CHANNELS,
 	CONTACT_RESULTS,
-	MAX_TEXT_LENGTH,
-	MAX_WAIT_WEEKS,
 	PRACTICE_KINDS,
 	STAGES,
 	type ContactAttempt,
@@ -19,13 +17,41 @@ z.config({ jitless: true });
 
 export const EXPORT_APP_ID = 'rueckenwind';
 
+const ISO_DATE =
+	/^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2})(?::(\d{2})(?:\.\d{1,9})?)?(Z|[+-](\d{2}):(\d{2})))?$/;
+
+/**
+ * True for an ISO 8601 date (optionally with time and offset) that names a real
+ * moment. `Date.parse` would roll e.g. 30 February over to 2 March.
+ */
+export function isStrictIsoDate(value: string): boolean {
+	const match = ISO_DATE.exec(value);
+	if (!match) return false;
+	const [year, month, day, hour, minute, second, , offsetHour, offsetMinute] = match
+		.slice(1)
+		.map((part) => Number(part ?? 0));
+	const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
+	return (
+		month >= 1 &&
+		month <= 12 &&
+		day >= 1 &&
+		day <= daysInMonth &&
+		hour <= 23 &&
+		minute <= 59 &&
+		second <= 59 &&
+		offsetHour <= 23 &&
+		offsetMinute <= 59
+	);
+}
+
 // Lists and the database index compare dates as strings, so every date is stored as UTC ISO 8601.
+// Converting a valid date to UTC keeps the same moment; impossible dates are rejected, not rolled over.
 const isoDate = z
 	.string()
-	.refine((value) => !Number.isNaN(Date.parse(value)), 'invalid date')
+	.refine(isStrictIsoDate, 'invalid date')
 	.transform((value) => new Date(value).toISOString());
-// Over-long texts are shortened rather than rejected: one bad field must not make the backup useless.
-const text = z.string().transform((value) => value.slice(0, MAX_TEXT_LENGTH));
+// Backups restore stored texts unchanged, even beyond MAX_TEXT_LENGTH: an import never loses data.
+const text = z.string();
 
 const practiceSchema = z.object({
 	id: z.string().min(1),
@@ -44,11 +70,8 @@ const attemptSchema = z.object({
 	at: isoDate,
 	channel: z.enum(CONTACT_CHANNELS),
 	result: z.enum(CONTACT_RESULTS),
-	waitTimeWeeks: z
-		.number()
-		.nonnegative()
-		.transform((weeks) => Math.min(weeks, MAX_WAIT_WEEKS))
-		.optional(),
+	// Kept as stored: older versions allowed more than MAX_WAIT_WEEKS.
+	waitTimeWeeks: z.number().nonnegative().finite().optional(),
 	rawInput: text.optional(),
 	notes: text.optional()
 }) satisfies z.ZodType<ContactAttempt>;
