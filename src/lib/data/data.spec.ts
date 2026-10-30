@@ -153,6 +153,55 @@ describe('attempts', () => {
 		});
 		expect(practice.kind).toBe('tss');
 	});
+
+	it('notes when an attempt was recorded and keeps it on edits', async () => {
+		const { weber } = await seed();
+		const [attempt] = await listAttempts(db, weber.id);
+		expect(Date.parse(attempt.createdAt!)).toBeGreaterThan(Date.parse(attempt.at));
+		await updateAttempt(db, attempt.id, { at: '2026-09-01T08:00:00.000Z' });
+		expect((await listAttempts(db, weber.id))[0].createdAt).toBe(attempt.createdAt);
+	});
+});
+
+describe('limits on writes', () => {
+	const long = 'x'.repeat(MAX_TEXT_LENGTH + 50);
+
+	it('cuts over-long texts on every write', async () => {
+		const practice = await createPractice(db, { name: long, notes: long });
+		expect(practice.name).toHaveLength(MAX_TEXT_LENGTH);
+		expect(practice.notes).toHaveLength(MAX_TEXT_LENGTH);
+		await updatePractice(db, practice.id, { address: long });
+		expect((await getPractice(db, practice.id))?.address).toHaveLength(MAX_TEXT_LENGTH);
+
+		const { attempt } = await recordContact(db, {
+			practiceName: long,
+			result: 'rejected',
+			rawInput: long
+		});
+		expect(attempt.practiceId).toBe(practice.id);
+		expect(attempt.rawInput).toHaveLength(MAX_TEXT_LENGTH);
+		await updateAttempt(db, attempt.id, { notes: long });
+		expect((await listAttempts(db))[0].notes).toHaveLength(MAX_TEXT_LENGTH);
+
+		await updateJourney(db, { displayName: long });
+		expect((await getJourney(db)).displayName).toHaveLength(MAX_TEXT_LENGTH);
+	});
+
+	it('keeps waiting times between 0 and the maximum', async () => {
+		const practice = await createPractice(db, { name: 'Weber' });
+		const base = { practiceId: practice.id, at: '2026-10-01T08:00:00.000Z' } as const;
+		const high = await addAttempt(db, {
+			...base,
+			channel: 'phone',
+			result: 'waitlist',
+			waitTimeWeeks: 9999
+		});
+		expect(high.waitTimeWeeks).toBe(MAX_WAIT_WEEKS);
+		await updateAttempt(db, high.id, { waitTimeWeeks: -3 });
+		expect((await listAttempts(db))[0].waitTimeWeeks).toBe(0);
+		await updateAttempt(db, high.id, { waitTimeWeeks: Number.NaN });
+		expect((await listAttempts(db))[0].waitTimeWeeks).toBeUndefined();
+	});
 });
 
 describe('journey', () => {

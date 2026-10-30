@@ -6,11 +6,32 @@ import type {
 	Practice,
 	PracticeKind
 } from '@/lib/domain';
-import { fold } from '@/lib/domain';
+import { MAX_TEXT_LENGTH, MAX_WAIT_WEEKS, fold } from '@/lib/domain';
 import { SCHEMA_VERSION, type RueckenwindDb } from './db';
 
 export function newId(): string {
 	return crypto.randomUUID();
+}
+
+/**
+ * Keeps a write within the limits the inputs show, whoever calls it: texts are
+ * cut at MAX_TEXT_LENGTH, waiting times kept between 0 and MAX_WAIT_WEEKS.
+ * The backup import does not use this, so a restore keeps stored values as they are.
+ */
+export function withinLimits<T extends object>(values: T): T {
+	const result: Record<string, unknown> = { ...(values as Record<string, unknown>) };
+	for (const [key, value] of Object.entries(result)) {
+		if (typeof value === 'string' && value.length > MAX_TEXT_LENGTH) {
+			result[key] = value.slice(0, MAX_TEXT_LENGTH);
+		}
+	}
+	const weeks = result.waitTimeWeeks;
+	if (typeof weeks === 'number') {
+		result.waitTimeWeeks = Number.isFinite(weeks)
+			? Math.min(Math.max(weeks, 0), MAX_WAIT_WEEKS)
+			: undefined;
+	}
+	return result as T;
 }
 
 export function defaultJourney(): JourneyState {
@@ -23,13 +44,13 @@ export type PracticeInput = Omit<Practice, 'id' | 'createdAt' | 'kind'> &
 	Partial<Pick<Practice, 'kind' | 'createdAt'>>;
 
 export async function createPractice(db: RueckenwindDb, input: PracticeInput): Promise<Practice> {
-	const practice: Practice = {
+	const practice: Practice = withinLimits({
 		kind: 'kassenpraxis',
 		createdAt: new Date().toISOString(),
 		...input,
 		name: input.name.trim(),
 		id: newId()
-	};
+	});
 	await db.practices.add(practice);
 	return practice;
 }
@@ -39,7 +60,7 @@ export async function updatePractice(
 	id: string,
 	changes: Partial<Omit<Practice, 'id'>>
 ): Promise<void> {
-	await db.practices.update(id, changes);
+	await db.practices.update(id, withinLimits(changes));
 }
 
 /** Deletes a practice together with all its contact attempts. */
@@ -74,18 +95,24 @@ export async function findPracticeByName(
 
 export type AttemptInput = Omit<ContactAttempt, 'id'>;
 
+/** Adds an attempt and notes when it was recorded, independent of the editable contact time. */
 export async function addAttempt(db: RueckenwindDb, input: AttemptInput): Promise<ContactAttempt> {
-	const attempt: ContactAttempt = { ...input, id: newId() };
+	const attempt: ContactAttempt = withinLimits({
+		...input,
+		createdAt: input.createdAt ?? new Date().toISOString(),
+		id: newId()
+	});
 	await db.attempts.add(attempt);
 	return attempt;
 }
 
+/** Changes an attempt. When it was recorded (`createdAt`) stays as it is. */
 export async function updateAttempt(
 	db: RueckenwindDb,
 	id: string,
-	changes: Partial<Omit<ContactAttempt, 'id'>>
+	changes: Partial<Omit<ContactAttempt, 'id' | 'createdAt'>>
 ): Promise<void> {
-	await db.attempts.update(id, changes);
+	await db.attempts.update(id, withinLimits(changes));
 }
 
 export async function deleteAttempt(db: RueckenwindDb, id: string): Promise<void> {
@@ -124,7 +151,7 @@ export async function recordContact(
 	record: ContactRecord
 ): Promise<{ practice: Practice; attempt: ContactAttempt }> {
 	return db.transaction('rw', db.practices, db.attempts, async () => {
-		const name = record.practiceName.trim();
+		const name = record.practiceName.trim().slice(0, MAX_TEXT_LENGTH);
 		const practice =
 			(await findPracticeByName(db, name)) ??
 			(await createPractice(db, { name, kind: record.practiceKind ?? 'kassenpraxis' }));
@@ -152,7 +179,7 @@ export async function updateJourney(
 	changes: Partial<Omit<JourneyState, 'id' | 'schemaVersion'>>
 ): Promise<JourneyState> {
 	return db.transaction('rw', db.journey, async () => {
-		const next = { ...(await getJourney(db)), ...changes };
+		const next = { ...(await getJourney(db)), ...withinLimits(changes) };
 		await db.journey.put(next);
 		return next;
 	});
