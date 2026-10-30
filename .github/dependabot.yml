@@ -17,6 +17,12 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    ignore:
+      # TypeScript 7 (nativer Compiler) wird von typescript-eslint noch nicht unterstützt,
+      # der Lint-Schritt bricht damit ab. Major-Updates erst wieder zulassen, wenn
+      # typescript-eslint TS 7 unterstützt (typescript-eslint/typescript-eslint#10940).
+      - dependency-name: typescript
+        update-types: ['version-update:semver-major']
     groups:
       npm-minor-patch:
         update-types: [minor, patch]
