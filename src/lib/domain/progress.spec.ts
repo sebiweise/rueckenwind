@@ -146,6 +146,12 @@ describe('shouldRemindExport', () => {
 		expect(shouldRemindExport(many, '2026-10-05T00:00:00.000Z')).toBe(false);
 		expect(shouldRemindExport(many, '2026-09-01T00:00:00.000Z')).toBe(true);
 	});
+
+	it('counts back-dated attempts by when they were recorded', () => {
+		const backDated = many.map((entry) => ({ ...entry, createdAt: '2026-10-20T08:00:00.000Z' }));
+		expect(shouldRemindExport(backDated, '2026-10-15T00:00:00.000Z')).toBe(true);
+		expect(shouldRemindExport(backDated, '2026-10-25T00:00:00.000Z')).toBe(false);
+	});
 });
 
 describe('attemptPeriod', () => {

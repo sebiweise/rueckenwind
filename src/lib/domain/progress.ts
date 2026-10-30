@@ -81,10 +81,14 @@ export function shouldSuggestPause(attempts: ContactAttempt[], now: Date = new D
 	return today.length >= PAUSE_AFTER_REJECTIONS;
 }
 
-/** True once enough attempts were recorded since the last export (or ever, without one). */
+/**
+ * True once enough attempts were recorded since the last export (or ever, without one).
+ * Uses when an attempt was recorded, so back-dated entries count as well. Entries from
+ * older versions have no `createdAt` and fall back to their contact time.
+ */
 export function shouldRemindExport(attempts: ContactAttempt[], lastExportAt?: string): boolean {
 	const since = lastExportAt ? Date.parse(lastExportAt) : -Infinity;
-	const fresh = attempts.filter((attempt) => Date.parse(attempt.at) > since);
+	const fresh = attempts.filter((attempt) => Date.parse(attempt.createdAt ?? attempt.at) > since);
 	return fresh.length >= EXPORT_REMINDER_AFTER;
 }
 

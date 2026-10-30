@@ -14,6 +14,12 @@ Alle Funktionen bekommen die Datenbank als ersten Parameter. In der App kommt si
 
 Jede Änderung bekommt einen neuen `db.version(n)`-Block mit Migration (`.upgrade()`), alte Blöcke bleiben stehen. `SCHEMA_VERSION` hochzählen und den Import so erweitern, dass ältere Sicherungen weiter lesbar sind.
 
+Ausnahme: Ein neues, optionales Feld ohne Index braucht keine neue Version, wenn Code und Import ohne das Feld auskommen. Beispiel: `ContactAttempt.createdAt` fehlt bei älteren Einträgen, dort gilt `at`.
+
+## Grenzen
+
+Die Schreibfunktionen in `repository.ts` kürzen Texte auf `MAX_TEXT_LENGTH` und halten Wartezeiten zwischen 0 und `MAX_WAIT_WEEKS` (`withinLimits()`). Der Import nutzt sie bewusst nicht: Eine Sicherung wird unverändert wiederhergestellt.
+
 ## Export-Format
 
 ```json
