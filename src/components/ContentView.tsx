@@ -36,31 +36,7 @@ export function ContentView({
 				<p className="lead">{page.summary}</p>
 			)}
 			{children}
-			{page.introHtml && <div dangerouslySetInnerHTML={{ __html: page.introHtml }} />}
-
-			{collapsible
-				? page.sections.length > 0 && (
-						<section aria-labelledby="details-title">
-							<h2 id="details-title">{t('content.details')}</h2>
-							<div className="details-list">
-								{page.sections.map((section) => (
-									<details key={section.heading}>
-										<summary>
-											<span>{section.heading}</span>
-											<PlusIcon className="icon details-icon" />
-										</summary>
-										<div dangerouslySetInnerHTML={{ __html: section.html }} />
-									</details>
-								))}
-							</div>
-						</section>
-					)
-				: page.sections.map((section) => (
-						<section key={section.heading}>
-							<h2>{section.heading}</h2>
-							<div dangerouslySetInnerHTML={{ __html: section.html }} />
-						</section>
-					))}
+			<ContentBody page={page} collapsible={collapsible} />
 
 			<footer className="content-meta">
 				<ReviewNotice lastReviewed={page.lastReviewed} />
@@ -104,5 +80,49 @@ export function ContentView({
 				</div>
 			</footer>
 		</article>
+	);
+}
+
+interface BodyProps {
+	page: Pick<ContentPage, 'introHtml' | 'sections'>;
+	collapsible?: boolean;
+	/** Heading level of the sections, e.g. 3 when the page is part of another page. */
+	level?: 2 | 3;
+}
+
+/**
+ * The rendered text of a page: intro and sections. The HTML comes from
+ * content/de at build time and is sanitized in lib/content/render.ts.
+ */
+export function ContentBody({ page, collapsible = false, level = 2 }: Readonly<BodyProps>) {
+	const Heading = level === 2 ? 'h2' : 'h3';
+	return (
+		<>
+			{page.introHtml && <div dangerouslySetInnerHTML={{ __html: page.introHtml }} />}
+
+			{collapsible
+				? page.sections.length > 0 && (
+						<section aria-labelledby="details-title">
+							<Heading id="details-title">{t('content.details')}</Heading>
+							<div className="details-list">
+								{page.sections.map((section) => (
+									<details key={section.heading}>
+										<summary>
+											<span>{section.heading}</span>
+											<PlusIcon className="icon details-icon" />
+										</summary>
+										<div dangerouslySetInnerHTML={{ __html: section.html }} />
+									</details>
+								))}
+							</div>
+						</section>
+					)
+				: page.sections.map((section) => (
+						<section key={section.heading}>
+							<Heading>{section.heading}</Heading>
+							<div dangerouslySetInnerHTML={{ __html: section.html }} />
+						</section>
+					))}
+		</>
 	);
 }

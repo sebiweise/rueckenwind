@@ -4,8 +4,7 @@ import { ContentView } from '@/components/ContentView';
 import { ChevronLeftIcon } from '@/components/Icons';
 import { StageDots } from '@/components/StageDots';
 import { StageTasks } from '@/components/StageTasks';
-import { APP_NAME } from '@/lib/config';
-import { loadStage, loadStages } from '@/lib/content';
+import { contentMetadata, loadStage, loadStages } from '@/lib/content';
 import { STAGES, type StageNumber } from '@/lib/domain';
 import { t } from '@/lib/i18n';
 
@@ -18,16 +17,18 @@ export function generateStaticParams() {
 type Props = { params: Promise<{ stage: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-	const page = loadStage(Number((await params).stage) as StageNumber);
-	return { title: `${page.title} – ${APP_NAME}`, description: page.summary };
+	return contentMetadata(loadStage(Number((await params).stage) as StageNumber));
 }
 
 export default async function StagePage({ params }: Readonly<Props>) {
 	const stage = Number((await params).stage) as StageNumber;
 	const stages = loadStages();
-	const page = stages[stage - 1];
-	const previous = stages[stage - 2];
-	const next = stages[stage];
+	// Look the stage up by its number, not by its position in the list.
+	const index = stages.findIndex((entry) => entry.stage === stage);
+	if (index === -1) throw new Error(`No content for stage ${stage}`);
+	const page = stages[index];
+	const previous = stages[index - 1];
+	const next = stages[index + 1];
 	const steps = stages.flatMap((entry) => entry.steps);
 
 	return (
