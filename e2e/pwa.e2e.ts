@@ -34,6 +34,37 @@ test('the app works offline after the first visit', async ({ page, context }) =>
 	await context.setOffline(false);
 });
 
+test('a new version waits and is loaded after asking', async ({ page }) => {
+	await page.goto('app/');
+	await page.evaluate(async () => {
+		await navigator.serviceWorker.ready;
+	});
+	await page.reload();
+	await expect.poll(() => page.evaluate(() => !!navigator.serviceWorker.controller)).toBe(true);
+	const notice = page.getByRole('complementary').filter({ hasText: 'Eine neue Version ist da.' });
+	await expect(notice).toBeHidden();
+
+	// Pretend a deploy happened: a changed script URL makes the browser install a new worker.
+	await page.evaluate(async () => {
+		await navigator.serviceWorker.register('/sw.js?version=2', { scope: '/' });
+	});
+	await expect(notice).toBeVisible();
+	expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
+	// The old version still controls the page until the person decides.
+	expect(
+		await page.evaluate(async () => !!(await navigator.serviceWorker.getRegistration())?.waiting)
+	).toBe(true);
+
+	await notice.getByRole('button', { name: 'Neu laden' }).click();
+	await expect(notice).toBeHidden();
+	await expect
+		.poll(() =>
+			page.evaluate(async () => !(await navigator.serviceWorker.getRegistration())?.waiting)
+		)
+		.toBe(true);
+	await expect(page.getByRole('heading', { level: 1 })).toContainText('Dein Weg');
+});
+
 test('the web app manifest is valid and installable', async ({ page, request }) => {
 	await page.goto('./');
 	const href = await page.locator('link[rel="manifest"]').getAttribute('href');

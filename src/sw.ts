@@ -20,7 +20,12 @@ declare const self: ServiceWorkerGlobalScope;
 const serwist = new Serwist({
 	precacheEntries: self.__SW_MANIFEST,
 	precacheOptions: { cleanupOutdatedCaches: true, ignoreURLParametersMatching: [/.*/] },
-	skipWaiting: true,
+	// A new version waits instead of taking over open tabs: their lazily loaded chunks
+	// (pdfmake, backup) are still in the old precache. Serwist then activates it on the
+	// message { type: 'SKIP_WAITING' }, sent by the update notice in ServiceWorker.tsx,
+	// or by itself once every tab of the app is closed.
+	skipWaiting: false,
+	// Only matters on the first visit: there is no old version to wait for.
 	clientsClaim: true,
 	navigationPreload: false,
 	runtimeCaching: defaultCache

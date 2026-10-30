@@ -264,5 +264,8 @@
 	"install.desktop3": "Bestätige mit „Installieren“.",
 	"install.backup": "Installieren ersetzt keine Sicherung. Sichere deine Einträge trotzdem ab und zu als Datei.",
 	"start.installLink": "So installierst du die App",
-	"install.iosStorage": "Auf dem iPhone hat die installierte App einen eigenen Speicher. Einträge aus Safari nimmst du per Sicherungsdatei mit."
+	"install.iosStorage": "Auf dem iPhone hat die installierte App einen eigenen Speicher. Einträge aus Safari nimmst du per Sicherungsdatei mit.",
+	"update.text": "Eine neue Version ist da. Deine Einträge bleiben erhalten.",
+	"update.reload": "Neu laden",
+	"update.later": "Später"
 }
