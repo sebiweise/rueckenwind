@@ -1,10 +1,15 @@
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
 	applyPalette,
+	applyThemeColor,
 	currentPalette,
 	DEFAULT_PALETTE,
 	isPalette,
 	PALETTE_STORAGE_KEY,
+	PALETTE_THEME_COLORS,
+	PALETTES,
 	paletteScript
 } from '.';
 
@@ -64,6 +69,34 @@ describe('palettes', () => {
 		const root = fakeRoot();
 		runScript(fakeStorage({ [PALETTE_STORAGE_KEY]: 'pfirsich' }), root);
 		expect(root.dataset.palette).toBe('pfirsich');
+	});
+
+	it('colours the browser chrome like the palette, light and dark', () => {
+		const metas = [
+			{ media: '(prefers-color-scheme: light)', content: '' },
+			{ media: '(prefers-color-scheme: dark)', content: '' }
+		];
+		const doc = { querySelectorAll: () => metas } as unknown as Document;
+		applyThemeColor('himmel', doc);
+		expect(metas.map((meta) => meta.content)).toEqual([
+			PALETTE_THEME_COLORS.himmel.light,
+			PALETTE_THEME_COLORS.himmel.dark
+		]);
+	});
+
+	it('keeps the theme colours in line with --color-bg in globals.css', () => {
+		const css = readFileSync(path.join(process.cwd(), 'src/app/globals.css'), 'utf8');
+		const [light, dark] = css.split('@media (prefers-color-scheme: dark)');
+		const background = (part: string, palette: string) => {
+			const selector =
+				palette === DEFAULT_PALETTE ? ':root {' : `:root[data-palette='${palette}'] {`;
+			const block = part.slice(part.indexOf(selector));
+			return /--color-bg:\s*(#[0-9a-f]{6})/i.exec(block)?.[1];
+		};
+		for (const palette of PALETTES) {
+			expect(background(light, palette), palette).toBe(PALETTE_THEME_COLORS[palette].light);
+			expect(background(dark, palette), palette).toBe(PALETTE_THEME_COLORS[palette].dark);
+		}
 	});
 
 	it('ignores unknown stored values and blocked storage', () => {

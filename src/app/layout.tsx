@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import Link from 'next/link';
 import { ServiceWorker } from '@/components/ServiceWorker';
+import { ThemeColor } from '@/components/ThemeColor';
 import { APP_NAME, APP_TITLE } from '@/lib/config';
 import { contentSecurityPolicy } from '@/lib/csp';
 import { t } from '@/lib/i18n';
@@ -24,11 +25,9 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
 	width: 'device-width',
 	initialScale: 1,
-	colorScheme: 'light dark',
-	themeColor: [
-		{ media: '(prefers-color-scheme: light)', color: DEFAULT_THEME_COLORS.light },
-		{ media: '(prefers-color-scheme: dark)', color: DEFAULT_THEME_COLORS.dark }
-	]
+	colorScheme: 'light dark'
+	// theme-color is rendered in <head> below: Next.js would reset the tags on every
+	// navigation, and ThemeColor sets them to the chosen palette.
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -40,6 +39,16 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 				{process.env.NODE_ENV === 'development' && (
 					<meta httpEquiv="Content-Security-Policy" content={contentSecurityPolicy(true)} />
 				)}
+				<meta
+					name="theme-color"
+					media="(prefers-color-scheme: light)"
+					content={DEFAULT_THEME_COLORS.light}
+				/>
+				<meta
+					name="theme-color"
+					media="(prefers-color-scheme: dark)"
+					content={DEFAULT_THEME_COLORS.dark}
+				/>
 				{/* Applies the stored colour theme before the first paint. */}
 				<script dangerouslySetInnerHTML={{ __html: paletteScript }} />
 			</head>
@@ -55,6 +64,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 						</p>
 					</footer>
 					<ServiceWorker />
+					<ThemeColor />
 				</div>
 			</body>
 		</html>
