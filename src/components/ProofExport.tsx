@@ -6,6 +6,7 @@ import { ProgressDetails } from '@/components/ProgressSummary';
 import { getDb } from '@/lib/data/db';
 import { useJourney } from '@/lib/data/hooks';
 import { listAttempts, listPractices, updateJourney } from '@/lib/data/repository';
+import { downloadBlob } from '@/lib/download';
 import { t } from '@/lib/i18n';
 import { createPdfBlob } from '@/lib/pdf/create';
 import { buildProofDocument, proofFileName } from '@/lib/pdf/proof';
@@ -30,12 +31,7 @@ export function ProofExport() {
 			const blob = await createPdfBlob(
 				buildProofDocument({ practices, attempts, displayName, now })
 			);
-			const url = URL.createObjectURL(blob);
-			const link = document.createElement('a');
-			link.href = url;
-			link.download = proofFileName(now);
-			link.click();
-			setTimeout(() => URL.revokeObjectURL(url), 1000);
+			downloadBlob(blob, proofFileName(now));
 			setStatus(t('proof.created'));
 		} catch {
 			setStatus(t('proof.error'));

@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { isStandalone } from '@/lib/install';
 
 /**
  * The installed app skips the start page and opens the app directly. The manifest's
@@ -10,9 +11,10 @@ import { useEffect } from 'react';
 export function StandaloneRedirect({ to }: Readonly<{ to: string }>) {
 	const router = useRouter();
 	useEffect(() => {
-		const standalone =
-			globalThis.matchMedia?.('(display-mode: standalone)').matches ||
-			(navigator as Navigator & { standalone?: boolean }).standalone === true;
+		const standalone = isStandalone(
+			globalThis.matchMedia?.bind(globalThis),
+			(navigator as Navigator & { standalone?: boolean }).standalone
+		);
 		if (standalone) router.replace(to);
 	}, [router, to]);
 	return null;

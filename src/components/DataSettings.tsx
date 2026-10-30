@@ -5,6 +5,7 @@ import { ChevronRightIcon, DownloadIcon, TrashIcon, UploadIcon } from '@/compone
 import { getDb } from '@/lib/data/db';
 import { useJourney } from '@/lib/data/hooks';
 import { clearAll, updateJourney } from '@/lib/data/repository';
+import { downloadBlob } from '@/lib/download';
 import { formatDate } from '@/lib/format';
 import { t } from '@/lib/i18n';
 
@@ -18,44 +19,52 @@ export function DataSettings() {
 	const id = useId();
 
 	async function exportFile() {
-		const { createExport, exportFileName } = await loadBackup();
-		const db = getDb();
-		const now = new Date();
-		const data = await createExport(db, now);
-		const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-		const url = URL.createObjectURL(blob);
-		const link = document.createElement('a');
-		link.href = url;
-		link.download = exportFileName(now);
-		link.click();
-		setTimeout(() => URL.revokeObjectURL(url), 1000);
-		await updateJourney(db, { lastExportAt: now.toISOString() });
-		setMessage(t('data.exported'));
+		try {
+			const { createExport, exportFileName } = await loadBackup();
+			const db = getDb();
+			const now = new Date();
+			const data = await createExport(db, now);
+			const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+			downloadBlob(blob, exportFileName(now));
+			await updateJourney(db, { lastExportAt: now.toISOString() });
+			setMessage(t('data.exported'));
+		} catch {
+			setMessage(t('data.exportFailed'));
+		}
 	}
 
 	async function importFile(event: React.ChangeEvent<HTMLInputElement>) {
 		const file = event.target.files?.[0];
 		event.target.value = '';
 		if (!file) return;
-		const { hasData, importData, parseImport } = await loadBackup();
-		const parsed = parseImport(await file.text());
-		if (!parsed.ok) {
-			setMessage(t(`data.importError.${parsed.error}`));
-			return;
+		try {
+			const { hasData, importData, parseImport } = await loadBackup();
+			const parsed = parseImport(await file.text());
+			if (!parsed.ok) {
+				setMessage(t(`data.importError.${parsed.error}`));
+				return;
+			}
+			const db = getDb();
+			if ((await hasData(db)) && !globalThis.confirm(t('data.importConfirm'))) {
+				setMessage(t('data.importCancelled'));
+				return;
+			}
+			await importData(db, parsed.data);
+			setMessage(t('data.imported'));
+		} catch {
+			// The import runs in one transaction, so a failure leaves the old data in place.
+			setMessage(t('data.importFailed'));
 		}
-		const db = getDb();
-		if ((await hasData(db)) && !globalThis.confirm(t('data.importConfirm'))) {
-			setMessage(t('data.importCancelled'));
-			return;
-		}
-		await importData(db, parsed.data);
-		setMessage(t('data.imported'));
 	}
 
 	async function deleteAll() {
 		if (!globalThis.confirm(t('data.deleteConfirm'))) return;
-		await clearAll(getDb());
-		setMessage(t('data.deleted'));
+		try {
+			await clearAll(getDb());
+			setMessage(t('data.deleted'));
+		} catch {
+			setMessage(t('data.deleteFailed'));
+		}
 	}
 
 	let lastExport = '';

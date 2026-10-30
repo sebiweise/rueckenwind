@@ -8,6 +8,7 @@ import {
 	type JourneyState,
 	type Practice
 } from '@/lib/domain';
+import { localDateStamp } from '@/lib/format';
 import { SCHEMA_VERSION, type RueckenwindDb } from './db';
 import { clearAll, getJourney } from './repository';
 
@@ -16,8 +17,41 @@ z.config({ jitless: true });
 
 export const EXPORT_APP_ID = 'rueckenwind';
 
-const isoDate = z.string().refine((value) => !Number.isNaN(Date.parse(value)), 'invalid date');
-const text = z.string().max(10_000);
+const ISO_DATE =
+	/^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2})(?::(\d{2})(?:\.\d{1,9})?)?(Z|[+-](\d{2}):(\d{2})))?$/;
+
+/**
+ * True for an ISO 8601 date (optionally with time and offset) that names a real
+ * moment. `Date.parse` would roll e.g. 30 February over to 2 March.
+ */
+export function isStrictIsoDate(value: string): boolean {
+	const match = ISO_DATE.exec(value);
+	if (!match) return false;
+	const [year, month, day, hour, minute, second, , offsetHour, offsetMinute] = match
+		.slice(1)
+		.map((part) => Number(part ?? 0));
+	const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
+	return (
+		month >= 1 &&
+		month <= 12 &&
+		day >= 1 &&
+		day <= daysInMonth &&
+		hour <= 23 &&
+		minute <= 59 &&
+		second <= 59 &&
+		offsetHour <= 23 &&
+		offsetMinute <= 59
+	);
+}
+
+// Lists and the database index compare dates as strings, so every date is stored as UTC ISO 8601.
+// Converting a valid date to UTC keeps the same moment; impossible dates are rejected, not rolled over.
+const isoDate = z
+	.string()
+	.refine(isStrictIsoDate, 'invalid date')
+	.transform((value) => new Date(value).toISOString());
+// Backups restore stored texts unchanged, even beyond MAX_TEXT_LENGTH: an import never loses data.
+const text = z.string();
 
 const practiceSchema = z.object({
 	id: z.string().min(1),
@@ -36,7 +70,8 @@ const attemptSchema = z.object({
 	at: isoDate,
 	channel: z.enum(CONTACT_CHANNELS),
 	result: z.enum(CONTACT_RESULTS),
-	waitTimeWeeks: z.number().nonnegative().max(1000).optional(),
+	// Kept as stored: older versions allowed more than MAX_WAIT_WEEKS.
+	waitTimeWeeks: z.number().nonnegative().finite().optional(),
 	rawInput: text.optional(),
 	notes: text.optional()
 }) satisfies z.ZodType<ContactAttempt>;
@@ -65,6 +100,12 @@ export const exportSchema = z
 			return data.attempts.every((attempt) => ids.has(attempt.practiceId));
 		},
 		{ message: 'attempt without practice', path: ['attempts'] }
+	)
+	.refine(
+		(data) =>
+			new Set(data.practices.map((practice) => practice.id)).size === data.practices.length &&
+			new Set(data.attempts.map((attempt) => attempt.id)).size === data.attempts.length,
+		{ message: 'duplicate id' }
 	);
 
 export type ExportFile = z.infer<typeof exportSchema>;
@@ -92,8 +133,7 @@ export async function createExport(db: RueckenwindDb, now = new Date()): Promise
 
 /** File name for a backup, e.g. "rueckenwind-2026-10-08.json". */
 export function exportFileName(now = new Date()): string {
-	const pad = (n: number) => String(n).padStart(2, '0');
-	return `${EXPORT_APP_ID}-${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}.json`;
+	return `${EXPORT_APP_ID}-${localDateStamp(now)}.json`;
 }
 
 /** Checks a backup file's text. Never throws; tells why a file cannot be used. */
@@ -115,10 +155,19 @@ export function parseImport(json: string): ImportResult {
 	return parsed.success ? { ok: true, data: parsed.data } : { ok: false, error: 'invalid' };
 }
 
-/** True when the database already holds data that an import would replace. */
+/** True when the database already holds data that an import would replace, journey included. */
 export async function hasData(db: RueckenwindDb): Promise<boolean> {
-	const [practices, attempts] = await Promise.all([db.practices.count(), db.attempts.count()]);
-	return practices + attempts > 0;
+	const [practices, attempts, journey] = await Promise.all([
+		db.practices.count(),
+		db.attempts.count(),
+		getJourney(db)
+	]);
+	return (
+		practices + attempts > 0 ||
+		journey.completedSteps.length > 0 ||
+		journey.currentStage !== 1 ||
+		!!journey.displayName
+	);
 }
 
 /** Replaces all local data with the backup, in one transaction. */

@@ -2,6 +2,7 @@
 
 import { useId, useSyncExternalStore } from 'react';
 import { t } from '@/lib/i18n';
+import { readStorage } from '@/lib/storage';
 import { applyPalette, currentPalette, DEFAULT_PALETTE, PALETTES, type Palette } from '@/lib/theme';
 
 const listeners = new Set<() => void>();
@@ -12,7 +13,7 @@ function subscribe(listener: () => void) {
 }
 
 function choose(palette: Palette) {
-	applyPalette(palette, document.documentElement, globalThis.localStorage);
+	applyPalette(palette, document.documentElement, readStorage());
 	listeners.forEach((listener) => listener());
 }
 
