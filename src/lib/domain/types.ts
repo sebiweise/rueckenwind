@@ -41,6 +41,12 @@ export type StageNumber = 1 | 2 | 3 | 4 | 5;
 
 export const STAGES: readonly StageNumber[] = [1, 2, 3, 4, 5];
 
+/** Longest text kept in any free-text field. Inputs, writes and the backup import share it. */
+export const MAX_TEXT_LENGTH = 10_000;
+
+/** Longest waiting time in weeks (ten years). Parser, inputs and the backup import share it. */
+export const MAX_WAIT_WEEKS = 520;
+
 export interface Practice {
 	id: string; // UUID
 	name: string;

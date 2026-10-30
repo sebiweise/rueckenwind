@@ -2,12 +2,15 @@ import { z } from 'zod';
 import {
 	CONTACT_CHANNELS,
 	CONTACT_RESULTS,
+	MAX_TEXT_LENGTH,
+	MAX_WAIT_WEEKS,
 	PRACTICE_KINDS,
 	STAGES,
 	type ContactAttempt,
 	type JourneyState,
 	type Practice
 } from '@/lib/domain';
+import { localDateStamp } from '@/lib/format';
 import { SCHEMA_VERSION, type RueckenwindDb } from './db';
 import { clearAll, getJourney } from './repository';
 
@@ -16,8 +19,13 @@ z.config({ jitless: true });
 
 export const EXPORT_APP_ID = 'rueckenwind';
 
-const isoDate = z.string().refine((value) => !Number.isNaN(Date.parse(value)), 'invalid date');
-const text = z.string().max(10_000);
+// Lists and the database index compare dates as strings, so every date is stored as UTC ISO 8601.
+const isoDate = z
+	.string()
+	.refine((value) => !Number.isNaN(Date.parse(value)), 'invalid date')
+	.transform((value) => new Date(value).toISOString());
+// Over-long texts are shortened rather than rejected: one bad field must not make the backup useless.
+const text = z.string().transform((value) => value.slice(0, MAX_TEXT_LENGTH));
 
 const practiceSchema = z.object({
 	id: z.string().min(1),
@@ -36,7 +44,11 @@ const attemptSchema = z.object({
 	at: isoDate,
 	channel: z.enum(CONTACT_CHANNELS),
 	result: z.enum(CONTACT_RESULTS),
-	waitTimeWeeks: z.number().nonnegative().max(1000).optional(),
+	waitTimeWeeks: z
+		.number()
+		.nonnegative()
+		.transform((weeks) => Math.min(weeks, MAX_WAIT_WEEKS))
+		.optional(),
 	rawInput: text.optional(),
 	notes: text.optional()
 }) satisfies z.ZodType<ContactAttempt>;
@@ -65,6 +77,12 @@ export const exportSchema = z
 			return data.attempts.every((attempt) => ids.has(attempt.practiceId));
 		},
 		{ message: 'attempt without practice', path: ['attempts'] }
+	)
+	.refine(
+		(data) =>
+			new Set(data.practices.map((practice) => practice.id)).size === data.practices.length &&
+			new Set(data.attempts.map((attempt) => attempt.id)).size === data.attempts.length,
+		{ message: 'duplicate id' }
 	);
 
 export type ExportFile = z.infer<typeof exportSchema>;
@@ -92,8 +110,7 @@ export async function createExport(db: RueckenwindDb, now = new Date()): Promise
 
 /** File name for a backup, e.g. "rueckenwind-2026-10-08.json". */
 export function exportFileName(now = new Date()): string {
-	const pad = (n: number) => String(n).padStart(2, '0');
-	return `${EXPORT_APP_ID}-${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}.json`;
+	return `${EXPORT_APP_ID}-${localDateStamp(now)}.json`;
 }
 
 /** Checks a backup file's text. Never throws; tells why a file cannot be used. */
@@ -115,10 +132,19 @@ export function parseImport(json: string): ImportResult {
 	return parsed.success ? { ok: true, data: parsed.data } : { ok: false, error: 'invalid' };
 }
 
-/** True when the database already holds data that an import would replace. */
+/** True when the database already holds data that an import would replace, journey included. */
 export async function hasData(db: RueckenwindDb): Promise<boolean> {
-	const [practices, attempts] = await Promise.all([db.practices.count(), db.attempts.count()]);
-	return practices + attempts > 0;
+	const [practices, attempts, journey] = await Promise.all([
+		db.practices.count(),
+		db.attempts.count(),
+		getJourney(db)
+	]);
+	return (
+		practices + attempts > 0 ||
+		journey.completedSteps.length > 0 ||
+		journey.currentStage !== 1 ||
+		!!journey.displayName
+	);
 }
 
 /** Replaces all local data with the backup, in one transaction. */
