@@ -1,18 +1,57 @@
 import { Marked } from 'marked';
 import { parse as parseYaml } from 'yaml';
+import { escapeAttribute, isSafeUrl, sanitizeHtml } from './sanitize';
 import { frontmatterSchema, type ContentPage, type ContentSection } from './schema';
-
-const marked = new Marked({ gfm: true, async: false });
 
 const FRONTMATTER = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?/;
 
+/** Encodes a link target like marked does; null when it cannot be encoded. */
+function encodeUrl(href: string): string | null {
+	try {
+		return encodeURI(href).replaceAll('%25', '%');
+	} catch {
+		return null;
+	}
+}
+
+const marked = new Marked({
+	gfm: true,
+	async: false,
+	renderer: {
+		// Raw HTML in the Markdown: only a few harmless tags survive, see sanitize.ts.
+		html({ text }) {
+			return sanitizeHtml(text);
+		},
+		// Only web, mail, phone and in-app links. External links open in a new tab and send no referrer.
+		link({ href, title, tokens }) {
+			const text = this.parser.parseInline(tokens);
+			const url = encodeUrl(href);
+			if (url === null || !isSafeUrl(href)) return text;
+			const external = /^(https?:)?\/\//i.test(href);
+			return (
+				`<a href="${escapeAttribute(url)}"` +
+				(external ? ' rel="noopener noreferrer" target="_blank"' : '') +
+				(title ? ` title="${escapeAttribute(title)}"` : '') +
+				`>${text}</a>`
+			);
+		},
+		// Images only from the app itself: the CSP blocks other origins anyway.
+		image({ href, title, text }) {
+			const url = encodeUrl(href);
+			if (url === null || !isSafeUrl(href) || /^([a-z][a-z0-9+.-]*:|\/\/)/i.test(href)) {
+				return escapeAttribute(text);
+			}
+			return (
+				`<img src="${escapeAttribute(url)}" alt="${escapeAttribute(text)}"` +
+				(title ? ` title="${escapeAttribute(title)}"` : '') +
+				'>'
+			);
+		}
+	}
+});
+
 function toHtml(markdown: string): string {
-	const html = marked.parse(markdown) as string;
-	// External links open in a new tab and send no referrer.
-	return html.replaceAll(
-		/<a href="(https?:[^"]+)"/g,
-		'<a href="$1" rel="noopener noreferrer" target="_blank"'
-	);
+	return marked.parse(markdown) as string;
 }
 
 /**

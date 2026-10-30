@@ -39,5 +39,7 @@ Jeder Abschnitt mit `##` wird bei Etappen zu einem aufklappbaren Detail.
 - Du-Form, Sätze unter 20 Wörtern, keine Paragrafen im Fließtext ohne Erklärung, keine festen Absagenzahlen.
 - Unsichere Aussagen mit `<!-- TODO: fachlich prüfen -->` markieren. Kommentare erscheinen nicht in der App.
 - Nach einer inhaltlichen Prüfung `lastReviewed` aktualisieren. Nach 12 Monaten ohne Prüfung zeigt die App einen Hinweis.
+- Möglichst nur Markdown. An rohem HTML sind nur einfache Text-Tags erlaubt, z. B. `<abbr title="…">`, `<br>`, `<kbd>`, `<sup>`, `<details>`/`<summary>` (Liste in `src/lib/content/sanitize.ts`). Andere Tags erscheinen als Text, und ein Test schlägt fehl. Andere Attribute fallen weg.
+- Links nur mit `https:`, `http:`, `mailto:`, `tel:` oder innerhalb der App. Bilder nur aus der App selbst (`/…`).
 
 Lizenz: [CC BY-SA 4.0](../LICENSE).
