@@ -128,6 +128,7 @@ interface ContactAttempt {
   id: string;
   practiceId: string;
   at: string;              // ISO 8601, editierbar
+  createdAt?: string;      // ISO 8601, Zeitpunkt der Erfassung, fehlt bei älteren Einträgen
   channel: 'phone' | 'email' | 'online' | 'in_person';
   result: ContactResult;
   waitTimeWeeks?: number;  // normalisiert aus Freitext

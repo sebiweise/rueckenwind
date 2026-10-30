@@ -65,6 +65,8 @@ export interface ContactAttempt {
 	id: string;
 	practiceId: string;
 	at: string; // ISO 8601, editierbar
+	/** ISO 8601, when it was recorded; never edited. Missing on entries saved by older versions. */
+	createdAt?: string;
 	channel: ContactChannel;
 	result: ContactResult;
 	waitTimeWeeks?: number; // normalisiert aus Freitext

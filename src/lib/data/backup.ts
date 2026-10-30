@@ -68,6 +68,8 @@ const attemptSchema = z.object({
 	id: z.string().min(1),
 	practiceId: z.string().min(1),
 	at: isoDate,
+	// Optional: backups from older versions do not have it.
+	createdAt: isoDate.optional(),
 	channel: z.enum(CONTACT_CHANNELS),
 	result: z.enum(CONTACT_RESULTS),
 	// Kept as stored: older versions allowed more than MAX_WAIT_WEEKS.
