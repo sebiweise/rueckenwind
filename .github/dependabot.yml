@@ -1,0 +1,25 @@
+# Dependabot hält die GitHub Actions (auf Commit-SHAs gepinnt) und die npm-Pakete aktuell.
+# Kleine Updates kommen gebündelt in einem PR pro Woche, große Versionen einzeln.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ['*']
+    commit-message:
+      prefix: ci
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    groups:
+      npm-minor-patch:
+        update-types: [minor, patch]
+    commit-message:
+      prefix: chore
+      include: scope
