@@ -29,11 +29,17 @@ export function formatDate(iso: string): string {
 	return date.format(new Date(iso));
 }
 
+const pad = (n: number) => String(n).padStart(2, '0');
+
+/** The local calendar day as "2026-10-08", e.g. for file names. */
+export function localDateStamp(d: Date): string {
+	return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
 /** Value for <input type="datetime-local"> in local time, e.g. "2026-10-08T09:30". */
 export function toDateTimeLocal(iso: string): string {
 	const d = new Date(iso);
-	const pad = (n: number) => String(n).padStart(2, '0');
-	return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+	return `${localDateStamp(d)}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
 /** Reads <input type="datetime-local"> back into ISO 8601; null when empty or invalid. */
