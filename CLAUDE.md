@@ -87,14 +87,15 @@ src/lib/i18n/        UI-Texte
 
 ## graphify
 
-Unter `graphify-out/` liegt ein Wissensgraph des Codes ([Graphify](https://github.com/Graphify-Labs/graphify)): Module, Funktionen, Aufrufe und Importe über Dateigrenzen hinweg. Er erspart das erneute Erkunden der App in jeder Sitzung.
+[Graphify](https://github.com/Graphify-Labs/graphify) (PyPI `graphifyy`) hält einen Wissensgraphen des Codes in `graphify-out/`: Module, Funktionen, Aufrufe und Importe über Dateigrenzen hinweg. Er erspart das erneute Erkunden der App in jeder Sitzung.
+
+`graphify-out/` ist gitignored und wird nicht committet. Der Graph ist ein Build-Produkt, das bei jedem Bau komplett neu geschrieben wird. `.claude/hooks/graphify-session-start.sh` baut ihn zu Beginn jeder Sitzung aus dem aktuellen Checkout: nur AST (`--code-only`, lokales tree-sitter, offline, kein API-Key). In Cloud-Sitzungen installiert der Hook die gepinnte Version selbst (nur fertige Wheels). Lokal läuft er nur, wenn `graphify` schon installiert ist, und installiert nie etwas. `graphify hook install` hält den Graphen per Git-Hooks auch zwischen Sitzungen aktuell.
 
 Regeln:
 
-- Wenn `graphify` installiert ist: vor dem ersten Grep, der ersten Suche oder dem ersten Lesen von Quelldateien zu einer Codefrage `graphify query "<Frage>"` ausführen. Diese Regel in jeden Subagent-Prompt übernehmen, der Code erkundet. Rohdateien nur für Stellen lesen, die der Graph oder ein früherer Read schon gefunden hat.
+- Wenn `graphify-out/graph.json` existiert: vor dem ersten Grep, der ersten Suche oder dem ersten Lesen von Quelldateien zu einer Codefrage `graphify query "<Frage>"` ausführen. Diese Regel in jeden Subagent-Prompt übernehmen, der Code erkundet. Rohdateien nur für Stellen lesen, die der Graph oder ein früherer Read schon gefunden hat.
 - Abfragen treffen Bezeichner aus dem Code, keine deutschen Sätze: `graphify query "contact repository save"` statt „Wie wird ein Kontakt gespeichert?“.
 - `graphify path "<A>" "<B>"` für Beziehungen, `graphify explain "<Name>"` für einzelne Dateien oder Funktionen. Beide liefern einen kleinen Teilgraphen statt ganzer Dateien.
-- `graphify-out/GRAPH_REPORT.md` für einen Architekturüberblick lesen, auch ohne installiertes `graphify`.
-- Nach Codeänderungen `graphify update .` ausführen und `graphify-out/` mitcommitten (nur AST, offline, keine API-Kosten).
-- `graph.json` wird bei jedem Bau komplett neu geschrieben. Ein großer Diff daran im PR ist normal und kein Befund.
-- Installation: `uv tool install graphifyy` (oder `pipx install graphifyy`). Die Hooks in `.claude/settings.json` tun nichts, solange `graphify` fehlt.
+- `graphify-out/GRAPH_REPORT.md` nur für einen breiten Architekturüberblick lesen. Die Bereiche darin sind unbenannt (`--no-label`, Benennen bräuchte ein LLM-Backend).
+- Nach Codeänderungen `graphify update .` ausführen, damit spätere Abfragen derselben Sitzung die Änderung sehen (nur AST, offline, keine API-Kosten). `graphify-out/` nie committen.
+- Installation: `uv tool install graphifyy` (oder `pipx install graphifyy`). Die Hooks in `.claude/settings.json` tun nichts und enden still, solange `graphify` fehlt. Die `PreToolUse`-Hooks (`.claude/hooks/graphify-guard.sh`) ergänzen nur einen Hinweis, sie blockieren nie.
