@@ -55,7 +55,19 @@ test('quick buttons work without typing', async ({ page }) => {
 	await page.getByRole('button', { name: 'Nicht erreicht', exact: true }).click();
 	await expect(page.locator('.preview')).toContainText('Praxis ohne Namen');
 	await save.click();
-	await expect(page.locator('.progress')).toContainText('1 Nachweis gesammelt');
+	// Without a name the entry is kept, but it only counts once name and kind are added.
+	await expect(page.getByRole('status')).toHaveText(
+		'Nicht erreicht notiert. Trag unter Kontakte Name und Art der Praxis nach, dann kann es für deinen Nachweis zählen.'
+	);
+	await expect(page.locator('.progress')).toContainText('Noch keine Nachweise');
+
+	// A second entry without a name gets its own practice instead of merging into the first.
+	await page.getByRole('button', { name: 'Kontakt notieren' }).click();
+	await page.getByRole('button', { name: 'Absage', exact: true }).click();
+	await save.click();
+	await expect(page.getByRole('dialog')).toBeHidden();
+	await page.goto('kontakte/');
+	await expect(page.getByRole('heading', { name: 'Praxis ohne Namen' })).toHaveCount(2);
 });
 
 test('three rejections on one day bring a gentle pause hint', async ({ page }) => {
