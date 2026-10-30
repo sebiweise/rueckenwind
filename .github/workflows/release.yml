@@ -8,14 +8,19 @@ on:
   push:
     tags: ['v*']
 
-permissions:
-  contents: write
+# Bauen läuft ohne Schreibrecht: npm ci und der Build führen Code aus Abhängigkeiten aus.
+# Nur der kleine Job "publish" bekommt contents: write und führt keinen Fremdcode aus.
+permissions: {}
 
 jobs:
-  release:
+  build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
@@ -28,10 +33,28 @@ jobs:
           version="${GITHUB_REF_NAME#v}"
           version="${version%%-*}"
           awk -v v="$version" '$0 ~ "^## \\[" v "\\]" {found=1; next} found && /^## \[/ {exit} found {print}' CHANGELOG.md > notes.md
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release
+          path: |
+            rueckenwind-${{ github.ref_name }}-static.zip
+            notes.md
+          if-no-files-found: error
+          retention-days: 1
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: release
       - name: Release anlegen
         run: |
           prerelease=""
           case "$GITHUB_REF_NAME" in *-*) prerelease="--prerelease" ;; esac
-          gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --notes-file notes.md $prerelease "rueckenwind-${GITHUB_REF_NAME}-static.zip"
+          gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --title "$GITHUB_REF_NAME" --notes-file notes.md $prerelease "rueckenwind-${GITHUB_REF_NAME}-static.zip"
         env:
           GH_TOKEN: ${{ github.token }}
