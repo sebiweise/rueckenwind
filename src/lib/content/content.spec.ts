@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { STAGES } from '@/lib/domain';
 import { loadOptionalPage, loadPage, loadStage, loadStages, loadSteps } from './load';
 import { renderContent } from './render';
+import { isSafeUrl, sanitizeHtml } from './sanitize';
 import { describeSource } from './schema';
 
 describe('content files', () => {
@@ -36,6 +37,14 @@ describe('content files', () => {
 		for (const page of stages) {
 			const html = page.introHtml + page.sections.map((s) => s.html).join('');
 			expect(html).not.toContain('TODO');
+		}
+	});
+
+	it('uses no raw HTML that the filter would show as text', () => {
+		for (const page of [...stages, ...['krise', 'hinweis', 'ueber', 'hilfen'].map(loadPage)]) {
+			const html = page.introHtml + page.sections.map((s) => s.html).join('');
+			expect(html, page.slug).not.toContain('&lt;');
+			expect(html, page.slug).not.toMatch(/<(script|style|iframe|object|embed|form)\b/i);
 		}
 	});
 
@@ -121,6 +130,92 @@ describe('renderContent', () => {
 		['a bad step id', valid.replace('id: a-b', 'id: A B'), 'kebab-case']
 	])('fails on %s', (_, source, message) => {
 		expect(() => renderContent('test', source)).toThrow(message);
+	});
+});
+
+describe('HTML in content', () => {
+	const render = (markdown: string) =>
+		renderContent(
+			'test',
+			[
+				'---',
+				'title: Test',
+				'summary: Kurz.',
+				'lastReviewed: 2026-10-08',
+				'sources: [https://example.org]',
+				'---',
+				markdown
+			].join('\n')
+		).introHtml;
+
+	it('keeps harmless tags for text', () => {
+		expect(render('Die <abbr title="Terminservicestelle">TSS</abbr> hilft.<br>Weiter.')).toBe(
+			'<p>Die <abbr title="Terminservicestelle">TSS</abbr> hilft.<br>Weiter.</p>'
+		);
+		expect(render('<details>\n<summary>Mehr</summary>\n\nText\n</details>')).toContain(
+			'<details>\n<summary>Mehr</summary>'
+		);
+	});
+
+	it('shows every other tag as text', () => {
+		const html = render(
+			[
+				'<script>alert(1)</script>',
+				'',
+				'Text <img src=x onerror=alert(1)> und <iframe src="https://example.org"></iframe>',
+				'',
+				'<a href="javascript:alert(1)">Klick</a> <style>p{}</style>'
+			].join('\n')
+		);
+		expect(html).not.toMatch(/<(script|img|iframe|a|style)\b/i);
+		expect(html).toContain('&lt;script>');
+	});
+
+	it('drops attributes that are not allowed', () => {
+		expect(render('<abbr title="x" onclick="alert(1)" style="color:red">A</abbr>')).toBe(
+			'<p><abbr title="x">A</abbr></p>'
+		);
+	});
+
+	it('allows only safe link targets and marks external links', () => {
+		expect(render('[Web](https://example.org/?a=1&b=2 "Titel")')).toBe(
+			'<p><a href="https://example.org/?a=1&amp;b=2" rel="noopener noreferrer" target="_blank" title="Titel">Web</a></p>'
+		);
+		expect(render('[Krise](/krise/) [Notruf](tel:112) [Mail](mailto:a@example.org)')).toBe(
+			'<p><a href="/krise/">Krise</a> <a href="tel:112">Notruf</a> <a href="mailto:a@example.org">Mail</a></p>'
+		);
+		for (const href of ['javascript:alert(1)', 'JAVASCRIPT:alert(1)', 'data:text/html,x']) {
+			expect(render(`[Böse](${href})`)).toBe('<p>Böse</p>');
+		}
+	});
+
+	it('shows images only from the app itself', () => {
+		expect(render('![Logo](/icons/icon.svg)')).toBe(
+			'<p><img src="/icons/icon.svg" alt="Logo"></p>'
+		);
+		expect(render('![Fremd](https://example.org/a.png)')).toBe('<p>Fremd</p>');
+	});
+});
+
+describe('isSafeUrl', () => {
+	it.each([
+		['https://example.org', true],
+		['/krise/', true],
+		['#abschnitt', true],
+		['tel:112', true],
+		['javascript:alert(1)', false],
+		['java\tscript:alert(1)', false],
+		[' javascript:alert(1)', false],
+		['vbscript:x', false]
+	])('%j → %s', (href, safe) => {
+		expect(isSafeUrl(href)).toBe(safe);
+	});
+});
+
+describe('sanitizeHtml', () => {
+	it('leaves text and entities alone and escapes stray brackets', () => {
+		expect(sanitizeHtml('a &amp; b < c > d')).toBe('a &amp; b &lt; c > d');
+		expect(sanitizeHtml('<B>fett</B><br/>')).toBe('<b>fett</b><br />');
 	});
 });
 
