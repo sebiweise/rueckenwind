@@ -12,10 +12,12 @@ import {
 import { CAPTURE_EVENT, type CaptureRequest } from '@/lib/capture';
 import { getDb } from '@/lib/data/db';
 import { usePractices } from '@/lib/data/hooks';
-import { recordContact } from '@/lib/data/repository';
+import { listAttempts, recordContact } from '@/lib/data/repository';
 import {
 	CONTACT_RESULTS,
-	countsForProof,
+	MAX_TEXT_LENGTH,
+	MAX_WAIT_WEEKS,
+	computeProgress,
 	parseContactInput,
 	type ContactResult
 } from '@/lib/domain';
@@ -58,10 +60,12 @@ export function QuickCapture() {
 	const [overrides, setOverrides] = useState<Overrides>({});
 	const [editor, setEditor] = useState<Editor>(null);
 	const [message, setMessage] = useState('');
+	// Relative dates ("gestern") and the default time refer to when the sheet was opened.
+	const [openedAt, setOpenedAt] = useState<Date>();
 	const practices = usePractices();
 	const ids = useId();
 
-	const parsed = useMemo(() => parseContactInput(text), [text]);
+	const parsed = useMemo(() => parseContactInput(text, openedAt), [text, openedAt]);
 	const name = overrides.name ?? parsed.practiceName?.value ?? '';
 	const result = overrides.result ?? parsed.result.value;
 	const weeks = overrides.weeks === undefined ? parsed.waitTimeWeeks?.value : overrides.weeks;
@@ -87,6 +91,7 @@ export function QuickCapture() {
 
 	useEffect(() => {
 		function open(event: Event) {
+			setOpenedAt(new Date());
 			setOverrides({});
 			setEditor(null);
 			setText((event as CustomEvent<CaptureRequest>).detail?.text ?? '');
@@ -104,7 +109,8 @@ export function QuickCapture() {
 		event.preventDefault();
 		if (!hasInput) return;
 		try {
-			const { practice, attempt } = await recordContact(getDb(), {
+			const db = getDb();
+			const { practice, attempt } = await recordContact(db, {
 				practiceName: name.trim() || t('capture.unnamedPractice'),
 				practiceKind: parsed.practiceKind?.value,
 				result,
@@ -113,8 +119,15 @@ export function QuickCapture() {
 				waitTimeWeeks: weeks ?? undefined,
 				rawInput: text.trim() || undefined
 			});
+			// A practice counts once and not at all once it gave an appointment,
+			// so only say "counts" when the proof count really went up.
+			const attempts = await listAttempts(db, practice.id);
+			const before = attempts.filter((other) => other.id !== attempt.id);
+			const counted =
+				computeProgress([practice], attempts).proofCount >
+				computeProgress([practice], before).proofCount;
 			setMessage(
-				countsForProof(attempt, practice)
+				counted
 					? t('capture.saved.counts', { result: t(`result.${result}`) })
 					: t(`capture.saved.${result}`)
 			);
@@ -158,6 +171,7 @@ export function QuickCapture() {
 						autoComplete="off"
 						autoFocus
 						enterKeyHint="done"
+						maxLength={MAX_TEXT_LENGTH}
 						placeholder={t('capture.placeholder')}
 						value={text}
 						onChange={(event) => setText(event.target.value)}
@@ -210,6 +224,7 @@ export function QuickCapture() {
 										id={`${ids}-name`}
 										type="text"
 										list={`${ids}-practices`}
+										maxLength={MAX_TEXT_LENGTH}
 										value={name}
 										onChange={(event) =>
 											setOverrides((current) => ({ ...current, name: event.target.value }))
@@ -251,12 +266,15 @@ export function QuickCapture() {
 										type="number"
 										inputMode="numeric"
 										min={0}
-										max={520}
+										max={MAX_WAIT_WEEKS}
 										value={weeks ?? ''}
 										onChange={(event) =>
 											setOverrides((current) => ({
 												...current,
-												weeks: event.target.value === '' ? null : Number(event.target.value)
+												weeks:
+													event.target.value === ''
+														? null
+														: Math.min(Math.max(Number(event.target.value), 0), MAX_WAIT_WEEKS)
 											}))
 										}
 									/>

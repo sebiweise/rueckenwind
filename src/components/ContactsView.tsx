@@ -16,6 +16,8 @@ import {
 import {
 	CONTACT_CHANNELS,
 	CONTACT_RESULTS,
+	MAX_TEXT_LENGTH,
+	MAX_WAIT_WEEKS,
 	PRACTICE_KINDS,
 	computeProgress,
 	type ContactAttempt,
@@ -135,7 +137,13 @@ function PracticeForm({
 			}}
 		>
 			<label htmlFor={`${id}-name`}>{t('contacts.name')}</label>
-			<input id={`${id}-name`} value={values.name} onChange={set('name')} autoComplete="off" />
+			<input
+				id={`${id}-name`}
+				value={values.name}
+				onChange={set('name')}
+				autoComplete="off"
+				maxLength={MAX_TEXT_LENGTH}
+			/>
 
 			<label htmlFor={`${id}-kind`}>{t('contacts.kind')}</label>
 			<select id={`${id}-kind`} value={values.kind} onChange={set('kind')}>
@@ -153,6 +161,7 @@ function PracticeForm({
 				value={values.phone ?? ''}
 				onChange={set('phone')}
 				autoComplete="off"
+				maxLength={MAX_TEXT_LENGTH}
 			/>
 
 			<label htmlFor={`${id}-hours`}>{t('contacts.phoneHours')}</label>
@@ -161,13 +170,25 @@ function PracticeForm({
 				value={values.phoneHours ?? ''}
 				onChange={set('phoneHours')}
 				placeholder={t('contacts.phoneHoursHint')}
+				maxLength={MAX_TEXT_LENGTH}
 			/>
 
 			<label htmlFor={`${id}-address`}>{t('contacts.address')}</label>
-			<input id={`${id}-address`} value={values.address ?? ''} onChange={set('address')} />
+			<input
+				id={`${id}-address`}
+				value={values.address ?? ''}
+				onChange={set('address')}
+				maxLength={MAX_TEXT_LENGTH}
+			/>
 
 			<label htmlFor={`${id}-notes`}>{t('contacts.notes')}</label>
-			<textarea id={`${id}-notes`} value={values.notes ?? ''} onChange={set('notes')} rows={2} />
+			<textarea
+				id={`${id}-notes`}
+				value={values.notes ?? ''}
+				onChange={set('notes')}
+				rows={2}
+				maxLength={MAX_TEXT_LENGTH}
+			/>
 
 			<div className="actions">
 				<button type="submit" className="button button-primary">
@@ -341,36 +362,43 @@ function PracticeMenu({
 
 function AttemptRow({ attempt }: Readonly<{ attempt: ContactAttempt }>) {
 	const [editing, setEditing] = useState(false);
+
+	// The form only exists while editing, so it starts from the saved attempt each time.
+	if (editing) return <AttemptForm attempt={attempt} onDone={() => setEditing(false)} />;
+
+	return (
+		<div className="attempt">
+			<p className="attempt-head">
+				<strong>{t(`result.${attempt.result}`)}</strong>
+				{' · '}
+				<time dateTime={attempt.at}>{formatRelativeDateTime(attempt.at)}</time>
+				{attempt.waitTimeWeeks ? ` · ${formatWaitTime(attempt.waitTimeWeeks)}` : ''}
+			</p>
+			{(attempt.notes || attempt.rawInput) && (
+				<p className="muted">{attempt.notes || attempt.rawInput}</p>
+			)}
+			<button
+				type="button"
+				className="button button-quiet button-small"
+				onClick={() => setEditing(true)}
+				aria-label={`${t('contacts.editAttempt')}: ${formatDateTime(attempt.at)}`}
+			>
+				{t('common.edit')}
+			</button>
+		</div>
+	);
+}
+
+function AttemptForm({
+	attempt,
+	onDone
+}: Readonly<{ attempt: ContactAttempt; onDone: () => void }>) {
 	const id = useId();
 	const [at, setAt] = useState(toDateTimeLocal(attempt.at));
 	const [result, setResult] = useState<ContactResult>(attempt.result);
 	const [channel, setChannel] = useState<ContactChannel>(attempt.channel);
 	const [weeks, setWeeks] = useState(attempt.waitTimeWeeks?.toString() ?? '');
 	const [notes, setNotes] = useState(attempt.notes ?? '');
-
-	if (!editing) {
-		return (
-			<div className="attempt">
-				<p className="attempt-head">
-					<strong>{t(`result.${attempt.result}`)}</strong>
-					{' · '}
-					<time dateTime={attempt.at}>{formatRelativeDateTime(attempt.at)}</time>
-					{attempt.waitTimeWeeks ? ` · ${formatWaitTime(attempt.waitTimeWeeks)}` : ''}
-				</p>
-				{(attempt.notes || attempt.rawInput) && (
-					<p className="muted">{attempt.notes || attempt.rawInput}</p>
-				)}
-				<button
-					type="button"
-					className="button button-quiet button-small"
-					onClick={() => setEditing(true)}
-					aria-label={`${t('contacts.editAttempt')}: ${formatDateTime(attempt.at)}`}
-				>
-					{t('common.edit')}
-				</button>
-			</div>
-		);
-	}
 
 	return (
 		<form
@@ -382,10 +410,11 @@ function AttemptRow({ attempt }: Readonly<{ attempt: ContactAttempt }>) {
 					at: fromDateTimeLocal(at) ?? attempt.at,
 					result,
 					channel,
-					waitTimeWeeks: weeks === '' ? undefined : Number(weeks),
+					waitTimeWeeks:
+						weeks === '' ? undefined : Math.min(Math.max(Number(weeks), 0), MAX_WAIT_WEEKS),
 					notes: notes.trim() || undefined
 				});
-				setEditing(false);
+				onDone();
 			}}
 		>
 			<label htmlFor={`${id}-at`}>{t('capture.date')}</label>
@@ -425,7 +454,7 @@ function AttemptRow({ attempt }: Readonly<{ attempt: ContactAttempt }>) {
 				type="number"
 				inputMode="numeric"
 				min={0}
-				max={520}
+				max={MAX_WAIT_WEEKS}
 				value={weeks}
 				onChange={(event) => setWeeks(event.target.value)}
 			/>
@@ -435,12 +464,13 @@ function AttemptRow({ attempt }: Readonly<{ attempt: ContactAttempt }>) {
 				value={notes}
 				onChange={(event) => setNotes(event.target.value)}
 				rows={2}
+				maxLength={MAX_TEXT_LENGTH}
 			/>
 			<div className="actions">
 				<button type="submit" className="button button-primary">
 					{t('common.save')}
 				</button>
-				<button type="button" className="button" onClick={() => setEditing(false)}>
+				<button type="button" className="button" onClick={onDone}>
 					{t('common.cancel')}
 				</button>
 				<button

@@ -38,6 +38,20 @@ function ProofCount({ progress }: Readonly<{ progress: Progress | undefined }>) 
 	);
 }
 
+/** "3 Kontaktversuche bei 2 Stellen", with singular forms for one. */
+function attemptsLine(progress: Progress): string {
+	return t('progress.attempts', {
+		attempts:
+			progress.attemptCount === 1
+				? t('progress.attemptsOne')
+				: t('progress.attemptsMany', { count: progress.attemptCount }),
+		practices:
+			progress.practiceCount === 1
+				? t('progress.practicesOne')
+				: t('progress.practicesMany', { count: progress.practiceCount })
+	});
+}
+
 function useProgress(): Progress | undefined {
 	const practices = usePractices();
 	const attempts = useAttempts();
@@ -56,12 +70,7 @@ export function ProgressSummary() {
 			</h2>
 			<ProofCount progress={progress} />
 			{progress && progress.attemptCount > 0 && (
-				<p className="muted progress-sub">
-					{t('progress.attempts', {
-						count: progress.attemptCount,
-						practices: progress.practiceCount
-					})}
-				</p>
+				<p className="muted progress-sub">{attemptsLine(progress)}</p>
 			)}
 			<Pebbles proofCount={progress?.proofCount ?? 0} />
 			<Link href="/daten/" className="row-link">
@@ -89,10 +98,7 @@ export function ProgressDetails() {
 			{progress && progress.attemptCount > 0 && (
 				<p className="check-line">
 					<CheckIcon />
-					{t('progress.attempts', {
-						count: progress.attemptCount,
-						practices: progress.practiceCount
-					})}
+					{attemptsLine(progress)}
 				</p>
 			)}
 			{progress?.tssContacted && (
