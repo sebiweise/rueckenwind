@@ -1,5 +1,6 @@
 import { IDBFactory, IDBKeyRange } from 'fake-indexeddb';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { MAX_TEXT_LENGTH, MAX_WAIT_WEEKS } from '@/lib/domain';
 import { createDb, type RueckenwindDb } from './db';
 import {
 	addAttempt,
@@ -23,6 +24,7 @@ import {
 	exportFileName,
 	hasData,
 	importData,
+	isStrictIsoDate,
 	parseImport,
 	type ExportFile
 } from './backup';
@@ -174,6 +176,11 @@ describe('journey', () => {
 		expect(journey.completedSteps).toEqual(['a']);
 		expect(journey.currentStage).toBe(2);
 	});
+
+	it('keeps both of two overlapping step toggles', async () => {
+		await Promise.all([setStepDone(db, 'a', true), setStepDone(db, 'b', true)]);
+		expect((await getJourney(db)).completedSteps.toSorted()).toEqual(['a', 'b']);
+	});
 });
 
 describe('export and import', () => {
@@ -216,6 +223,50 @@ describe('export and import', () => {
 		expect(parseImport(JSON.stringify(empty)).ok).toBe(true);
 	});
 
+	it('counts journey progress as data that an import would replace', async () => {
+		expect(await hasData(db)).toBe(false);
+		await setStepDone(db, 'sprechstunde', true);
+		expect(await hasData(db)).toBe(true);
+	});
+
+	it('normalizes dates to UTC and keeps long values unchanged on import', async () => {
+		await seed();
+		const backup = await createExport(db);
+		const notes = 'x'.repeat(MAX_TEXT_LENGTH * 2);
+		const attempt = {
+			...backup.attempts[0],
+			at: '2026-10-08T14:30:00+02:00',
+			notes,
+			waitTimeWeeks: MAX_WAIT_WEEKS + 380
+		};
+		const parsed = parseImport(JSON.stringify({ ...backup, attempts: [attempt] }));
+		expect(parsed.ok).toBe(true);
+		if (!parsed.ok) return;
+		expect(parsed.data.attempts[0]).toMatchObject({
+			at: '2026-10-08T12:30:00.000Z',
+			waitTimeWeeks: MAX_WAIT_WEEKS + 380,
+			notes
+		});
+	});
+
+	it.each([
+		['2026-10-08T12:30:00.000Z', true],
+		['2026-10-08T14:30:00+02:00', true],
+		['2026-10-08T14:30Z', true],
+		['2026-10-08', true],
+		['2028-02-29T00:00:00Z', true],
+		['2026-02-30T10:00:00Z', false],
+		['2026-02-29T10:00:00Z', false],
+		['2026-13-01T10:00:00Z', false],
+		['2026-10-08T24:00:00Z', false],
+		['2026-10-08T12:60:00Z', false],
+		['2026-10-08T12:30:00+25:00', false],
+		['2026-10-08T12:30:00', false],
+		['October 8, 2026', false]
+	])('treats %s as a valid date: %s', (value, valid) => {
+		expect(isStrictIsoDate(value)).toBe(valid);
+	});
+
 	it('names the file after the date', () => {
 		expect(exportFileName(new Date(2026, 0, 5))).toBe('rueckenwind-2026-01-05.json');
 	});
@@ -244,7 +295,21 @@ describe('export and import', () => {
 				() => JSON.stringify({ ...valid, attempts: [{ ...valid.attempts[0], at: 'gestern' }] }),
 				'invalid'
 			],
+			[
+				'an impossible date',
+				() =>
+					JSON.stringify({
+						...valid,
+						attempts: [{ ...valid.attempts[0], at: '2026-02-30T10:00:00Z' }]
+					}),
+				'invalid'
+			],
 			['an attempt without practice', () => JSON.stringify({ ...valid, practices: [] }), 'invalid'],
+			[
+				'a duplicate id',
+				() => JSON.stringify({ ...valid, attempts: [valid.attempts[0], valid.attempts[0]] }),
+				'invalid'
+			],
 			[
 				'a wrong stage',
 				() => JSON.stringify({ ...valid, journey: { ...valid.journey, currentStage: 7 } }),

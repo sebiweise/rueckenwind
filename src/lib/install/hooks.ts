@@ -1,17 +1,10 @@
 import { useSyncExternalStore } from 'react';
+import { readStorage } from '@/lib/storage';
 import { installWay, isInstallDismissed, isIos, isStandalone, type InstallWay } from '.';
 import { installPrompt, subscribeInstallPrompt } from './prompt';
 
 const serverNull = () => null;
 const serverFalse = () => false;
-
-function readStorage(): Storage | undefined {
-	try {
-		return globalThis.localStorage;
-	} catch {
-		return undefined;
-	}
-}
 
 function readStandalone(): boolean {
 	return isStandalone(

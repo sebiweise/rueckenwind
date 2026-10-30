@@ -1,5 +1,10 @@
 import { editDistance, fold } from './text';
-import type { ContactChannel, ContactResult, PracticeKind } from './types';
+import {
+	MAX_WAIT_WEEKS,
+	type ContactChannel,
+	type ContactResult,
+	type PracticeKind
+} from './types';
 
 /** A parsed value plus how sure the parser is about it (0 = guess, 1 = certain). */
 export interface ParsedField<T> {
@@ -415,7 +420,7 @@ function parseWaitTime(text: string): ParsedField<number> | null {
 		const amount = parseNumber(to ?? from);
 		if (!Number.isFinite(amount) || amount <= 0) continue;
 		const weeks = Math.round(amount * unitToWeeks(unit));
-		if (weeks <= 0 || weeks > 520) continue;
+		if (weeks <= 0 || weeks > MAX_WAIT_WEEKS) continue;
 		const field = { value: weeks, confidence: durationConfidence(vague, from) };
 		if (!best || field.value > best.value) best = field;
 	}

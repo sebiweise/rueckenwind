@@ -35,12 +35,14 @@ function addCsp(file) {
 		added = true;
 		return head + meta;
 	});
-	if (!added) return false;
+	// Vercel sends no CSP header, so a page without the meta tag would ship without any CSP.
+	if (!added) throw new Error(`${file}: no <head> found to insert the CSP meta tag`);
 	writeFileSync(file, next);
-	return true;
 }
 
-const hardened = htmlFiles('out').filter(addCsp).length;
+const pages = htmlFiles('out');
+pages.forEach(addCsp);
+const hardened = pages.length;
 if (hardened === 0) throw new Error('CSP: no prerendered page with a CSP meta tag found');
 console.log(`CSP: inline scripts hashed in ${hardened} pages`);
 

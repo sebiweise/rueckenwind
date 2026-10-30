@@ -63,11 +63,13 @@ reviews:
         ablehnen. hooks.ts nur im Client.
     - path: 'src/lib/csp.ts'
       instructions: >-
-        Die CSP erlaubt nur 'self' als Origin. Skripte laufen im Build über
-        Hashes aus scripts/postbuild.mjs, 'unsafe-inline' nur im HTTP-Header
-        für Hydration-Skripte und für Styles, 'unsafe-eval' nur im Dev-Server.
-        Jede weitere Lockerung (fremde Origins, neue Ausnahmen) braucht eine
-        sehr gute Begründung.
+        Die CSP erlaubt nur 'self' als Origin. Sie kommt nur als <meta>-Tag:
+        scripts/postbuild.mjs fügt ihn mit den Hashes der Inline-Skripte in
+        jede exportierte Seite ein, im Dev-Server rendert ihn das Layout.
+        vercel.json sendet keinen CSP-Header. 'unsafe-inline' gilt im Build
+        nur für style-src; 'unsafe-inline' für Skripte und 'unsafe-eval' nur
+        im Dev-Server. Jede weitere Lockerung (fremde Origins, neue
+        Ausnahmen) braucht eine sehr gute Begründung.
     - path: 'src/lib/pdf/**'
       instructions: >-
         Nachweis-PDF mit pdfmake, clientseitig per dynamischem Import. Die

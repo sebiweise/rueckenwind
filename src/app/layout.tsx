@@ -4,7 +4,7 @@ import { ServiceWorker } from '@/components/ServiceWorker';
 import { APP_NAME, APP_TITLE } from '@/lib/config';
 import { contentSecurityPolicy } from '@/lib/csp';
 import { t } from '@/lib/i18n';
-import { paletteScript } from '@/lib/theme';
+import { DEFAULT_THEME_COLORS, paletteScript } from '@/lib/theme';
 // Self-hosted rounded font for the Himmel theme; browsers only load it when it is used.
 import '@fontsource-variable/nunito/wght.css';
 import './globals.css';
@@ -26,8 +26,8 @@ export const viewport: Viewport = {
 	initialScale: 1,
 	colorScheme: 'light dark',
 	themeColor: [
-		{ media: '(prefers-color-scheme: light)', color: '#fcf3ee' },
-		{ media: '(prefers-color-scheme: dark)', color: '#1e1716' }
+		{ media: '(prefers-color-scheme: light)', color: DEFAULT_THEME_COLORS.light },
+		{ media: '(prefers-color-scheme: dark)', color: DEFAULT_THEME_COLORS.dark }
 	]
 };
 

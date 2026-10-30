@@ -3,7 +3,7 @@
 import { createReadStream, readFileSync } from 'node:fs';
 import { stat } from 'node:fs/promises';
 import { createServer } from 'node:http';
-import { extname, join, normalize, resolve } from 'node:path';
+import { extname, join, normalize, resolve, sep } from 'node:path';
 import { createGzip } from 'node:zlib';
 
 const root = resolve('out');
@@ -28,8 +28,15 @@ const types = {
 };
 
 async function resolveFile(urlPath) {
-	const path = join(root, normalize(decodeURIComponent(urlPath)));
-	if (!path.startsWith(root)) return null;
+	let decoded;
+	try {
+		decoded = decodeURIComponent(urlPath);
+	} catch {
+		// Malformed percent-encoding ("/%E0%A4%A"): answer 404 instead of crashing the server.
+		return null;
+	}
+	const path = join(root, normalize(decoded));
+	if (path !== root && !path.startsWith(root + sep)) return null;
 	for (const candidate of [path, join(path, 'index.html'), `${path}.html`]) {
 		const info = await stat(candidate).catch(() => null);
 		if (info?.isFile()) return candidate;

@@ -164,9 +164,14 @@ export async function setStepDone(
 	stepId: string,
 	done: boolean
 ): Promise<JourneyState> {
-	const journey = await getJourney(db);
-	const steps = journey.completedSteps.filter((id) => id !== stepId);
-	return updateJourney(db, { completedSteps: done ? [...steps, stepId] : steps });
+	// Read and write in one transaction, so quick toggles cannot overwrite each other.
+	return db.transaction('rw', db.journey, async () => {
+		const journey = await getJourney(db);
+		const steps = journey.completedSteps.filter((id) => id !== stepId);
+		const next = { ...journey, completedSteps: done ? [...steps, stepId] : steps };
+		await db.journey.put(next);
+		return next;
+	});
 }
 
 /** Deletes everything this app stored on the device. */

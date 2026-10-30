@@ -7,6 +7,16 @@ export type Palette = (typeof PALETTES)[number];
 
 export const DEFAULT_PALETTE: Palette = 'salbei';
 
+/**
+ * Colours of the default palette for the browser chrome and the web app manifest.
+ * They must match `--color-bg` (light and dark) and `--color-accent` in globals.css.
+ */
+export const DEFAULT_THEME_COLORS = {
+	light: '#fcf3ee',
+	dark: '#1e1716',
+	accent: '#3d6b57'
+} as const;
+
 /** localStorage key. A display preference only, no health data. */
 export const PALETTE_STORAGE_KEY = 'rueckenwind.palette';
 

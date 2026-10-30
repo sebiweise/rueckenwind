@@ -1,7 +1,7 @@
 import type { Content, TableCell, TDocumentDefinitions } from 'pdfmake/interfaces';
 import { APP_NAME } from '@/lib/config';
 import { attemptPeriod, computeProgress, type ContactAttempt, type Practice } from '@/lib/domain';
-import { formatDate, formatWaitTime } from '@/lib/format';
+import { formatDate, formatWaitTime, localDateStamp } from '@/lib/format';
 import { t } from '@/lib/i18n';
 
 export interface ProofInput {
@@ -170,6 +170,5 @@ export function buildProofDocument({
 
 /** File name for the proof, e.g. "nachweis-psychotherapie-2026-10-08.pdf". */
 export function proofFileName(now = new Date()): string {
-	const pad = (n: number) => String(n).padStart(2, '0');
-	return `nachweis-psychotherapie-${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}.pdf`;
+	return `nachweis-psychotherapie-${localDateStamp(now)}.pdf`;
 }
