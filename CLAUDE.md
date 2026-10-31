@@ -77,6 +77,7 @@ src/lib/i18n/        UI-Texte
 ## Arbeitsweise
 
 - **Pro Phase** ein eigener Branch und ein PR mit Zusammenfassung und erfüllten Akzeptanzkriterien. Kleine Commits nach Conventional Commits.
+- **Keine `Co-Authored-By`-Zeilen** in Commit-Nachrichten.
 - **Tests zuerst** für Parser und Datenlogik. Keine Phase ist fertig, solange Tests fehlschlagen.
 - **Nachfragen statt raten** bei Lizenzwahl, Farbpalette, Abweichungen vom Tech-Stack und allem, was Daten nach außen senden würde.
 - **Inhalte nicht erfinden.** Infotexte nur aus `docs/WISSEN.md` ableiten, Quellen ins Frontmatter, unsichere Aussagen mit `<!-- TODO: fachlich prüfen -->` markieren.
