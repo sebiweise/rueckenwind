@@ -4,8 +4,7 @@ Stand: 08.10.2026. Dieses Dokument sammelt Fachwissen, Projektkontext und offene
 
 ## 1. Projektkontext
 
-- Persönliches Open-Source-Projekt, Ziel: das öffentliche GitHub-Profil erweitern und etwas Nützliches für psychisch belastete Menschen bauen.
-- Idee entstand aus einer Sammlung von Projektideen (Home Assistant, mentale Gesundheit, Feuerwehr/Zivilschutz). Gewählt wurde die Therapieplatzsuche.
+- Open-Source-Projekt mit dem Ziel, etwas Nützliches für psychisch belastete Menschen zu bauen. Thema ist die Therapieplatzsuche.
 - Kernidee: Ein Tool, das Betroffene ungezwungen, aber klar begleitet, mit Informationen versorgt und Organisation, Planung und den gesamten Weg sauber dokumentiert – ohne Formulare abzufragen.
 - Umsetzung: mit Claude Code, nach `PLAN.md`.
 
