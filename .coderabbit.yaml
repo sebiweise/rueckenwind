@@ -39,7 +39,7 @@ reviews:
         Route Handler, Server Actions, Middleware/Proxy, cookies()/headers()
         und kein next/image-Optimizer. Keine next/font/google. Imports aus
         src/ über @/…. Lint und Format übernehmen ESLint und Prettier,
-        Code-Smells meldet SonarCloud: diese nicht wiederholen.
+        Sicherheitsfunde meldet der Security-Scan: diese nicht wiederholen.
     - path: 'src/{app,components}/**/*.tsx'
       instructions: >-
         UI-Texte nur über t() aus src/lib/i18n/de.json, nie hart im Code.
