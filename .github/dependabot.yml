@@ -6,6 +6,10 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    # Versions-Updates warten eine Woche: gekaperte Releases sind meist nach
+    # wenigen Tagen zurückgezogen. Sicherheitsupdates verzögert das nicht.
+    cooldown:
+      default-days: 7
     groups:
       actions:
         patterns: ['*']
@@ -16,6 +20,8 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 7
     open-pull-requests-limit: 5
     ignore:
       # TypeScript 7 (nativer Compiler) wird von typescript-eslint noch nicht unterstützt,
