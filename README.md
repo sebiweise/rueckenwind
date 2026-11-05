@@ -102,7 +102,7 @@ Die Infotexte liegen als Markdown in [`content/de/`](content/de/README.md). Korr
 ## Unterstützen
 
 Rückenwind ist kostenlos und Open Source. Wenn die App dir hilft und du Danke sagen möchtest,
-kannst du mich über [GitHub Sponsors](https://github.com/sponsors/sebiweise) unterstützen.
+kannst du mir gern [einen Kaffee ausgeben](https://buymeacoffee.com/sebiweise).
 Korrekturen an den Infotexten oder Hinweise auf Fehler helfen genauso viel.
 
 ## Lizenz
