@@ -99,6 +99,12 @@ Die App muss im Wurzelverzeichnis der Domain liegen, nicht unter einem Unterpfad
 
 Die Infotexte liegen als Markdown in [`content/de/`](content/de/README.md). Korrekturen daran sind besonders willkommen, auch ohne Programmierkenntnisse. Wie das geht, steht in [CONTRIBUTING.md](CONTRIBUTING.md). Bitte beachte den [Verhaltenskodex](CODE_OF_CONDUCT.md).
 
+## Unterstützen
+
+Rückenwind ist kostenlos und Open Source. Wenn die App dir hilft und du Danke sagen möchtest,
+kannst du mich über [GitHub Sponsors](https://github.com/sponsors/sebiweise) unterstützen.
+Korrekturen an den Infotexten oder Hinweise auf Fehler helfen genauso viel.
+
 ## Lizenz
 
 - Code: [MIT](LICENSE)
