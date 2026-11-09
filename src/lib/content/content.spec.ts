@@ -131,6 +131,16 @@ describe('renderContent', () => {
 	])('fails on %s', (_, source, message) => {
 		expect(() => renderContent('test', source)).toThrow(message);
 	});
+
+	it.each([
+		'"javascript:alert(1)"',
+		'"data:text/html,x"',
+		'"vbscript:x"',
+		'{ url: "JaVaScRiPt:alert(1)", title: t }'
+	])('fails on the non-web source %s', (entry) => {
+		const source = valid.replace('sources: [https://example.org]', `sources: [${entry}]`);
+		expect(() => renderContent('test', source)).toThrow('sources must be http(s) URLs');
+	});
 });
 
 describe('HTML in content', () => {
@@ -169,6 +179,14 @@ describe('HTML in content', () => {
 		);
 		expect(html).not.toMatch(/<(script|img|iframe|a|style)\b/i);
 		expect(html).toContain('&lt;script>');
+	});
+
+	it.each(['kbd', 'code'])('escapes text after an inline <%s>', (tag) => {
+		const html = render(`Taste <${tag}>A & B &amp; <img/src=x title=marker> "q"</${tag}> weiter`);
+		expect(html).not.toContain('<img');
+		expect(html).toContain('&lt;img/src=x title=marker&gt;');
+		expect(html).toContain('A &amp; B &amp; ');
+		expect(render('Drück <kbd>Strg</kbd>.')).toBe('<p>Drück <kbd>Strg</kbd>.</p>');
 	});
 
 	it('drops attributes that are not allowed', () => {
