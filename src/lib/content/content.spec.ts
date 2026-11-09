@@ -131,6 +131,16 @@ describe('renderContent', () => {
 	])('fails on %s', (_, source, message) => {
 		expect(() => renderContent('test', source)).toThrow(message);
 	});
+
+	it.each([
+		'"javascript:alert(1)"',
+		'"data:text/html,x"',
+		'"vbscript:x"',
+		'{ url: "JaVaScRiPt:alert(1)", title: t }'
+	])('fails on the non-web source %s', (entry) => {
+		const source = valid.replace('sources: [https://example.org]', `sources: [${entry}]`);
+		expect(() => renderContent('test', source)).toThrow('sources must be http(s) URLs');
+	});
 });
 
 describe('HTML in content', () => {

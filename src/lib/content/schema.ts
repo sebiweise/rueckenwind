@@ -8,9 +8,12 @@ const stepSchema = z.object({
 	action: z.literal('capture').optional()
 });
 
+/** Sources are web pages: only http(s), so no javascript: or data: link reaches the page. */
+const sourceUrl = z.url({ protocol: /^https?$/, error: 'sources must be http(s) URLs' });
+
 /** A source is a bare URL or a URL with a readable title. */
 const sourceSchema = z
-	.union([z.url(), z.object({ url: z.url(), title: z.string().min(1) })])
+	.union([sourceUrl, z.object({ url: sourceUrl, title: z.string().min(1) })])
 	.transform((entry) => describeSource(typeof entry === 'string' ? { url: entry } : entry));
 
 export interface ContentSource {
