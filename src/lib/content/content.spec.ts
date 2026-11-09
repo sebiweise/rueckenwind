@@ -171,6 +171,14 @@ describe('HTML in content', () => {
 		expect(html).toContain('&lt;script>');
 	});
 
+	it.each(['kbd', 'code'])('escapes text after an inline <%s>', (tag) => {
+		const html = render(`Taste <${tag}>A & B &amp; <img/src=x title=marker> "q"</${tag}> weiter`);
+		expect(html).not.toContain('<img');
+		expect(html).toContain('&lt;img/src=x title=marker&gt;');
+		expect(html).toContain('A &amp; B &amp; ');
+		expect(render('Drück <kbd>Strg</kbd>.')).toBe('<p>Drück <kbd>Strg</kbd>.</p>');
+	});
+
 	it('drops attributes that are not allowed', () => {
 		expect(render('<abbr title="x" onclick="alert(1)" style="color:red">A</abbr>')).toBe(
 			'<p><abbr title="x">A</abbr></p>'
