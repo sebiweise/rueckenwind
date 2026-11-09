@@ -14,6 +14,15 @@ function encodeUrl(href: string): string | null {
 	}
 }
 
+/** Escapes raw text for HTML; entities that are already written stay as they are. */
+function escapeRawText(text: string): string {
+	return text
+		.replaceAll(/&(?!#?\w+;)/g, '&amp;')
+		.replaceAll('<', '&lt;')
+		.replaceAll('>', '&gt;')
+		.replaceAll('"', '&quot;');
+}
+
 const marked = new Marked({
 	gfm: true,
 	async: false,
@@ -21,6 +30,13 @@ const marked = new Marked({
 		// Raw HTML in the Markdown: only a few harmless tags survive, see sanitize.ts.
 		html({ text }) {
 			return sanitizeHtml(text);
+		},
+		// After an inline <kbd>, <code>, <pre> or <script>, marked passes the following
+		// text through unescaped. Escape it, so it never reaches the page as HTML.
+		text(token) {
+			if ('tokens' in token && token.tokens) return this.parser.parseInline(token.tokens);
+			if (!('escaped' in token && token.escaped)) return false;
+			return escapeRawText(token.text);
 		},
 		// Only web, mail, phone and in-app links. External links open in a new tab and send no referrer.
 		link({ href, title, tokens }) {
