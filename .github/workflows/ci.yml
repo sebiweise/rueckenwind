@@ -12,13 +12,15 @@ on:
 permissions:
   contents: read
 
+# Lint, Typecheck und Build laufen nicht hier: Vercel baut jeden Push und jeden PR
+# (`next build` prüft auch die Typen) und meldet das als eigenen Check.
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   check:
-    name: Lint, Typecheck, Unit-Tests, Build
+    name: Unit-Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -29,10 +31,7 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci --ignore-scripts
-      - run: npm run lint
-      - run: npm run check
       - run: npm run test:coverage
-      - run: npm run build
 
   e2e:
     name: E2E-Tests (Playwright + axe)
