@@ -14,7 +14,7 @@ GRAPHIFY_VERSION="0.9.95"
 cd "${CLAUDE_PROJECT_DIR:-$(dirname "$0")/../..}" || exit 0
 
 if ! command -v graphify >/dev/null 2>&1; then
-  if [ "${CLAUDE_CODE_REMOTE:-}" != "true" ]; then
+  if [[ "${CLAUDE_CODE_REMOTE:-}" != "true" ]]; then
     exit 0
   fi
   if command -v uv >/dev/null 2>&1; then
@@ -26,7 +26,7 @@ if ! command -v graphify >/dev/null 2>&1; then
 fi
 
 # Incremental after the first build: only files whose hash changed are re-parsed.
-if [ -f graphify-out/graph.json ]; then
+if [[ -f graphify-out/graph.json ]]; then
   graphify update . >/dev/null 2>&1 || true
 else
   graphify extract . --code-only >/dev/null 2>&1 || true
@@ -34,7 +34,7 @@ fi
 # Report without LLM community naming and without graph.html (unused by agents).
 graphify cluster-only . --no-label --no-viz >/dev/null 2>&1 || true
 
-if [ -f graphify-out/graph.json ]; then
+if [[ -f graphify-out/graph.json ]]; then
   echo "graphify: code graph ready at graphify-out/ - use \`graphify explain|query|path|affected\` before grepping (see CLAUDE.md)."
 fi
 exit 0

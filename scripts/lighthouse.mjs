@@ -32,8 +32,9 @@ if (failed) {
 
 function audit(url) {
 	const output = path.join(dir, 'report.json');
+	// Dev/CI-only script: it runs with the developer's or CI runner's own trusted PATH, like any npm script.
 	execFileSync(
-		'npx',
+		'npx', // NOSONAR(javascript:S4036) trusted PATH, see above
 		[
 			'--yes',
 			'lighthouse@13.5.0',
