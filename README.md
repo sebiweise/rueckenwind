@@ -2,6 +2,7 @@
 
 [![CI](https://github.com/sebiweise/rueckenwind/actions/workflows/ci.yml/badge.svg)](https://github.com/sebiweise/rueckenwind/actions/workflows/ci.yml)
 [![Security](https://github.com/sebiweise/rueckenwind/actions/workflows/security.yml/badge.svg)](https://github.com/sebiweise/rueckenwind/actions/workflows/security.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=sebiweise_rueckenwind&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=sebiweise_rueckenwind)
 [![Lizenz: MIT](https://img.shields.io/badge/Code-MIT-blue.svg)](LICENSE)
 [![Inhalte: CC BY-SA 4.0](https://img.shields.io/badge/Inhalte-CC%20BY--SA%204.0-lightgrey.svg)](content/LICENSE)
 

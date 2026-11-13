@@ -317,7 +317,8 @@ function PracticeMenu({
 	const id = useId();
 
 	return (
-		<div
+		// The div only catches focusout/Escape bubbling up from the native buttons inside; it is not interactive itself.
+		<div // NOSONAR(typescript:S6848) delegated handlers, see above
 			className="menu"
 			onBlur={(event) => {
 				if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
