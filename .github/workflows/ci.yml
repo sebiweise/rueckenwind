@@ -5,7 +5,7 @@ on:
     branches: [master]
   pull_request:
 
-# Lieferkette: Actions sind auf Commit-SHAs gepinnt (Dependabot hält sie aktuell, siehe
+# Lieferkette: Actions sind per Versions-Tag eingebunden (Dependabot hält sie aktuell, siehe
 # .github/dependabot.yml). npm ci läuft mit --ignore-scripts: Install-Skripte von Paketen
 # werden nicht ausgeführt. esbuild und unrs-resolver bringen ihre Binärdateien als
 # optionale Pakete mit und brauchen ihr Skript nicht.
@@ -23,10 +23,10 @@ jobs:
     name: Unit-Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: npm
@@ -37,10 +37,10 @@ jobs:
     name: E2E-Tests (Playwright + axe)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: npm
@@ -49,7 +49,7 @@ jobs:
       - run: npm run test:e2e
         env:
           CI: true
-      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: playwright-report
@@ -60,10 +60,10 @@ jobs:
     name: Lighthouse (≥ 90)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+      - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
           cache: npm
