@@ -8,7 +8,7 @@ Alle wichtigen Änderungen an Rückenwind. Format nach [Keep a Changelog](https:
 
 - **Schnellerfassung:** Uhrzeiten wie „8:30“, „8.30 Uhr“ oder „gestern 12 Uhr“ werden als Zeitpunkt des Kontaktversuchs übernommen (#13).
 - **Parser:** versteht mehr Alltagsformulierungen, etwa „ned erreicht“, „keine Kapa“, „nimmt grad niemand auf“ oder „Rückruf zugesagt“ (#14).
-- **Hosting:** Rückenwind läuft wieder auf GitHub Pages unter <https://sebiweise.github.io/rueckenwind/>. Der Workflow `pages.yml` veröffentlicht jeden Push auf `master`; `BASE_PATH` (z. B. `/rueckenwind`) legt die App unter einen Unterpfad, auch Manifest, Icons, Service Worker und Links in Infotexten. CI testet den Build mit diesem Unterpfad und prüft jetzt auch Lint und Typen.
+- **Hosting:** Rückenwind läuft wieder auf GitHub Pages unter <https://sebiweise.github.io/rueckenwind/>. Der Workflow `pages.yml` veröffentlicht jeden Push auf `master`; `BASE_PATH` (z. B. `/rueckenwind`) legt die App unter einen Unterpfad, auch Manifest, Icons, Service Worker und Links in Infotexten. CI testet den Build mit diesem Unterpfad und prüft jetzt auch Lint und Typen; CI läuft nur noch bei Pull Requests, das Badge im README zeigt den Pages-Deploy.
 
 ### Entfernt
 

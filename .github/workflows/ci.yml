@@ -1,8 +1,8 @@
 name: CI
 
+# Nur bei Pull Requests: master ändert sich nur über PRs, ein Push-Lauf wäre doppelt.
+# Nach dem Merge baut pages.yml den Export und veröffentlicht ihn.
 on:
-  push:
-    branches: [master]
   pull_request:
 
 # Lieferkette: Actions sind per Versions-Tag eingebunden (Dependabot hält sie aktuell, siehe
