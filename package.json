@@ -4,6 +4,7 @@
 	"private": true,
 	"description": "Begleit-App (PWA) für die Suche nach einem ambulanten Psychotherapieplatz in Deutschland",
 	"license": "MIT",
+	"homepage": "https://sebiweise.github.io/rueckenwind/",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/sebiweise/rueckenwind.git"

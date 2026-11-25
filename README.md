@@ -1,12 +1,14 @@
 # Rückenwind – Therapieplatz finden
 
-[![CI](https://github.com/sebiweise/rueckenwind/actions/workflows/ci.yml/badge.svg)](https://github.com/sebiweise/rueckenwind/actions/workflows/ci.yml)
+[![GitHub Pages](https://github.com/sebiweise/rueckenwind/actions/workflows/pages.yml/badge.svg)](https://github.com/sebiweise/rueckenwind/actions/workflows/pages.yml)
 [![Security](https://github.com/sebiweise/rueckenwind/actions/workflows/security.yml/badge.svg)](https://github.com/sebiweise/rueckenwind/actions/workflows/security.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=sebiweise_rueckenwind&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=sebiweise_rueckenwind)
 [![Lizenz: MIT](https://img.shields.io/badge/Code-MIT-blue.svg)](LICENSE)
 [![Inhalte: CC BY-SA 4.0](https://img.shields.io/badge/Inhalte-CC%20BY--SA%204.0-lightgrey.svg)](content/LICENSE)
 
 Rückenwind ist eine Open-Source-Web-App (PWA), die gesetzlich Versicherte in Deutschland auf dem Weg zu einem ambulanten Psychotherapieplatz begleitet. Sie erklärt die Schritte verständlich, schlägt immer genau eine nächste kleine Aufgabe vor und dokumentiert jeden Kontaktversuch nebenbei. Am Ende entsteht daraus ein Nachweis-PDF für das Kostenerstattungsverfahren.
+
+**Ausprobieren:** <https://sebiweise.github.io/rueckenwind/> (läuft komplett im Browser, deine Daten bleiben auf deinem Gerät).
 
 > **Status:** MVP fertig, Version 0.1.0 in Vorbereitung. Die Infotexte werden vor dem ersten Release noch fachkundig geprüft.
 
@@ -63,6 +65,11 @@ npm run test:e2e    # E2E-Tests (Playwright + axe-core); vorher einmal: npx play
                     # oder vorhandenes Chromium nutzen: PLAYWRIGHT_CHROMIUM_PATH=/pfad/zu/chrome
 npm run build       # Produktions-Build (statischer Export nach out/)
 npm start           # Build lokal ausliefern (http://localhost:4173)
+
+# wie auf GitHub Pages, unter dem Unterpfad /rueckenwind (so prüft es auch CI):
+BASE_PATH=/rueckenwind npm run build
+BASE_PATH=/rueckenwind npm start   # http://localhost:4173/rueckenwind/
+BASE_PATH=/rueckenwind npm run test:e2e
 ```
 
 Tech-Stack: Next.js + React + TypeScript, Plain CSS, Vitest, Playwright. Details, Datenmodell und Phasen stehen im [Umsetzungsplan](docs/PLAN.md), das Fachwissen in [docs/WISSEN.md](docs/WISSEN.md).
@@ -84,17 +91,24 @@ src/lib/i18n/        UI-Texte
 
 Rückenwind braucht kein Backend. Der Build ist eine rein statische Seite, deine Daten bleiben im Browser.
 
-**Vercel** (so läuft die offizielle Version): Repository importieren, fertig. Die [`vercel.json`](vercel.json) sorgt dafür, dass Vercel den statischen Export baut und mit Sicherheits-Headern ausliefert. Bitte Vercel Analytics und Speed Insights ausgeschaltet lassen, die App verzichtet bewusst auf Tracking.
+**GitHub Pages** (so läuft die offizielle Version unter <https://sebiweise.github.io/rueckenwind/>): Der Workflow [`pages.yml`](.github/workflows/pages.yml) baut bei jedem Push auf `master` den statischen Export mit `BASE_PATH=/<Repository-Name>` und veröffentlicht ihn. In einem Fork unter Settings → Pages als Source „GitHub Actions“ wählen.
 
 **Jeder andere statische Host** (Netlify, ein einfacher Webserver):
 
 ```sh
-npm ci && npm run build   # schreibt die Seite nach out/
+npm ci && npm run build                          # App im Wurzelverzeichnis der Domain, nach out/
+npm ci && BASE_PATH=/rueckenwind npm run build   # App unter einem Unterpfad wie /rueckenwind
 ```
 
 Nach dem Build läuft `scripts/postbuild.mjs`: Es fügt in jede Seite eine CSP ein, die Inline-Skripte nur per Hash erlaubt, und baut den Service Worker (`sw.js`, Serwist) für die Offline-Nutzung. Wer selbst hostet und ein Impressum braucht, legt `content/de/impressum.md` an; es erscheint dann auf der Über-Seite.
 
-Die App muss im Wurzelverzeichnis der Domain liegen, nicht unter einem Unterpfad. Die Content-Security-Policy steckt als Meta-Tag in jeder Seite. Die übrigen Sicherheits-Header aus `vercel.json` solltest du auf deinem Host nachbilden, falls er Header setzen kann.
+**Sicherheits-Header:** Ein statischer Host wie GitHub Pages kann keine eigenen HTTP-Header senden. Die Content-Security-Policy und die Referrer-Policy (`no-referrer`) stecken deshalb als Meta-Tags in jeder Seite. Was per Meta-Tag nicht geht und auf GitHub Pages fehlt: Schutz vor dem Einbetten in fremde Seiten (`X-Frame-Options: DENY` bzw. `frame-ancestors`), `X-Content-Type-Options: nosniff` und `Permissions-Policy`. Wenn dein Host Header setzen kann, ergänze diese:
+
+```text
+X-Frame-Options: DENY
+X-Content-Type-Options: nosniff
+Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
+```
 
 ## Mitmachen
 

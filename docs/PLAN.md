@@ -73,12 +73,12 @@ Die App spricht wie eine ruhige, kompetente Begleitung: duzend, kurz, ohne Parag
 
 ## Tech-Stack und Architektur
 
-Entschieden (07.10.2026): eine Next.js-PWA ohne Backend für Nutzerdaten. Gebaut wird ein statischer Export, gehostet auf Vercel (seit 29.10.2026; vorher auch Docker, Node-Host und GitHub Pages). Es gibt keinen App-Server; Gesundheitsdaten bleiben immer im Browser.
+Entschieden (07.10.2026): eine Next.js-PWA ohne Backend für Nutzerdaten. Gebaut wird ein statischer Export, gehostet auf GitHub Pages unter <https://sebiweise.github.io/rueckenwind/> (seit 25.11.2026 wieder; vom 29.10. bis 25.11.2026 auf Vercel, davor zusätzlich Docker und Node-Host). Es gibt keinen App-Server; Gesundheitsdaten bleiben immer im Browser.
 
 | Bereich | Wahl | Grund |
 | --- | --- | --- |
 | Framework | Next.js (App Router) + React + TypeScript | Verbreitet, als statischer Export baubar |
-| Hosting | Statischer Export (`output: 'export'`) auf Vercel | Kein Vendor-Lock-in: `out/` läuft auf jedem statischen Host |
+| Hosting | Statischer Export (`output: 'export'`) auf GitHub Pages (Unterpfad `/rueckenwind`) | Kein Vendor-Lock-in: `out/` läuft auf jedem statischen Host |
 | PWA | Serwist (`@serwist/next`) | Offline-Fähigkeit, installierbar |
 | Speicher | IndexedDB über Dexie.js | Strukturierte lokale Daten, Migrationen |
 | Inhalte | Markdown in `content/`, zur Build-Zeit gerendert (MDX bzw. remark) | Pflege per Pull Request ohne Code |
@@ -87,7 +87,7 @@ Entschieden (07.10.2026): eine Next.js-PWA ohne Backend für Nutzerdaten. Gebaut
 | i18n | Einfache JSON-Schlüssel | Spätere Übersetzungen |
 | Tests | Vitest (Parser, Datenlogik), Playwright (E2E) | Parser muss robust sein |
 | Qualität | ESLint, Prettier, axe-core in E2E | Barrierefreiheit prüfbar |
-| CI/CD | GitHub Actions: Lint, Test, Build, E2E, Lighthouse; Deploy über Vercel | Sichtbar im Profil |
+| CI/CD | GitHub Actions: Lint, Test, Build, E2E, Lighthouse; Deploy auf GitHub Pages | Sichtbar im Profil |
 | Lizenz | Code MIT, Inhalte CC BY-SA 4.0 | Offen, Inhalte bleiben frei |
 
 **Architektur:** Drei Schichten ohne Netzwerkzugriff zur Laufzeit. Es gibt keine Route Handler oder Server Actions, die Nutzerdaten verarbeiten; die App muss jederzeit auch als statischer Export funktionieren.

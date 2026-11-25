@@ -1,0 +1,54 @@
+name: GitHub Pages
+
+# Baut den statischen Export für https://sebiweise.github.io/rueckenwind/ und veröffentlicht ihn.
+# Läuft nur bei einem Push auf master (oder von Hand); PRs prüft ci.yml mit demselben BASE_PATH.
+# Einstellung im Repository: Settings → Pages → Source „GitHub Actions“.
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+# Bauen läuft ohne Schreibrecht: der Build führt Code aus Abhängigkeiten aus
+# (npm ci selbst läuft mit --ignore-scripts, siehe ci.yml). Nur der Job "deploy"
+# darf Pages schreiben und führt keinen Fremdcode aus.
+permissions: {}
+
+# Ein Deploy nach dem anderen; ein laufender wird nicht abgebrochen.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --ignore-scripts
+      # Projektseite: GitHub Pages liefert die App unter /<Repository-Name>/ aus.
+      - run: npm run build
+        env:
+          BASE_PATH: /${{ github.event.repository.name }}
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: out
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

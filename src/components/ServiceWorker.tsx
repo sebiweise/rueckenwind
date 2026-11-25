@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 // Starts listening for the browser's install dialog on every page, see InstallBanner.
 import '@/lib/install/prompt';
+import { withBasePath } from '@/lib/config';
 import { t } from '@/lib/i18n';
 
 /** Message that tells a waiting service worker to take over (handled by Serwist in src/sw.ts). */
@@ -58,7 +59,9 @@ export function ServiceWorker() {
 			if (document.visibilityState === 'visible') registration?.update().catch(() => undefined);
 		}
 
-		container.register('/sw.js', { scope: '/' }).then(track, () => undefined);
+		container
+			.register(withBasePath('/sw.js'), { scope: withBasePath('/') })
+			.then(track, () => undefined);
 		container.addEventListener('controllerchange', onControllerChange);
 		document.addEventListener('visibilitychange', checkForUpdate);
 		return () => {

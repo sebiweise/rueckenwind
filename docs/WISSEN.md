@@ -69,7 +69,7 @@ Die Anforderungen sind nicht bundesweit einheitlich geregelt und unterscheiden s
 - MVP: Etappen-Inhalte, Schnellerfassung, Kontaktliste, Nachweis-PDF, Export/Import.
 - Zielgruppe MVP: erwachsene gesetzlich Versicherte.
 - Name: **Rückenwind** (vorläufig), Untertitel „Rückenwind – Therapieplatz finden“, Repo `rueckenwind`.
-- Framework: Next.js + TypeScript (entschieden am 07.10.2026). Hosting: statischer Export auf Vercel. Docker, GitHub Pages und der Standalone-Server wurden am 29.10.2026 entfernt. Kein Backend für Nutzerdaten.
+- Framework: Next.js + TypeScript (entschieden am 07.10.2026). Hosting: statischer Export auf GitHub Pages (<https://sebiweise.github.io/rueckenwind/>). Docker und der Standalone-Server wurden am 29.10.2026 entfernt; Vercel war vom 29.10. bis 25.11.2026 der Host, seitdem wieder GitHub Pages. Kein Backend für Nutzerdaten.
 
 ## 4. Offene Entscheidungen
 

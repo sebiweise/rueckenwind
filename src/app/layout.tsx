@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import Link from 'next/link';
 import { ServiceWorker } from '@/components/ServiceWorker';
 import { ThemeColor } from '@/components/ThemeColor';
-import { APP_NAME, APP_TITLE } from '@/lib/config';
+import { APP_NAME, APP_TITLE, withBasePath } from '@/lib/config';
 import { contentSecurityPolicy } from '@/lib/csp';
 import { t } from '@/lib/i18n';
 import { DEFAULT_THEME_COLORS, paletteScript } from '@/lib/theme';
@@ -13,12 +13,13 @@ import './globals.css';
 export const metadata: Metadata = {
 	title: APP_TITLE,
 	description: t('meta.description'),
+	// Static hosts like GitHub Pages cannot send a Referrer-Policy header, the <meta> tag can.
 	referrer: 'no-referrer',
 	applicationName: APP_NAME,
 	appleWebApp: { capable: true, title: APP_NAME, statusBarStyle: 'default' },
 	icons: {
-		icon: [{ url: '/icons/icon.svg', type: 'image/svg+xml' }],
-		apple: '/icons/apple-touch-icon.png'
+		icon: [{ url: withBasePath('/icons/icon.svg'), type: 'image/svg+xml' }],
+		apple: withBasePath('/icons/apple-touch-icon.png')
 	}
 };
 

@@ -22,7 +22,7 @@ Bei Zielkonflikten gewinnen Datenschutz und Einfachheit.
 | Bereich  | Wahl                                                                                                                                                                    |
 | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | App      | Next.js 16 (App Router) + React 19 + TypeScript                                                                                                                         |
-| Hosting  | Statischer Export (`output: 'export'`) nach `out/`, ausgeliefert von Vercel über `vercel.json` (`@vercel/static-build`)                                                 |
+| Hosting  | Statischer Export (`output: 'export'`) nach `out/`, ausgeliefert von GitHub Pages unter <https://sebiweise.github.io/rueckenwind/> (`pages.yml`, `BASE_PATH`)           |
 | Speicher | IndexedDB über Dexie.js (Phase 2)                                                                                                                                       |
 | Inhalte  | Markdown in `content/de/`, zur Build-Zeit gerendert (Phase 3)                                                                                                           |
 | PDF      | pdfmake, clientseitig (Phase 5)                                                                                                                                         |
@@ -31,11 +31,13 @@ Bei Zielkonflikten gewinnen Datenschutz und Einfachheit.
 | i18n     | JSON-Schlüssel in `src/lib/i18n/de.json`, Zugriff über `t()`                                                                                                            |
 | Tests    | Vitest (Unit), Playwright + `@axe-core/playwright` (E2E)                                                                                                                |
 | Qualität | ESLint (`eslint-config-next`), Prettier, `tsc --noEmit`                                                                                                                 |
-| CI/CD    | GitHub Actions: `ci.yml` (Lint, Check, Test, Build, E2E, Lighthouse), `release.yml` (Release mit Zip)                                                                   |
+| CI/CD    | GitHub Actions: `ci.yml` (Lint, Check, Test, Build, E2E, Lighthouse), `pages.yml` (Deploy von `master`), `release.yml` (Release mit Zip)                                |
 
 Next.js 16 weicht in Teilen von älterem Wissen ab: vor neuem Code die passende Anleitung in `node_modules/next/dist/docs/` lesen (siehe `AGENTS.md`). Es gibt nur ein Build-Ziel: den statischen Export (`next.config.ts`). Deshalb: keine Route Handler, Server Actions, Middleware/Proxy, dynamischen Server-Funktionen (`cookies()`, `headers()`) und kein `next/image`-Optimizer. Es gibt keinen App-Server, Nutzerdaten bleiben im Browser. Keine `next/font/google` (lädt von Google); System-Fonts verwenden.
 
-Die CSP kommt aus `src/lib/csp.ts`: als `<meta>` mit Skript-Hashes in jeder vorgerenderten Seite (von `scripts/postbuild.mjs` eingefügt, im Dev-Server vom Layout). Sie erlaubt nur `'self'`. Die übrigen Sicherheits-Header setzt Vercel aus `vercel.json`; `scripts/preview.mjs` sendet dieselben. `scripts/postbuild.mjs` fügt nach jedem Build den Meta-Tag ohne `'unsafe-inline'` für Skripte ein und baut den Service Worker (`src/sw.ts` → `sw.js`, Serwist). Deshalb immer `npm run build` nutzen, nie `next build` direkt. Auch Vercel baut deshalb über `vercel.json` mit `@vercel/static-build` (Skript `build`): Der Next.js-Builder von Vercel sammelt die Seiten schon während `next build` ein, also bevor `postbuild` die CSP einfügt. Imports aus `src/` laufen über `@/…`.
+Die CSP kommt aus `src/lib/csp.ts`: als `<meta>` mit Skript-Hashes in jeder vorgerenderten Seite (von `scripts/postbuild.mjs` eingefügt, im Dev-Server vom Layout). Sie erlaubt nur `'self'`. GitHub Pages kann keine HTTP-Header setzen: Die Referrer-Policy kommt deshalb ebenfalls als `<meta>` (Layout), `X-Frame-Options`/`frame-ancestors`, `X-Content-Type-Options` und `Permissions-Policy` fehlen (per `<meta>` nicht möglich). `scripts/preview.mjs` sendet wie Pages keine dieser Header. `scripts/postbuild.mjs` fügt nach jedem Build den Meta-Tag ohne `'unsafe-inline'` für Skripte ein und baut den Service Worker (`src/sw.ts` → `sw.js`, Serwist). Deshalb immer `npm run build` nutzen, nie `next build` direkt. Imports aus `src/` laufen über `@/…`.
+
+Die App liegt auf GitHub Pages unter dem Unterpfad `/rueckenwind`. `pages.yml` und CI bauen mit `BASE_PATH=/rueckenwind`; ohne `BASE_PATH` liegt sie im Wurzelverzeichnis. `next/link` und der Router setzen den Pfad selbst davor. Alle anderen Wurzel-Pfade (Icons in Metadaten, Manifest, Service-Worker-Registrierung, Links und Bilder in Markdown) laufen über `withBasePath()` aus `src/lib/config.ts`; `postbuild` setzt ihn vor die `/_next/`-Einträge der Precache-Liste.
 
 ## Befehle
 
@@ -49,8 +51,9 @@ npm test            # Vitest einmalig
 npm run test:coverage   # Vitest mit Abdeckung (Domäne ≥ 90 %, läuft in CI)
 npm run test:unit   # Vitest im Watch-Modus
 npm run build       # statischer Export nach out/, danach postbuild (CSP-Hashes, sw.js)
-npm start           # out/ lokal ausliefern (scripts/preview.mjs, Port 4173 oder PORT), mit Headern aus vercel.json
+npm start           # out/ lokal ausliefern wie GitHub Pages (scripts/preview.mjs, Port 4173 oder PORT, unter BASE_PATH)
 npm run test:e2e    # Playwright gegen npm start (vorher: npx playwright install chromium)
+BASE_PATH=/rueckenwind npm run test:e2e   # dasselbe mit dem Unterpfad von GitHub Pages (so läuft CI)
 node scripts/lighthouse.mjs     # Lighthouse ≥ 90 gegen laufenden Server (CHROME_PATH setzen)
 node scripts/screenshots.mjs    # README-Screenshots gegen laufenden Server
 ```
@@ -65,7 +68,7 @@ public/              statische Dateien (Icons, robots.txt)
 scripts/             Hilfsskripte (postbuild, Preview-Server, Icons, Screenshots, Lighthouse)
 src/app/             Startseite (page.tsx), App-Routen in (app)/ (Weg unter /app/), Layout, globals.css
 src/components/      UI-Komponenten
-src/lib/config.ts    APP_NAME, APP_SUBTITLE, APP_TITLE – der Name ist vorläufig, nur hier pflegen
+src/lib/config.ts    APP_NAME, APP_SUBTITLE, APP_TITLE – der Name ist vorläufig, nur hier pflegen; BASE_PATH, withBasePath()
 src/lib/domain/      reine Logik ohne Framework, voll getestet
 src/lib/data/        Dexie, Repository-Funktionen, Export/Import, Hooks (hooks.ts nur im Client)
 src/lib/content/     Markdown aus content/de laden und prüfen (nur zur Build-Zeit)
