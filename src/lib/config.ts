@@ -22,7 +22,7 @@ export function withBasePath(url: string): string {
 }
 
 /** Default of NEXT_PUBLIC_FEEDBACK_URL: the central feedback service (a Cloudflare Worker). */
-export const DEFAULT_FEEDBACK_URL = 'https://feedback.sebiweise.workers.dev';
+export const DEFAULT_FEEDBACK_URL = 'https://feedback.goscinski.dev';
 
 /** Project ID at the feedback service; it files the text as an issue in a private repository. */
 export const FEEDBACK_PROJECT = 'rueckenwind';

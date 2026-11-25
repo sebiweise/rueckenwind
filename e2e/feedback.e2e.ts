@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
 
 // The build uses the default of NEXT_PUBLIC_FEEDBACK_URL; requests to it never leave the test.
-const SERVICE = 'https://feedback.sebiweise.workers.dev';
+const SERVICE = 'https://feedback.goscinski.dev';
 const ENDPOINT = `${SERVICE}/v1/feedback/rueckenwind`;
 
 // Requests the service worker answers would bypass page.route.

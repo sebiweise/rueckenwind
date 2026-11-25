@@ -41,7 +41,7 @@ Die App liegt auf GitHub Pages unter dem Unterpfad `/rueckenwind`. `pages.yml` u
 
 ## Feedback
 
-`/feedback/` ist der einzige Ort, an dem etwas das Gerät verlässt, und nur, wenn jemand das Formular abschickt. Gesendet werden nur die Formularfelder (`kind`, `message`, optional `email`, `source: "web"`, Honeypot `website`) an `POST <NEXT_PUBLIC_FEEDBACK_URL>/v1/feedback/rueckenwind`; Standard `https://feedback.sebiweise.workers.dev`, leer = Formular, Links und Datenfluss-Text aus. Nie etwas aus Dexie, keine Diagnosedaten. Der Dienst legt ein Issue in einem privaten GitHub-Repository an (Cloudflare und GitHub, USA, EU-US DPF); wer Empfänger oder Felder ändert, passt `content/de/feedback.md` und die Texte unter `feedback.*` in `de.json` an. Offline zeigt das Formular einen Hinweis.
+`/feedback/` ist der einzige Ort, an dem etwas das Gerät verlässt, und nur, wenn jemand das Formular abschickt. Gesendet werden nur die Formularfelder (`kind`, `message`, optional `email`, `source: "web"`, Honeypot `website`) an `POST <NEXT_PUBLIC_FEEDBACK_URL>/v1/feedback/rueckenwind`; Standard `https://feedback.goscinski.dev`, leer = Formular, Links und Datenfluss-Text aus. Nie etwas aus Dexie, keine Diagnosedaten. Der Dienst legt ein Issue in einem privaten GitHub-Repository an (Cloudflare und GitHub, USA, EU-US DPF); wer Empfänger oder Felder ändert, passt `content/de/feedback.md` und die Texte unter `feedback.*` in `de.json` an. Offline zeigt das Formular einen Hinweis.
 
 ## Befehle
 
