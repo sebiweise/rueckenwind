@@ -2,14 +2,15 @@
 
 Hier liegen die Infotexte als Markdown. Sie werden beim Build in die App gerendert. Ein Test prüft jede Datei.
 
-| Datei                     | Seite                                             |
-| ------------------------- | ------------------------------------------------- |
-| `etappe-<n>-<name>.md`    | Etappe 1–5 unter `/etappe/<n>/`                   |
-| `krise.md`                | Krisenhilfe (`/krise/`)                           |
-| `hinweis.md`              | Disclaimer (`/hinweis/`)                          |
-| `ueber.md`                | Über die App (`/ueber/`)                          |
-| `hilfen.md`               | Nützliche Hilfen, externe Angebote (`/hilfen/`)   |
-| `impressum.md` (optional) | wird auf der Über-Seite angehängt, wenn vorhanden |
+| Datei                     | Seite                                                                                        |
+| ------------------------- | -------------------------------------------------------------------------------------------- |
+| `etappe-<n>-<name>.md`    | Etappe 1–5 unter `/etappe/<n>/`                                                              |
+| `krise.md`                | Krisenhilfe (`/krise/`)                                                                      |
+| `hinweis.md`              | Disclaimer (`/hinweis/`)                                                                     |
+| `ueber.md`                | Über die App (`/ueber/`)                                                                     |
+| `hilfen.md`               | Nützliche Hilfen, externe Angebote (`/hilfen/`)                                              |
+| `feedback.md`             | Datenfluss des Feedbacks, auf der Über-Seite angehängt, wenn ein Feedback-Dienst gesetzt ist |
+| `impressum.md` (optional) | wird auf der Über-Seite angehängt, wenn vorhanden                                            |
 
 ## Aufbau einer Datei
 

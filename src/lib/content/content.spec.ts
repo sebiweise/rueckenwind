@@ -12,7 +12,7 @@ describe('content files', () => {
 		expect(stages.map((page) => page.stage)).toEqual([...STAGES]);
 	});
 
-	it.each(['krise', 'hinweis', 'ueber', 'hilfen'])('has the page "%s"', (slug) => {
+	it.each(['krise', 'hinweis', 'ueber', 'hilfen', 'feedback'])('has the page "%s"', (slug) => {
 		const page = loadPage(slug);
 		expect(page.title).not.toBe('');
 		expect(page.sources.length).toBeGreaterThan(0);
@@ -41,7 +41,10 @@ describe('content files', () => {
 	});
 
 	it('uses no raw HTML that the filter would show as text', () => {
-		for (const page of [...stages, ...['krise', 'hinweis', 'ueber', 'hilfen'].map(loadPage)]) {
+		for (const page of [
+			...stages,
+			...['krise', 'hinweis', 'ueber', 'hilfen', 'feedback'].map(loadPage)
+		]) {
 			const html = page.introHtml + page.sections.map((s) => s.html).join('');
 			expect(html, page.slug).not.toContain('&lt;');
 			expect(html, page.slug).not.toMatch(/<(script|style|iframe|object|embed|form)\b/i);

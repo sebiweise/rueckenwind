@@ -48,6 +48,15 @@ test('the feedback page says what is sent and is reachable from the app', async 
 	expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
 });
 
+test('the about page describes where feedback goes', async ({ page }) => {
+	await page.goto('ueber/');
+	const section = page.locator('#feedback');
+	await expect(section.getByRole('heading', { name: 'Freiwilliges Feedback' })).toBeVisible();
+	await expect(section.getByText('Cloudflare Worker, USA')).toBeVisible();
+	await section.getByRole('link', { name: 'Feedback-Formular' }).click();
+	await expect(page).toHaveURL(/\/feedback\/$/);
+});
+
 test('sends only what was typed in, and only on the button', async ({ page }) => {
 	const received = await mockService(page);
 	// Something stored in the app must not end up in the feedback.
