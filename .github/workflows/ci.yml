@@ -12,15 +12,16 @@ on:
 permissions:
   contents: read
 
-# Lint, Typecheck und Build laufen nicht hier: Vercel baut jeden Push und jeden PR
-# (`next build` prüft auch die Typen) und meldet das als eigenen Check.
+# Gebaut wird hier wie für GitHub Pages (BASE_PATH=/<Repository-Name>, siehe pages.yml):
+# Die E2E-Tests und Lighthouse prüfen genau den Export, der veröffentlicht wird.
+# `next build` prüft dabei auch die Typen; Lint und `tsc` laufen im Job "check".
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   check:
-    name: Unit-Tests
+    name: Lint, Typecheck, Unit-Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -31,6 +32,8 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci --ignore-scripts
+      - run: npm run lint
+      - run: npm run check
       - run: npm run test:coverage
 
   e2e:
@@ -49,6 +52,7 @@ jobs:
       - run: npm run test:e2e
         env:
           CI: true
+          BASE_PATH: /${{ github.event.repository.name }}
       - uses: actions/upload-artifact@v7
         if: failure()
         with:
@@ -59,6 +63,8 @@ jobs:
   lighthouse:
     name: Lighthouse (≥ 90)
     runs-on: ubuntu-latest
+    env:
+      BASE_PATH: /${{ github.event.repository.name }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -73,6 +79,6 @@ jobs:
       - name: Lighthouse gegen den statischen Export
         run: |
           PORT=4173 npm start &
-          for i in $(seq 30); do curl -sf http://localhost:4173/ > /dev/null && break; sleep 1; done
+          for i in $(seq 30); do curl -sf "http://localhost:4173$BASE_PATH/" > /dev/null && break; sleep 1; done
           CHROME_PATH=$(node -e "console.log(require('@playwright/test').chromium.executablePath())") \
-            node scripts/lighthouse.mjs http://localhost:4173/
+            node scripts/lighthouse.mjs "http://localhost:4173$BASE_PATH/"

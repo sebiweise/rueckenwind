@@ -45,8 +45,11 @@ test('a new version waits and is loaded after asking', async ({ page }) => {
 	await expect(notice).toBeHidden();
 
 	// Pretend a deploy happened: a changed script URL makes the browser install a new worker.
+	// Relative to the page: the app may live under a base path like /rueckenwind.
 	await page.evaluate(async () => {
-		await navigator.serviceWorker.register('/sw.js?version=2', { scope: '/' });
+		const registration = await navigator.serviceWorker.getRegistration();
+		const scope = registration!.scope;
+		await navigator.serviceWorker.register(`${scope}sw.js?version=2`, { scope });
 	});
 	await expect(notice).toBeVisible();
 	expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);

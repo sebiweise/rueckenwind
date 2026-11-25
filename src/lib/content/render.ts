@@ -1,5 +1,6 @@
 import { Marked } from 'marked';
 import { parse as parseYaml } from 'yaml';
+import { withBasePath } from '@/lib/config';
 import { escapeAttribute, isSafeUrl, sanitizeHtml } from './sanitize';
 import { frontmatterSchema, type ContentPage, type ContentSection } from './schema';
 
@@ -8,7 +9,8 @@ const FRONTMATTER = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?/;
 /** Encodes a link target like marked does; null when it cannot be encoded. */
 function encodeUrl(href: string): string | null {
 	try {
-		return encodeURI(href).replaceAll('%25', '%');
+		// In-app links like "/krise/" get the base path, the app may live under /rueckenwind.
+		return withBasePath(encodeURI(href).replaceAll('%25', '%'));
 	} catch {
 		return null;
 	}

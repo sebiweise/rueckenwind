@@ -10,7 +10,6 @@ export default defineConfig([
 	globalIgnores([
 		'.next/**',
 		'out/**',
-		'.vercel/**',
 		'next-env.d.ts',
 		'test-results/**',
 		'playwright-report/**',

@@ -49,17 +49,16 @@ test('content security policy blocks requests to other origins', async ({ page }
 	expect(blocked).toBe('connect-src');
 });
 
-test('sends the security headers from vercel.json', async ({ page }) => {
-	// The preview server sends the same headers as Vercel; the CSP comes from the <meta> tag.
-	const response = await page.goto('./');
-	const headers = response!.headers();
-	expect(headers['x-content-type-options']).toBe('nosniff');
-	expect(headers['referrer-policy']).toBe('no-referrer');
-	expect(headers['x-frame-options']).toBe('DENY');
-	await expect(page.locator('meta[http-equiv="Content-Security-Policy"]')).toHaveAttribute(
-		'content',
-		/default-src 'self'/
-	);
+test('every page carries its security policy as <meta> tags', async ({ page }) => {
+	// GitHub Pages cannot send security headers, so the CSP and referrer policy are in the page.
+	for (const path of ['./', 'app/', 'kontakte/']) {
+		await page.goto(path);
+		await expect(page.locator('meta[http-equiv="Content-Security-Policy"]')).toHaveAttribute(
+			'content',
+			/default-src 'self'/
+		);
+		await expect(page.locator('meta[name="referrer"]')).toHaveAttribute('content', 'no-referrer');
+	}
 });
 
 test('the start page introduces the app and leads into it', async ({ page }) => {

@@ -1,6 +1,8 @@
-// Serves the static export in out/ for local previews and E2E tests, with the same
-// security headers as Vercel (vercel.json). Deliberately tiny: no extra server dependency.
-import { createReadStream, readFileSync } from 'node:fs';
+// Serves the static export in out/ for local previews and E2E tests, the way GitHub Pages does:
+// under BASE_PATH (e.g. /rueckenwind) if set, gzip, 404.html for unknown paths and no security
+// headers (static hosts cannot send them; the CSP and referrer policy are <meta> tags).
+// Deliberately tiny: no extra server dependency.
+import { createReadStream } from 'node:fs';
 import { stat } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { extname, join, normalize, resolve, sep } from 'node:path';
@@ -8,12 +10,8 @@ import { createGzip } from 'node:zlib';
 
 const root = resolve('out');
 const port = Number(process.env.PORT ?? 4173);
-// vercel.json applies one header block to every path ("/(.*)").
-const headers = Object.fromEntries(
-	JSON.parse(readFileSync('vercel.json', 'utf8')).headers.flatMap((rule) =>
-		rule.headers.map(({ key, value }) => [key, value])
-	)
-);
+// Same value as basePath in next.config.ts: the build must have used the same BASE_PATH.
+const basePath = (process.env.BASE_PATH ?? '').replace(/\/+$/, '');
 const types = {
 	'.html': 'text/html; charset=utf-8',
 	'.js': 'text/javascript; charset=utf-8',
@@ -57,15 +55,21 @@ function acceptsGzip(header = '') {
 
 createServer(async (request, response) => {
 	const { pathname } = new URL(request.url ?? '/', 'http://localhost');
-	const file = (await resolveFile(pathname)) ?? join(root, '404.html');
+	// Like GitHub Pages: "/rueckenwind" redirects to "/rueckenwind/".
+	if (basePath && pathname === basePath) {
+		response.writeHead(301, { Location: `${basePath}/` }).end();
+		return;
+	}
+	// Outside the base path GitHub Pages has nothing of this app either.
+	const appPath = pathname.startsWith(`${basePath}/`) ? pathname.slice(basePath.length) : null;
+	const file = (appPath && (await resolveFile(appPath))) ?? join(root, '404.html');
 	const type = types[extname(file)] ?? 'application/octet-stream';
-	// Compress text like Vercel does, so Lighthouse measures realistic transfer sizes.
+	// Compress text like GitHub Pages does, so Lighthouse measures realistic transfer sizes.
 	const gzip = !type.startsWith('image/png') && acceptsGzip(request.headers['accept-encoding']);
-	response.writeHead(file.endsWith('404.html') && pathname !== '/404.html' ? 404 : 200, {
-		...headers,
+	response.writeHead(file.endsWith('404.html') && appPath !== '/404.html' ? 404 : 200, {
 		'Content-Type': type,
 		...(gzip && { 'Content-Encoding': 'gzip', Vary: 'Accept-Encoding' })
 	});
 	const stream = createReadStream(file);
 	(gzip ? stream.pipe(createGzip()) : stream).pipe(response);
-}).listen(port, () => console.log(`Preview: http://localhost:${port}/`));
+}).listen(port, () => console.log(`Preview: http://localhost:${port}${basePath}/`));
