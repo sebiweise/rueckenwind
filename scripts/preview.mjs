@@ -77,7 +77,8 @@ createServer((request, response) => {
 	const found = appPath ? resolveFile(appPath) : null;
 	const file = found ?? notFound;
 	// Compress text like GitHub Pages does, so Lighthouse measures realistic transfer sizes.
-	const gzip = !file.type.startsWith('image/png') && acceptsGzip(request.headers['accept-encoding']);
+	const gzip =
+		!file.type.startsWith('image/png') && acceptsGzip(request.headers['accept-encoding']);
 	response.writeHead(found ? 200 : 404, {
 		'Content-Type': file.type,
 		...(gzip && { 'Content-Encoding': 'gzip', Vary: 'Accept-Encoding' })
