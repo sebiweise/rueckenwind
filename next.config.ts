@@ -9,7 +9,7 @@ import type { NextConfig } from 'next';
 
 // GitHub Pages serves the app from /<repo>; the Pages workflow sets BASE_PATH=/rueckenwind.
 // Empty (the default) puts the app at the root of the domain.
-const basePath = (process.env.BASE_PATH ?? '').replace(/\/+$/, '');
+const basePath = (process.env.BASE_PATH ?? '').replace(/\/$/, '');
 
 const nextConfig: NextConfig = {
 	output: 'export',

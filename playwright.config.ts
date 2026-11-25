@@ -3,7 +3,7 @@ import { defineConfig, devices } from '@playwright/test';
 const port = 4173;
 // BASE_PATH=/rueckenwind tests the build for GitHub Pages (CI does that); the build and the
 // preview server (npm start) read the same variable.
-const basePath = (process.env.BASE_PATH ?? '').replace(/\/+$/, '');
+const basePath = (process.env.BASE_PATH ?? '').replace(/\/$/, '');
 
 export default defineConfig({
 	testDir: 'e2e',

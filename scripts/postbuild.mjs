@@ -48,7 +48,7 @@ if (hardened === 0) throw new Error('CSP: no prerendered page with a CSP meta ta
 console.log(`CSP: inline scripts hashed in ${hardened} pages`);
 
 // Same value as basePath in next.config.ts, which Serwist reads as well.
-const basePath = (process.env.BASE_PATH ?? '').replace(/\/+$/, '');
+const basePath = (process.env.BASE_PATH ?? '').replace(/\/$/, '');
 const config = await serwist({ swSrc: 'src/sw.ts', swDest: 'public/sw.js' });
 // Runs after Serwist's own transform, which turns "etappe/1.html" into "<basePath>/etappe/1"
 // and ".next/static/…" into "/_next/static/…".

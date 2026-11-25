@@ -2,16 +2,15 @@
 // under BASE_PATH (e.g. /rueckenwind) if set, gzip, 404.html for unknown paths and no security
 // headers (static hosts cannot send them; the CSP and referrer policy are <meta> tags).
 // Deliberately tiny: no extra server dependency.
-import { createReadStream } from 'node:fs';
-import { stat } from 'node:fs/promises';
+import { createReadStream, readdirSync } from 'node:fs';
 import { createServer } from 'node:http';
-import { extname, join, normalize, resolve, sep } from 'node:path';
+import { extname, join, relative, resolve, sep } from 'node:path';
 import { createGzip } from 'node:zlib';
 
 const root = resolve('out');
 const port = Number(process.env.PORT ?? 4173);
 // Same value as basePath in next.config.ts: the build must have used the same BASE_PATH.
-const basePath = (process.env.BASE_PATH ?? '').replace(/\/+$/, '');
+const basePath = (process.env.BASE_PATH ?? '').replace(/\/$/, '');
 const types = {
 	'.html': 'text/html; charset=utf-8',
 	'.js': 'text/javascript; charset=utf-8',
@@ -25,7 +24,18 @@ const types = {
 	'.woff2': 'font/woff2'
 };
 
-async function resolveFile(urlPath) {
+// Every file of the export, keyed by its URL path ("/etappe/1.html"). Requests are only looked up
+// here, so no part of a URL ever becomes a file system path.
+const files = new Map(
+	readdirSync(root, { recursive: true, withFileTypes: true })
+		.filter((entry) => entry.isFile())
+		.map((entry) => {
+			const file = join(entry.parentPath, entry.name);
+			return [`/${relative(root, file).split(sep).join('/')}`, file];
+		})
+);
+
+function resolveFile(urlPath) {
 	let decoded;
 	try {
 		decoded = decodeURIComponent(urlPath);
@@ -33,11 +43,10 @@ async function resolveFile(urlPath) {
 		// Malformed percent-encoding ("/%E0%A4%A"): answer 404 instead of crashing the server.
 		return null;
 	}
-	const path = join(root, normalize(decoded));
-	if (path !== root && !path.startsWith(root + sep)) return null;
-	for (const candidate of [path, join(path, 'index.html'), `${path}.html`]) {
-		const info = await stat(candidate).catch(() => null);
-		if (info?.isFile()) return candidate;
+	const path = decoded.endsWith('/') ? decoded.slice(0, -1) : decoded;
+	for (const candidate of [path, `${path}/index.html`, `${path}.html`]) {
+		const file = files.get(candidate);
+		if (file) return file;
 	}
 	return null;
 }
@@ -53,7 +62,7 @@ function acceptsGzip(header = '') {
 	return (q.gzip ?? q['*'] ?? 0) > 0;
 }
 
-createServer(async (request, response) => {
+createServer((request, response) => {
 	const { pathname } = new URL(request.url ?? '/', 'http://localhost');
 	// Like GitHub Pages: "/rueckenwind" redirects to "/rueckenwind/".
 	if (basePath && pathname === basePath) {
@@ -62,7 +71,7 @@ createServer(async (request, response) => {
 	}
 	// Outside the base path GitHub Pages has nothing of this app either.
 	const appPath = pathname.startsWith(`${basePath}/`) ? pathname.slice(basePath.length) : null;
-	const file = (appPath && (await resolveFile(appPath))) ?? join(root, '404.html');
+	const file = (appPath && resolveFile(appPath)) ?? join(root, '404.html');
 	const type = types[extname(file)] ?? 'application/octet-stream';
 	// Compress text like GitHub Pages does, so Lighthouse measures realistic transfer sizes.
 	const gzip = !type.startsWith('image/png') && acceptsGzip(request.headers['accept-encoding']);
