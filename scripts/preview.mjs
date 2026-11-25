@@ -79,6 +79,7 @@ createServer((request, response) => {
 		'Content-Type': type,
 		...(gzip && { 'Content-Encoding': 'gzip', Vary: 'Accept-Encoding' })
 	});
-	const stream = createReadStream(file);
+	// `file` is always an entry of `files` (built from out/ at startup) or 404.html, never a path from the request
+	const stream = createReadStream(file); // NOSONAR
 	(gzip ? stream.pipe(createGzip()) : stream).pipe(response);
 }).listen(port, () => console.log(`Preview: http://localhost:${port}${basePath}/`));
