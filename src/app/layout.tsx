@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import Link from 'next/link';
 import { ServiceWorker } from '@/components/ServiceWorker';
 import { ThemeColor } from '@/components/ThemeColor';
-import { APP_NAME, APP_TITLE, withBasePath } from '@/lib/config';
+import { APP_NAME, APP_TITLE, FEEDBACK_ENDPOINT, withBasePath } from '@/lib/config';
 import { contentSecurityPolicy } from '@/lib/csp';
 import { t } from '@/lib/i18n';
 import { DEFAULT_THEME_COLORS, paletteScript } from '@/lib/theme';
@@ -38,7 +38,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 			<head>
 				{/* Production builds get this tag with script hashes from scripts/postbuild.mjs. */}
 				{process.env.NODE_ENV === 'development' && (
-					<meta httpEquiv="Content-Security-Policy" content={contentSecurityPolicy(true)} />
+					<meta
+						httpEquiv="Content-Security-Policy"
+						content={contentSecurityPolicy(true, undefined, FEEDBACK_ENDPOINT?.origin)}
+					/>
 				)}
 				<meta
 					name="theme-color"
@@ -62,6 +65,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
 						<p className="site-footer-links">
 							<Link href="/hinweis/">{t('footer.disclaimer')}</Link>
 							<Link href="/ueber/">{t('nav.about')}</Link>
+							{FEEDBACK_ENDPOINT && <Link href="/feedback/">{t('nav.feedback')}</Link>}
 						</p>
 					</footer>
 					<ServiceWorker />

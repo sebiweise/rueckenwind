@@ -7,10 +7,11 @@ import {
 	HeartIcon,
 	HomeScreenIcon,
 	InfoIcon,
+	MessageIcon,
 	WindIcon
 } from '@/components/Icons';
 import { ThemePicker } from '@/components/ThemePicker';
-import { APP_NAME } from '@/lib/config';
+import { APP_NAME, FEEDBACK_ENDPOINT } from '@/lib/config';
 import { t } from '@/lib/i18n';
 
 export const metadata: Metadata = { title: `${t('more.title')} – ${APP_NAME}` };
@@ -20,7 +21,11 @@ const HELP = [
 	{ href: '/hilfen/', label: t('nav.helpers'), icon: <FlowerIcon /> },
 	{ href: '/installieren/', label: t('install.title'), icon: <HomeScreenIcon /> },
 	{ href: '/hinweis/', label: t('footer.disclaimer'), icon: <InfoIcon /> },
-	{ href: '/ueber/', label: t('nav.about'), icon: <WindIcon /> }
+	{ href: '/ueber/', label: t('nav.about'), icon: <WindIcon /> },
+	// Only where this build has a feedback service (NEXT_PUBLIC_FEEDBACK_URL).
+	...(FEEDBACK_ENDPOINT
+		? [{ href: '/feedback/', label: t('nav.feedback'), icon: <MessageIcon /> }]
+		: [])
 ];
 
 function Row({

@@ -1,5 +1,6 @@
 // Runs after `next build` (static export to out/):
-// 1. adds a CSP <meta> to every prerendered page that allows only that page's inline scripts (by hash),
+// 1. adds a CSP <meta> to every prerendered page that allows only that page's inline scripts (by hash)
+//    and, as the only foreign origin, the feedback service (NEXT_PUBLIC_FEEDBACK_URL, read like the build),
 // 2. builds the service worker (sw.js) with a precache list of all pages and assets,
 // 3. copies sw.js to out/.
 // With BASE_PATH (GitHub Pages: /rueckenwind) every precached URL starts with it.
@@ -8,6 +9,7 @@ import { cpSync, existsSync, readdirSync, readFileSync, statSync, writeFileSync 
 import path from 'node:path';
 import { runBuildCommand } from '@serwist/cli';
 import { serwist } from '@serwist/next/config';
+import { FEEDBACK_ENDPOINT } from '../src/lib/config.ts';
 import { contentSecurityPolicy } from '../src/lib/csp.ts';
 
 function htmlFiles(dir) {
@@ -30,7 +32,7 @@ function addCsp(file) {
 		if (/\bsrc=/.test(attributes) || body === '') continue;
 		hashes.add(createHash('sha256').update(body, 'utf8').digest('base64'));
 	}
-	const meta = `<meta http-equiv="Content-Security-Policy" content="${contentSecurityPolicy(false, [...hashes])}"/>`;
+	const meta = `<meta http-equiv="Content-Security-Policy" content="${contentSecurityPolicy(false, [...hashes], FEEDBACK_ENDPOINT?.origin)}"/>`;
 	let added = false;
 	const next = html.replace(/<head>(<meta charSet="utf-8"\/>)?/, (head) => {
 		added = true;

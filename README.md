@@ -42,9 +42,18 @@ Screenshots neu erzeugen: Server starten (`npm start` mit `PORT=4173`), dann `no
 ## Datenschutz-Versprechen
 
 - **Deine Daten bleiben auf deinem Gerät.** Alles wird nur im Browser gespeichert (IndexedDB).
-- **Kein Konto, kein Server, kein Tracking.** Keine Analytics, keine externen Fonts, keine CDNs.
-- **Keine Verbindungen nach außen.** Eine Content-Security-Policy erlaubt nur Anfragen an die eigene Seite. Inline-Skripte sind nur mit ihrem Hash erlaubt (beim Build berechnet). Automatische Tests prüfen das.
+- **Kein Konto, kein Server für deine Daten, kein Tracking.** Keine Analytics, keine externen Fonts, keine CDNs.
+- **Keine Verbindungen nach außen, außer du schickst selbst Feedback.** Eine Content-Security-Policy erlaubt nur Anfragen an die eigene Seite und an den Feedback-Dienst (siehe [Feedback](#feedback)). Inline-Skripte sind nur mit ihrem Hash erlaubt (beim Build berechnet). Automatische Tests prüfen das.
 - **Sicherung nur per Datei.** Du kannst deine Daten als JSON exportieren, wieder importieren und jederzeit vollständig löschen.
+
+## Feedback
+
+Unter `/feedback/` (verlinkt unter „Mehr“ und im Fuß jeder Seite) gibt es ein freiwilliges Formular für Fehler, Wünsche und Sonstiges. Gesendet wird nur, was dort eingetippt wird: die Art, der Text und auf Wunsch eine E-Mail-Adresse für eine Antwort. Nichts aus den gespeicherten Einträgen, keine Diagnosedaten, keine Cookies, kein Referrer. Offline sagt das Formular das, statt still zu scheitern; der Text bleibt dann stehen.
+
+- **Weg:** `POST <NEXT_PUBLIC_FEEDBACK_URL>/v1/feedback/rueckenwind` an einen zentralen Feedback-Dienst (Cloudflare Worker, USA, EU-US Data Privacy Framework). Er legt daraus ein Issue in einem privaten GitHub-Repository an (USA, EU-US DPF). Die IP-Adresse nutzt er nur kurz für ein Rate Limit, gespeichert wird sie nicht. Die Über-Seite beschreibt das für Nutzer (`content/de/feedback.md`).
+- **Konfiguration:** `NEXT_PUBLIC_FEEDBACK_URL` beim Build, Standard `https://feedback.goscinski.dev`. Derselbe Wert landet in `connect-src` der CSP (`src/lib/config.ts`, `src/lib/csp.ts`, `scripts/postbuild.mjs`). Leer gesetzt (`NEXT_PUBLIC_FEEDBACK_URL=`) gibt es kein Formular, keine Links dorthin, keine Beschreibung des Datenflusses (Über-Seite, `/feedback/`) und keine fremde Origin in der CSP, etwa für eine selbst gehostete Instanz.
+- **Ein eigener Host** braucht beim Feedback-Dienst einen freigegebenen Origin. Die offizielle Version ist nur für `https://sebiweise.github.io` freigegeben; von anderen Origins antwortet der Dienst mit 403.
+- **Tests:** `src/lib/feedback.spec.ts` (Body, Fehler, offline) und `e2e/feedback.e2e.ts` (mit einem Mock des Dienstes, ohne echte Anfragen).
 
 ## Hinweis
 
@@ -89,7 +98,7 @@ src/lib/i18n/        UI-Texte
 
 ## Hosting
 
-Rückenwind braucht kein Backend. Der Build ist eine rein statische Seite, deine Daten bleiben im Browser.
+Rückenwind braucht kein eigenes Backend. Der Build ist eine rein statische Seite, deine Daten bleiben im Browser. Nur das freiwillige Feedback geht an einen externen Dienst (siehe [Feedback](#feedback)).
 
 **GitHub Pages** (so läuft die offizielle Version unter <https://sebiweise.github.io/rueckenwind/>): Der Workflow [`pages.yml`](.github/workflows/pages.yml) baut bei jedem Push auf `master` den statischen Export mit `BASE_PATH=/<Repository-Name>` und veröffentlicht ihn. In einem Fork unter Settings → Pages als Source „GitHub Actions“ wählen.
 

@@ -17,6 +17,15 @@ describe('contentSecurityPolicy', () => {
 	});
 });
 
+describe('contentSecurityPolicy with the feedback service', () => {
+	it('allows connections to that origin only, nothing else from outside', () => {
+		const csp = contentSecurityPolicy(false, [], 'https://feedback.example.org');
+		expect(csp).toContain("connect-src 'self' https://feedback.example.org;");
+		expect(csp).toContain("default-src 'self';");
+		expect(csp.match(/https:/g)).toHaveLength(1);
+	});
+});
+
 describe('contentSecurityPolicy with script hashes', () => {
 	it('replaces unsafe-inline for scripts with the hashes', () => {
 		const csp = contentSecurityPolicy(false, ['abc=', 'def=']);

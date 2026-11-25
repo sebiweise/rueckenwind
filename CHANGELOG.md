@@ -4,6 +4,10 @@ Alle wichtigen Änderungen an Rückenwind. Format nach [Keep a Changelog](https:
 
 ## [Unveröffentlicht]
 
+### Neu
+
+- **Feedback:** freiwilliges Formular unter `/feedback/` (verlinkt unter „Mehr“ und im Fuß jeder Seite) für Fehler, Wünsche und Sonstiges. Gesendet wird nur, was dort eingetippt wird, nichts aus deinen Einträgen und keine Diagnosedaten. Der Text geht über Cloudflare an ein privates GitHub-Repository, eine E-Mail-Adresse nur, wenn du eine Antwort möchtest. Offline sagt das Formular das, statt still zu scheitern. Die CSP erlaubt dafür in `connect-src` zusätzlich den Feedback-Dienst (`NEXT_PUBLIC_FEEDBACK_URL`, leer = Formular aus); die Über-Seite beschreibt den Datenfluss (`content/de/feedback.md`, nur wenn ein Feedback-Dienst gesetzt ist).
+
 ### Verbessert
 
 - **Schnellerfassung:** Uhrzeiten wie „8:30“, „8.30 Uhr“ oder „gestern 12 Uhr“ werden als Zeitpunkt des Kontaktversuchs übernommen (#13).
