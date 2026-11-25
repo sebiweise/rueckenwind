@@ -20,3 +20,29 @@ export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
 export function withBasePath(url: string): string {
 	return url.startsWith('/') && !url.startsWith('//') ? `${BASE_PATH}${url}` : url;
 }
+
+/** Default of NEXT_PUBLIC_FEEDBACK_URL: the central feedback service (a Cloudflare Worker). */
+export const DEFAULT_FEEDBACK_URL = 'https://feedback.sebiweise.workers.dev';
+
+/** Project ID at the feedback service; it files the text as an issue in a private repository. */
+export const FEEDBACK_PROJECT = 'rueckenwind';
+
+/**
+ * Endpoint of the opt-in feedback form, or null if it is switched off. Read from
+ * NEXT_PUBLIC_FEEDBACK_URL at build time; an empty value switches the form off (e.g. for an
+ * instance hosted by someone else). Plain http is only taken for a local test server.
+ */
+export function feedbackEndpoint(baseUrl: string | undefined): URL | null {
+	if (baseUrl === '') return null;
+	const url = new URL(baseUrl ?? DEFAULT_FEEDBACK_URL);
+	const local = url.hostname === 'localhost' || url.hostname === '127.0.0.1';
+	if (url.protocol !== 'https:' && !(url.protocol === 'http:' && local)) {
+		throw new Error(`NEXT_PUBLIC_FEEDBACK_URL must use https: ${url.origin}`);
+	}
+	// Strip trailing slashes without a regex (avoids backtracking on long inputs).
+	let end = url.pathname.length;
+	while (end > 0 && url.pathname[end - 1] === '/') end--;
+	return new URL(`${url.pathname.slice(0, end)}/v1/feedback/${FEEDBACK_PROJECT}`, url.origin);
+}
+
+export const FEEDBACK_ENDPOINT = feedbackEndpoint(process.env.NEXT_PUBLIC_FEEDBACK_URL);

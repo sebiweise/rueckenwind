@@ -12,6 +12,7 @@ describe('sectionOf', () => {
 		expect(sectionOf('/hilfen/')).toBe('more');
 		expect(sectionOf('/installieren/')).toBe('more');
 		expect(sectionOf('/ueber/')).toBe('more');
+		expect(sectionOf('/feedback/')).toBe('more');
 		expect(sectionOf('/krise/')).toBeNull();
 		// The start page is outside the app.
 		expect(sectionOf('/')).toBeNull();

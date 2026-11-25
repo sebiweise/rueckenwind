@@ -1,8 +1,40 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { APP_NAME, APP_SUBTITLE, APP_TITLE } from './config';
+import {
+	APP_NAME,
+	APP_SUBTITLE,
+	APP_TITLE,
+	DEFAULT_FEEDBACK_URL,
+	feedbackEndpoint
+} from './config';
 
 it('builds the title from name and subtitle', () => {
 	expect(APP_TITLE).toBe(`${APP_NAME} – ${APP_SUBTITLE}`);
+});
+
+describe('feedbackEndpoint', () => {
+	it('defaults to the central feedback service', () => {
+		expect(feedbackEndpoint(undefined)?.href).toBe(
+			`${DEFAULT_FEEDBACK_URL}/v1/feedback/rueckenwind`
+		);
+	});
+
+	it('keeps a path of the base URL and drops trailing slashes', () => {
+		expect(feedbackEndpoint('https://example.org/feedback//')?.href).toBe(
+			'https://example.org/feedback/v1/feedback/rueckenwind'
+		);
+		expect(feedbackEndpoint('http://127.0.0.1:8787')?.href).toBe(
+			'http://127.0.0.1:8787/v1/feedback/rueckenwind'
+		);
+	});
+
+	it('is switched off by an empty value', () => {
+		expect(feedbackEndpoint('')).toBeNull();
+	});
+
+	it('refuses plain http outside a local test server', () => {
+		expect(() => feedbackEndpoint('http://example.org')).toThrow(/https/);
+		expect(() => feedbackEndpoint('javascript:alert(1)')).toThrow(/https/);
+	});
 });
 
 /** Loads config.ts again, because BASE_PATH is read once when the module loads. */

@@ -2464,3 +2464,31 @@ a.tag {
 .home .install-banner {
 	margin: 0;
 }
+
+/* Feedback page: the opt-in form */
+
+.feature textarea {
+	background: var(--color-surface);
+	resize: vertical;
+}
+
+.feedback-form fieldset {
+	margin: 0;
+}
+
+.feedback-status {
+	margin: 0;
+}
+
+.feedback-status:empty {
+	display: none;
+}
+
+.feedback-privacy {
+	margin: 0 0 var(--space-3);
+	padding-left: var(--space-4);
+}
+
+.feedback-privacy li + li {
+	margin-top: var(--space-1);
+}

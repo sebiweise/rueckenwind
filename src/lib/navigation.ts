@@ -10,7 +10,7 @@ export function sectionOf(pathname: string): Section | null {
 	if (path.startsWith('/kontakte')) return 'contacts';
 	if (path.startsWith('/daten')) return 'data';
 	if (
-		['/mehr', '/hilfen', '/installieren', '/ueber', '/hinweis'].some((prefix) =>
+		['/mehr', '/hilfen', '/installieren', '/ueber', '/hinweis', '/feedback'].some((prefix) =>
 			path.startsWith(prefix)
 		)
 	) {

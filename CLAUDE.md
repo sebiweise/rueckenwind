@@ -35,9 +35,13 @@ Bei Zielkonflikten gewinnen Datenschutz und Einfachheit.
 
 Next.js 16 weicht in Teilen von älterem Wissen ab: vor neuem Code die passende Anleitung in `node_modules/next/dist/docs/` lesen (siehe `AGENTS.md`). Es gibt nur ein Build-Ziel: den statischen Export (`next.config.ts`). Deshalb: keine Route Handler, Server Actions, Middleware/Proxy, dynamischen Server-Funktionen (`cookies()`, `headers()`) und kein `next/image`-Optimizer. Es gibt keinen App-Server, Nutzerdaten bleiben im Browser. Keine `next/font/google` (lädt von Google); System-Fonts verwenden.
 
-Die CSP kommt aus `src/lib/csp.ts`: als `<meta>` mit Skript-Hashes in jeder vorgerenderten Seite (von `scripts/postbuild.mjs` eingefügt, im Dev-Server vom Layout). Sie erlaubt nur `'self'`. GitHub Pages kann keine HTTP-Header setzen: Die Referrer-Policy kommt deshalb ebenfalls als `<meta>` (Layout), `X-Frame-Options`/`frame-ancestors`, `X-Content-Type-Options` und `Permissions-Policy` fehlen (per `<meta>` nicht möglich). `scripts/preview.mjs` sendet wie Pages keine dieser Header. `scripts/postbuild.mjs` fügt nach jedem Build den Meta-Tag ohne `'unsafe-inline'` für Skripte ein und baut den Service Worker (`src/sw.ts` → `sw.js`, Serwist). Deshalb immer `npm run build` nutzen, nie `next build` direkt. Imports aus `src/` laufen über `@/…`.
+Die CSP kommt aus `src/lib/csp.ts`: als `<meta>` mit Skript-Hashes in jeder vorgerenderten Seite (von `scripts/postbuild.mjs` eingefügt, im Dev-Server vom Layout). Sie erlaubt nur `'self'`, dazu in `connect-src` die Origin des Feedback-Dienstes (siehe „Feedback“). GitHub Pages kann keine HTTP-Header setzen: Die Referrer-Policy kommt deshalb ebenfalls als `<meta>` (Layout), `X-Frame-Options`/`frame-ancestors`, `X-Content-Type-Options` und `Permissions-Policy` fehlen (per `<meta>` nicht möglich). `scripts/preview.mjs` sendet wie Pages keine dieser Header. `scripts/postbuild.mjs` fügt nach jedem Build den Meta-Tag ohne `'unsafe-inline'` für Skripte ein und baut den Service Worker (`src/sw.ts` → `sw.js`, Serwist). Deshalb immer `npm run build` nutzen, nie `next build` direkt. Imports aus `src/` laufen über `@/…`.
 
 Die App liegt auf GitHub Pages unter dem Unterpfad `/rueckenwind`. `pages.yml` und CI bauen mit `BASE_PATH=/rueckenwind`; ohne `BASE_PATH` liegt sie im Wurzelverzeichnis. `next/link` und der Router setzen den Pfad selbst davor. Alle anderen Wurzel-Pfade (Icons in Metadaten, Manifest, Service-Worker-Registrierung, Links und Bilder in Markdown) laufen über `withBasePath()` aus `src/lib/config.ts`; `postbuild` setzt ihn vor die `/_next/`-Einträge der Precache-Liste.
+
+## Feedback
+
+`/feedback/` ist der einzige Ort, an dem etwas das Gerät verlässt, und nur, wenn jemand das Formular abschickt. Gesendet werden nur die Formularfelder (`kind`, `message`, optional `email`, `source: "web"`, Honeypot `website`) an `POST <NEXT_PUBLIC_FEEDBACK_URL>/v1/feedback/rueckenwind`; Standard `https://feedback.sebiweise.workers.dev`, leer = Formular aus. Nie etwas aus Dexie, keine Diagnosedaten. Der Dienst legt ein Issue in einem privaten GitHub-Repository an (Cloudflare und GitHub, USA, EU-US DPF); wer Empfänger oder Felder ändert, passt `content/de/ueber.md` und die Texte unter `feedback.*` in `de.json` an. Offline zeigt das Formular einen Hinweis.
 
 ## Befehle
 
@@ -68,7 +72,8 @@ public/              statische Dateien (Icons, robots.txt)
 scripts/             Hilfsskripte (postbuild, Preview-Server, Icons, Screenshots, Lighthouse)
 src/app/             Startseite (page.tsx), App-Routen in (app)/ (Weg unter /app/), Layout, globals.css
 src/components/      UI-Komponenten
-src/lib/config.ts    APP_NAME, APP_SUBTITLE, APP_TITLE – der Name ist vorläufig, nur hier pflegen; BASE_PATH, withBasePath()
+src/lib/config.ts    APP_NAME, APP_SUBTITLE, APP_TITLE – der Name ist vorläufig, nur hier pflegen; BASE_PATH, withBasePath(); FEEDBACK_ENDPOINT
+src/lib/feedback.ts  Feedback-Formular: Body und Versand an den Feedback-Dienst
 src/lib/domain/      reine Logik ohne Framework, voll getestet
 src/lib/data/        Dexie, Repository-Funktionen, Export/Import, Hooks (hooks.ts nur im Client)
 src/lib/content/     Markdown aus content/de laden und prüfen (nur zur Build-Zeit)
@@ -83,7 +88,7 @@ src/lib/i18n/        UI-Texte
 - **Tests zuerst** für Parser und Datenlogik. Keine Phase ist fertig, solange Tests fehlschlagen.
 - **Nachfragen statt raten** bei Lizenzwahl, Farbpalette, Abweichungen vom Tech-Stack und allem, was Daten nach außen senden würde.
 - **Inhalte nicht erfinden.** Infotexte nur aus `docs/WISSEN.md` ableiten, Quellen ins Frontmatter, unsichere Aussagen mit `<!-- TODO: fachlich prüfen -->` markieren.
-- **Keine externen Laufzeit-Abhängigkeiten:** keine CDNs, Fonts, Analytics oder APIs. Die CSP erlaubt nur `'self'`; E2E-Tests prüfen, dass keine fremden Origins angefragt werden und die CSP fremde Anfragen blockiert.
+- **Keine externen Laufzeit-Abhängigkeiten:** keine CDNs, Fonts, Analytics oder APIs. Einzige Ausnahme ist das freiwillige Feedback-Formular. Die CSP erlaubt sonst nur `'self'`; E2E-Tests prüfen, dass keine fremden Origins angefragt werden und die CSP fremde Anfragen blockiert.
 - **UI-Texte** nur in `src/lib/i18n/de.json`, nie hart im Komponentencode. Ton: Du-Form, Sätze unter 20 Wörtern, kein Druck, keine roten Warnungen, keine Streaks.
 - **Barrierefreiheit:** WCAG 2.2 AA, Touch-Ziele ≥ 44 px (`--touch-target`), `prefers-reduced-motion`, Hell- und Dunkelmodus. axe-core in E2E muss fehlerfrei sein.
 - **Am Ende jeder Phase:** README aktualisieren, offene Punkte als GitHub-Issues formulieren, Einsteigeraufgaben mit `good first issue` markieren.
